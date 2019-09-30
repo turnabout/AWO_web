@@ -1,0 +1,46 @@
+.progress {
+  display: -ms-flexbox;
+  display: flex;
+  height: 1.0rem;
+  width: 100%;
+  background-color: #e9ecef;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.progress-bar {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -ms-flex-pack: center;
+  justify-content: center;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  background-color: #007bff;
+  transition: width .6s ease;
+}
+
+.progress-status-wrapper {
+  position: absolute;
+  left: 50%;
+}
+
+.progress-status {
+  background-color: #007bff;
+  color: #fff;
+  position: relative;
+  top: 1.5rem;
+  left: -50%;
+  margin: 0;
+  white-space: nowrap;
+  width: auto;
+  padding: 10px;
+  transition: all .6s ease;
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
+}
