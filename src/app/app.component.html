@@ -1,1 +1,5 @@
-<app-loading-bar [progress]="loadingProgress" [status]="loadingStatus"></app-loading-bar>
+<app-loading-bar
+    [class.show]="loading" class="step"
+    [progress]="loadingProgress"
+    [status]="loadingStatus">
+</app-loading-bar>

@@ -101,7 +101,7 @@ export default function loadAWO(
 
             // Fix path for .data file
             if (path.endsWith(".data")) {
-                return "assets/" + path;
+                return AWO.dirPath + path;
             }
 
             // otherwise, use the default, the prefix (JS file's dir) + the path
