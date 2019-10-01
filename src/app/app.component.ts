@@ -17,9 +17,9 @@ export class AppComponent {
     }
 
     // Loading bar support
-    private loading: boolean = true;
+    private loading: boolean = false;
     private loadingProgress: number = 0;
-    private loadingStatus: string = "Loading...";
+    private loadingStatus: string = "";
 
     /**
      * Sets the new AWO loading state.

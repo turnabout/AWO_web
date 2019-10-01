@@ -12,16 +12,27 @@ export class AWO {
     // Path to emscripten-generated files
     public static emDirPath: string = "assets/";
 
-    // External references to the app's main component & its zone
-    public static mainAppComponentRef: AngularComponentRef;
-
     // Module object generated and used by emscripten as an interface to the outside world.
     // Can be used to speak with emscripten and use its interfaces.
     public static emModuleObj: any;
 
+    // External references to the app's main component & its zone
+    public static mainAppComponentRef: AngularComponentRef;
+
     // Launch AWO game instance and stores pointer to the initialized Game object.
-    public init() {
-        // window.ccall("init_AWO"
-        // Game* init_AWO()
+    public static init() {
+        // Get width/height of user's window to pass to game
+        const width: number  = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+        const height: number = window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight;
+
+        // Initialize and run game
+        // TODO: Height should compensate for additional UI at bottom of screen
+        AWO.gamePtr = AWO.emModuleObj.ccall("init_AWO", "number", ["number", "number"], [width, height]);
+
+        // Add small delay before running game, for a smoother transition
+        setTimeout(() => {
+            document.getElementById("canvas").classList.add("show");
+            AWO.emModuleObj.ccall("run_AWO", null, ["number"], [AWO.gamePtr]);
+        }, 100);
     }
 }

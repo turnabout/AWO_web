@@ -3,7 +3,7 @@
     display: flex;
     height: 1.0rem;
     width: 100%;
-    background-color: #e9ecef;
+    background: none;
     position: absolute;
     top: 0;
     left: 0;
@@ -19,7 +19,7 @@
     color: #fff;
     text-align: center;
     white-space: nowrap;
-    background-color: #007bff;
+    background-color: #f7523a;
     transition: width .6s ease;
 }
 
@@ -29,7 +29,7 @@
 }
 
 .progress-status {
-    background-color: #007bff;
+    background-color: #f7523a;
     color: #fff;
     position: relative;
     top: 1.5rem;

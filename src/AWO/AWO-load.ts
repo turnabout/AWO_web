@@ -37,18 +37,19 @@ export default function loadAWO(
         },
 
         // Used by module to get the canvas element
-        canvas() {
-            const canvas: HTMLCanvasElement = document.getElementById("canvas") as HTMLCanvasElement;
+        canvas: (() => {
+          const canvas = document.querySelector("#canvas");
 
             // TODO: Change behavior to something more user-friendly for when webgl context is lost
-            canvas.addEventListener("webglcontextlost", (e) => {
-                alert("WebGL context lost. You will need to reload the page.");
-                e.preventDefault();
-            }, false);
+          canvas.addEventListener("webglcontextlost", (e) => {
+              alert("WebGL context lost. You will need to reload the page.");
+              e.preventDefault();
+          }, false);
 
-            return canvas;
-        },
+          return canvas;
+        })(),
 
+        // Set the current loading status message
         setStatus(text: string) {
             if (!this.setStatus.last) {
                 this.setStatus.last = { time: Date.now(), text: "" };
@@ -95,6 +96,7 @@ export default function loadAWO(
 
         onRuntimeInitialized() { runtimeInitializedCb(); },
 
+        // Adjust location of files queried for
         locateFile(path: string, prefix: string) {
             return AWO.emDirPath + path;
         },

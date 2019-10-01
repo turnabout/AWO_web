@@ -202,7 +202,7 @@ Module['FS_createPath']('/Resources', 'Font', true, true);
   }
 
  }
- loadPackage({"files": [{"start": 0, "audio": 0, "end": 100324, "filename": "/Resources/spritesheet.png"}, {"start": 100324, "audio": 0, "end": 180199, "filename": "/Resources/visuals.json"}, {"start": 180199, "audio": 0, "end": 198827, "filename": "/Resources/Font/aw2-gba.ttf"}, {"start": 198827, "audio": 0, "end": 199047, "filename": "/Resources/Font/license.txt"}, {"start": 199047, "audio": 0, "end": 199720, "filename": "/Resources/Font/readme.txt"}], "remote_package_size": 199720, "package_uuid": "2cae0482-8118-41e8-a897-5e69ff487b37"});
+ loadPackage({"files": [{"start": 0, "audio": 0, "end": 100324, "filename": "/Resources/spritesheet.png"}, {"start": 100324, "audio": 0, "end": 180199, "filename": "/Resources/visuals.json"}, {"start": 180199, "audio": 0, "end": 198827, "filename": "/Resources/Font/aw2-gba.ttf"}, {"start": 198827, "audio": 0, "end": 199047, "filename": "/Resources/Font/license.txt"}, {"start": 199047, "audio": 0, "end": 199720, "filename": "/Resources/Font/readme.txt"}], "remote_package_size": 199720, "package_uuid": "ab711fbd-2057-4a70-ad02-5563a9249f82"});
 
 })();
 
@@ -6567,33 +6567,18 @@ function copyTempDouble(ptr) {
   
   
   
+  function __maybeCStringToJsString(cString) {
+      return cString === cString + 0 ? UTF8ToString(cString) : cString;
+    }
+  
   var __specialEventTargets=[0, document, window];function __findEventTarget(target) {
-      warnOnce('Rules for selecting event targets in HTML5 API are changing: instead of using document.getElementById() that only can refer to elements by their DOM ID, new event target selection mechanism uses the more flexible function document.querySelector() that can look up element names, classes, and complex CSS selectors. Build with -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=1 to change to the new lookup rules. See https://github.com/emscripten-core/emscripten/pull/7977 for more details.');
-      try {
-        // The sensible "default" target varies between events, but use window as the default
-        // since DOM events mostly can default to that. Specific callback registrations
-        // override their own defaults.
-        if (!target) return window;
-        if (typeof target === "number") target = __specialEventTargets[target] || UTF8ToString(target);
-        if (target === '#window') return window;
-        else if (target === '#document') return document;
-        else if (target === '#screen') return screen;
-        else if (target === '#canvas') return Module['canvas'];
-        return (typeof target === 'string') ? document.getElementById(target) : target;
-      } catch(e) {
-        // In Web Workers, some objects above, such as '#document' do not exist. Gracefully
-        // return null for them.
-        return null;
-      }
-    }function __findCanvasEventTarget(target) {
-      if (typeof target === 'number') target = UTF8ToString(target);
-      if (!target || target === '#canvas') {
-        if (typeof GL !== 'undefined' && GL.offscreenCanvases['canvas']) return GL.offscreenCanvases['canvas']; // TODO: Remove this line, target '#canvas' should refer only to Module['canvas'], not to GL.offscreenCanvases['canvas'] - but need stricter tests to be able to remove this line.
-        return Module['canvas'];
-      }
-      if (typeof GL !== 'undefined' && GL.offscreenCanvases[target]) return GL.offscreenCanvases[target];
-      return __findEventTarget(target);
-    }function _emscripten_get_canvas_element_size(target, width, height) {
+      var domElement = __specialEventTargets[target] || document.querySelector(__maybeCStringToJsString(target));
+      // TODO: Remove this check in the future, or move it to some kind of debugging mode, because it may be perfectly fine behavior
+      // for one to query an event target to test if any DOM element with given CSS selector exists. However for a migration period
+      // from old lookup over to new, it is very useful to get diagnostics messages related to a lookup failing.
+      if (!domElement) err('No DOM element was found with CSS selector "' + __maybeCStringToJsString(target) + '"');
+      return domElement;
+    }function __findCanvasEventTarget(target) { return __findEventTarget(target); }function _emscripten_get_canvas_element_size(target, width, height) {
       var canvas = __findCanvasEventTarget(target);
       if (!canvas) return -4;
       HEAP32[((width)>>2)]=canvas.width;
@@ -6862,7 +6847,7 @@ function copyTempDouble(ptr) {
     }
 
   function _emscripten_get_element_css_size(target, width, height) {
-      target = target ? __findEventTarget(target) : Module['canvas'];
+      target = __findEventTarget(target);
       if (!target) return -4;
   
       if (target.getBoundingClientRect) {
@@ -8276,7 +8261,6 @@ function copyTempDouble(ptr) {
   
   function __emscripten_do_request_fullscreen(target, strategy) {
       if (!JSEvents.fullscreenEnabled()) return -1;
-      if (!target) target = '#canvas';
       target = __findEventTarget(target);
       if (!target) return -4;
   
@@ -8311,7 +8295,6 @@ function copyTempDouble(ptr) {
     }
 
   function _emscripten_request_pointerlock(target, deferUntilInEventHandler) {
-      if (!target) target = '#canvas';
       target = __findEventTarget(target);
       if (!target) return -4;
       if (!target.requestPointerLock && !target.mozRequestPointerLock && !target.webkitRequestPointerLock && !target.msRequestPointerLock) {
@@ -8371,7 +8354,7 @@ function copyTempDouble(ptr) {
 
 
   function _emscripten_set_element_css_size(target, width, height) {
-      target = target ? __findEventTarget(target) : Module['canvas'];
+      target = __findEventTarget(target);
       if (!target) return -4;
   
       target.style.width = width + "px";
@@ -8430,7 +8413,7 @@ function copyTempDouble(ptr) {
       JSEvents.registerOrRemoveHandler(eventHandler);
     }function _emscripten_set_fullscreenchange_callback_on_thread(target, userData, useCapture, callbackfunc, targetThread) {
       if (!JSEvents.fullscreenEnabled()) return -1;
-      target = target ? __findEventTarget(target) : __specialEventTargets[1];
+      target = __findEventTarget(target);
       if (!target) return -4;
       __registerFullscreenChangeEventCallback(target, userData, useCapture, callbackfunc, 19, "fullscreenchange", targetThread);
       __registerFullscreenChangeEventCallback(target, userData, useCapture, callbackfunc, 19, "mozfullscreenchange", targetThread);
@@ -8543,14 +8526,6 @@ function copyTempDouble(ptr) {
       HEAP32[(((eventStruct)+(44))>>2)]=e["movementX"] || e["mozMovementX"] || e["webkitMovementX"] || (e.screenX-JSEvents.previousScreenX);
       HEAP32[(((eventStruct)+(48))>>2)]=e["movementY"] || e["mozMovementY"] || e["webkitMovementY"] || (e.screenY-JSEvents.previousScreenY);
   
-      if (Module['canvas']) {
-        var rect = Module['canvas'].getBoundingClientRect();
-        HEAP32[(((eventStruct)+(60))>>2)]=e.clientX - rect.left;
-        HEAP32[(((eventStruct)+(64))>>2)]=e.clientY - rect.top;
-      } else { // Canvas is not initialized, return 0.
-        HEAP32[(((eventStruct)+(60))>>2)]=0;
-        HEAP32[(((eventStruct)+(64))>>2)]=0;
-      }
       if (target) {
         var rect = JSEvents.getBoundingClientRectOrZeros(target);
         HEAP32[(((eventStruct)+(52))>>2)]=e.clientX - rect.left;
@@ -8652,7 +8627,7 @@ function copyTempDouble(ptr) {
         return -1;
       }
   
-      target = target ? __findEventTarget(target) : __specialEventTargets[1]; // Pointer lock change events need to be captured from 'document' by default instead of 'window'
+      target = __findEventTarget(target);
       if (!target) return -4;
       __registerPointerlockChangeEventCallback(target, userData, useCapture, callbackfunc, 20, "pointerlockchange", targetThread);
       __registerPointerlockChangeEventCallback(target, userData, useCapture, callbackfunc, 20, "mozpointerlockchange", targetThread);
@@ -8665,11 +8640,7 @@ function copyTempDouble(ptr) {
   function __registerUiEventCallback(target, userData, useCapture, callbackfunc, eventTypeId, eventTypeString, targetThread) {
       if (!JSEvents.uiEvent) JSEvents.uiEvent = _malloc( 36 );
   
-      if (eventTypeString == "scroll" && !target) {
-        target = document; // By default read scroll events on document rather than window.
-      } else {
-        target = __findEventTarget(target);
-      }
+      target = __findEventTarget(target);
   
       var uiEventHandlerFunc = function(ev) {
         var e = ev || event;
@@ -8741,7 +8712,6 @@ function copyTempDouble(ptr) {
         HEAP32[(((ptr)+(12))>>2)]=e.altKey;
         HEAP32[(((ptr)+(16))>>2)]=e.metaKey;
         ptr += 20; // Advance to the start of the touch array.
-        var canvasRect = Module['canvas'] ? Module['canvas'].getBoundingClientRect() : undefined;
         var targetRect = JSEvents.getBoundingClientRectOrZeros(target);
         var numTouches = 0;
         for(var i in touches) {
@@ -8755,13 +8725,6 @@ function copyTempDouble(ptr) {
           HEAP32[(((ptr)+(24))>>2)]=t.pageY;
           HEAP32[(((ptr)+(28))>>2)]=t.changed;
           HEAP32[(((ptr)+(32))>>2)]=t.onTarget;
-          if (canvasRect) {
-            HEAP32[(((ptr)+(44))>>2)]=t.clientX - canvasRect.left;
-            HEAP32[(((ptr)+(48))>>2)]=t.clientY - canvasRect.top;
-          } else {
-            HEAP32[(((ptr)+(44))>>2)]=0;
-            HEAP32[(((ptr)+(48))>>2)]=0;            
-          }
           HEAP32[(((ptr)+(36))>>2)]=t.clientX - targetRect.left;
           HEAP32[(((ptr)+(40))>>2)]=t.clientY - targetRect.top;
   
@@ -9319,6 +9282,7 @@ var asmLibraryArg = {
   "__findEventTarget": __findEventTarget,
   "__get_canvas_element_size": __get_canvas_element_size,
   "__glGenObject": __glGenObject,
+  "__maybeCStringToJsString": __maybeCStringToJsString,
   "__registerFocusEventCallback": __registerFocusEventCallback,
   "__registerFullscreenChangeEventCallback": __registerFullscreenChangeEventCallback,
   "__registerGamepadEventCallback": __registerGamepadEventCallback,
