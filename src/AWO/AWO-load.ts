@@ -1,22 +1,20 @@
+import AWO_EM_MODULE from "../assets/AWO.js";
 import { AWO } from "./AWO";
 
-declare global {
-    interface Window {
-        Module: any;
-    }
-}
-
 /**
- * Loads the AWO game by creating the initial `window.Module` object used by emscripten and then loading the runtime
- * script.
+ * Loads the AWO game. Calls AWO's emscripten module with a custom argument object used to hook into different loading
+ * stages and update progress.
+ *
+ * Stores the full emscripten module in the `AWO` class.
  */
 export default function loadAWO(
     progressUpdateCb: (percentComplete: number) => void,
     statusUpdateCb: (status: string) => void,
     runtimeInitializedCb: () => void
 ) {
-    // Initialize window.Module and add custom properties to it
-    window.Module = {
+
+    // Object with custom properties for AWO emscripten module to use
+    const moduleObj: any = {
         preRun:  [],
         postRun: [],
 
@@ -52,23 +50,23 @@ export default function loadAWO(
         },
 
         setStatus(text: string) {
-            if (!window.Module.setStatus.last) {
-                window.Module.setStatus.last = { time: Date.now(), text: "" };
+            if (!this.setStatus.last) {
+                this.setStatus.last = { time: Date.now(), text: "" };
             }
 
-            if (text === window.Module.setStatus.last.text) {
+            if (text === this.setStatus.last.text) {
                 return;
             }
 
             const m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
             const now = Date.now();
 
-            if (m && now - window.Module.setStatus.last.time < 30) {
+            if (m && now - this.setStatus.last.time < 30) {
                 // return; // If this is a progress update, skip it if too soon
             }
 
-            window.Module.setStatus.last.time = now;
-            window.Module.setStatus.last.text = text;
+            this.setStatus.last.time = now;
+            this.setStatus.last.text = text;
 
             statusUpdateCb(text);
         },
@@ -88,7 +86,7 @@ export default function loadAWO(
 
             this.totalDependencies = Math.max(this.totalDependencies, remaining);
 
-            window.Module.setStatus(
+            this.setStatus(
                 remaining
                 ? "Preparing... (" + (this.totalDependencies - remaining) + "/" + this.totalDependencies + ")"
                 : "All downloads complete.",
@@ -98,33 +96,13 @@ export default function loadAWO(
         onRuntimeInitialized() { runtimeInitializedCb(); },
 
         locateFile(path: string, prefix: string) {
-
-            // Fix path for .data file
-            if (path.endsWith(".data")) {
-                return AWO.dirPath + path;
-            }
-
-            // otherwise, use the default, the prefix (JS file's dir) + the path
-            return prefix + path;
+            return AWO.emDirPath + path;
         },
 
         // TODO: Set behaviour when abnormal program termination occurs
         onAbort() {
-
         }
     };
 
-    // Load AWO's runtime script.
-    ((d: Document) => {
-        const script: HTMLScriptElement = d.createElement("script");
-
-        script.type   = "text/javascript";
-        script.async  = true;
-        /*
-        script.onload = () => {
-        };
-        */
-        script.src = AWO.path;
-        d.getElementsByTagName("head")[0].appendChild(script);
-    })(document);
+    AWO.emModuleObj = AWO_EM_MODULE(moduleObj);
 }

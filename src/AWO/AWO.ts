@@ -6,13 +6,22 @@ interface AngularComponentRef {
 }
 
 export class AWO {
-    // Pointer to the game instance.
+    // Pointer to the main AWO Game instance.
     public static gamePtr: number;
 
-    // Path to AWO.js
-    public static dirPath: string = "assets/";
-    public static path: string = AWO.dirPath + "AWO.js";
+    // Path to emscripten-generated files
+    public static emDirPath: string = "assets/";
 
     // External references to the app's main component & its zone
     public static mainAppComponentRef: AngularComponentRef;
+
+    // Module object generated and used by emscripten as an interface to the outside world.
+    // Can be used to speak with emscripten and use its interfaces.
+    public static emModuleObj: any;
+
+    // Launch AWO game instance and stores pointer to the initialized Game object.
+    public init() {
+        // window.ccall("init_AWO"
+        // Game* init_AWO()
+    }
 }

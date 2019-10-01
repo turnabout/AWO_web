@@ -1,3 +1,10 @@
+
+var AWO_EM_MODULE = (function() {
+  var _scriptDir = typeof document !== 'undefined' && document.currentScript ? document.currentScript.src : undefined;
+  return (
+function(AWO_EM_MODULE) {
+  AWO_EM_MODULE = AWO_EM_MODULE || {};
+
 // Copyright 2010 The Emscripten Authors.  All rights reserved.
 // Emscripten is available under two separate licenses, the MIT license and the
 // University of Illinois/NCSA Open Source License.  Both these licenses can be
@@ -16,7 +23,7 @@
 // after the generated code, you will need to define   var Module = {};
 // before the code. Then that object will be used in the code, and you
 // can continue to use Module afterwards as well.
-var Module = typeof Module !== 'undefined' ? Module : {};
+var Module = typeof AWO_EM_MODULE !== 'undefined' ? AWO_EM_MODULE : {};
 
 // --pre-jses are emitted after the Module integration code, so that they can
 // refer to Module (if they choose; they can also define Module)
@@ -195,7 +202,7 @@ Module['FS_createPath']('/Resources', 'Font', true, true);
   }
 
  }
- loadPackage({"files": [{"start": 0, "audio": 0, "end": 100324, "filename": "/Resources/spritesheet.png"}, {"start": 100324, "audio": 0, "end": 180199, "filename": "/Resources/visuals.json"}, {"start": 180199, "audio": 0, "end": 198827, "filename": "/Resources/Font/aw2-gba.ttf"}, {"start": 198827, "audio": 0, "end": 199047, "filename": "/Resources/Font/license.txt"}, {"start": 199047, "audio": 0, "end": 199720, "filename": "/Resources/Font/readme.txt"}], "remote_package_size": 199720, "package_uuid": "6e7f5e4c-bfb7-4810-941f-349361db294c"});
+ loadPackage({"files": [{"start": 0, "audio": 0, "end": 100324, "filename": "/Resources/spritesheet.png"}, {"start": 100324, "audio": 0, "end": 180199, "filename": "/Resources/visuals.json"}, {"start": 180199, "audio": 0, "end": 198827, "filename": "/Resources/Font/aw2-gba.ttf"}, {"start": 198827, "audio": 0, "end": 199047, "filename": "/Resources/Font/license.txt"}, {"start": 199047, "audio": 0, "end": 199720, "filename": "/Resources/Font/readme.txt"}], "remote_package_size": 199720, "package_uuid": "2cae0482-8118-41e8-a897-5e69ff487b37"});
 
 })();
 
@@ -223,21 +230,11 @@ var quit_ = function(status, toThrow) {
 // Determine the runtime environment we are in. You can customize this by
 // setting the ENVIRONMENT setting at compile time (see settings.js).
 
-var ENVIRONMENT_IS_WEB = false;
+var ENVIRONMENT_IS_WEB = true;
 var ENVIRONMENT_IS_WORKER = false;
 var ENVIRONMENT_IS_NODE = false;
-var ENVIRONMENT_HAS_NODE = false;
+var ENVIRONMENT_HAS_NODE = ENVIRONMENT_IS_NODE;
 var ENVIRONMENT_IS_SHELL = false;
-ENVIRONMENT_IS_WEB = typeof window === 'object';
-ENVIRONMENT_IS_WORKER = typeof importScripts === 'function';
-// A web environment like Electron.js can have Node enabled, so we must
-// distinguish between Node-enabled environments and Node environments per se.
-// This will allow the former to do things like mount NODEFS.
-// Extended check using process.versions fixes issue #8816.
-// (Also makes redundant the original check that 'require' is a function.)
-ENVIRONMENT_HAS_NODE = typeof process === 'object' && typeof process.versions === 'object' && typeof process.versions.node === 'string';
-ENVIRONMENT_IS_NODE = ENVIRONMENT_HAS_NODE && !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_WORKER;
-ENVIRONMENT_IS_SHELL = !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_NODE && !ENVIRONMENT_IS_WORKER;
 
 if (Module['ENVIRONMENT']) {
   throw new Error('Module.ENVIRONMENT has been deprecated. To force the environment, use the ENVIRONMENT compile-time option (for example, -s ENVIRONMENT=web or -s ENVIRONMENT=node)');
@@ -267,100 +264,16 @@ var read_,
     readBinary,
     setWindowTitle;
 
-if (ENVIRONMENT_IS_NODE) {
-  scriptDirectory = __dirname + '/';
-
-  // Expose functionality in the same simple way that the shells work
-  // Note that we pollute the global namespace here, otherwise we break in node
-  var nodeFS;
-  var nodePath;
-
-  read_ = function shell_read(filename, binary) {
-    var ret;
-      if (!nodeFS) nodeFS = require('fs');
-      if (!nodePath) nodePath = require('path');
-      filename = nodePath['normalize'](filename);
-      ret = nodeFS['readFileSync'](filename);
-    return binary ? ret : ret.toString();
-  };
-
-  readBinary = function readBinary(filename) {
-    var ret = read_(filename, true);
-    if (!ret.buffer) {
-      ret = new Uint8Array(ret);
-    }
-    assert(ret.buffer);
-    return ret;
-  };
-
-  if (process['argv'].length > 1) {
-    thisProgram = process['argv'][1].replace(/\\/g, '/');
-  }
-
-  arguments_ = process['argv'].slice(2);
-
-  if (typeof module !== 'undefined') {
-    module['exports'] = Module;
-  }
-
-  process['on']('uncaughtException', function(ex) {
-    // suppress ExitStatus exceptions from showing an error
-    if (!(ex instanceof ExitStatus)) {
-      throw ex;
-    }
-  });
-
-  process['on']('unhandledRejection', abort);
-
-  quit_ = function(status) {
-    process['exit'](status);
-  };
-
-  Module['inspect'] = function () { return '[Emscripten Module object]'; };
-} else
-if (ENVIRONMENT_IS_SHELL) {
-
-
-  if (typeof read != 'undefined') {
-    read_ = function shell_read(f) {
-      return read(f);
-    };
-  }
-
-  readBinary = function readBinary(f) {
-    var data;
-    if (typeof readbuffer === 'function') {
-      return new Uint8Array(readbuffer(f));
-    }
-    data = read(f, 'binary');
-    assert(typeof data === 'object');
-    return data;
-  };
-
-  if (typeof scriptArgs != 'undefined') {
-    arguments_ = scriptArgs;
-  } else if (typeof arguments != 'undefined') {
-    arguments_ = arguments;
-  }
-
-  if (typeof quit === 'function') {
-    quit_ = function(status) {
-      quit(status);
-    };
-  }
-
-  if (typeof print !== 'undefined') {
-    // Prefer to use print/printErr where they exist, as they usually work better.
-    if (typeof console === 'undefined') console = {};
-    console.log = print;
-    console.warn = console.error = typeof printErr !== 'undefined' ? printErr : print;
-  }
-} else
 if (ENVIRONMENT_IS_WEB || ENVIRONMENT_IS_WORKER) {
   if (ENVIRONMENT_IS_WORKER) { // Check worker, not web, since window could be polyfilled
     scriptDirectory = self.location.href;
   } else if (document.currentScript) { // web
     scriptDirectory = document.currentScript.src;
+  }
+  // When MODULARIZE (and not _INSTANCE), this JS may be executed later, after document.currentScript
+  // is gone, so we saved it, and we use it here instead of any other info.
+  if (_scriptDir) {
+    scriptDirectory = _scriptDir;
   }
   // blob urls look like blob:http://site.com/etc/etc and we cannot infer anything from them.
   // otherwise, slice off the final part of the url to find the script directory.
@@ -372,6 +285,7 @@ if (ENVIRONMENT_IS_WEB || ENVIRONMENT_IS_WORKER) {
     scriptDirectory = '';
   }
 
+  if (!(typeof window === 'object' || typeof importScripts === 'function')) throw new Error('not compiled for this environment (did you build to HTML and try to run it not on the web, or set ENVIRONMENT to something - like node - and run it someplace else - like on the web?)');
 
   read_ = function shell_read(url) {
       var xhr = new XMLHttpRequest();
@@ -2288,40 +2202,6 @@ function copyTempDouble(ptr) {
         }},default_tty_ops:{get_char:function (tty) {
           if (!tty.input.length) {
             var result = null;
-            if (ENVIRONMENT_IS_NODE) {
-              // we will read data by chunks of BUFSIZE
-              var BUFSIZE = 256;
-              var buf = Buffer.alloc ? Buffer.alloc(BUFSIZE) : new Buffer(BUFSIZE);
-              var bytesRead = 0;
-  
-              var isPosixPlatform = (process.platform != 'win32'); // Node doesn't offer a direct check, so test by exclusion
-  
-              var fd = process.stdin.fd;
-              if (isPosixPlatform) {
-                // Linux and Mac cannot use process.stdin.fd (which isn't set up as sync)
-                var usingDevice = false;
-                try {
-                  fd = fs.openSync('/dev/stdin', 'r');
-                  usingDevice = true;
-                } catch (e) {}
-              }
-  
-              try {
-                bytesRead = fs.readSync(fd, buf, 0, BUFSIZE, null);
-              } catch(e) {
-                // Cross-platform differences: on Windows, reading EOF throws an exception, but on other OSes,
-                // reading EOF returns 0. Uniformize behavior by treating the EOF exception to return 0.
-                if (e.toString().indexOf('EOF') != -1) bytesRead = 0;
-                else throw e;
-              }
-  
-              if (usingDevice) { fs.closeSync(fd); }
-              if (bytesRead > 0) {
-                result = buf.slice(0, bytesRead).toString('utf-8');
-              } else {
-                result = null;
-              }
-            } else
             if (typeof window != 'undefined' &&
               typeof window.prompt == 'function') {
               // Browser.
@@ -2966,256 +2846,6 @@ function copyTempDouble(ptr) {
           }
         });
       }};
-  
-  var NODEFS={isWindows:false,staticInit:function () {
-        NODEFS.isWindows = !!process.platform.match(/^win/);
-        var flags = process["binding"]("constants");
-        // Node.js 4 compatibility: it has no namespaces for constants
-        if (flags["fs"]) {
-          flags = flags["fs"];
-        }
-        NODEFS.flagsForNodeMap = {
-          "1024": flags["O_APPEND"],
-          "64": flags["O_CREAT"],
-          "128": flags["O_EXCL"],
-          "0": flags["O_RDONLY"],
-          "2": flags["O_RDWR"],
-          "4096": flags["O_SYNC"],
-          "512": flags["O_TRUNC"],
-          "1": flags["O_WRONLY"]
-        };
-      },bufferFrom:function (arrayBuffer) {
-        // Node.js < 4.5 compatibility: Buffer.from does not support ArrayBuffer
-        // Buffer.from before 4.5 was just a method inherited from Uint8Array
-        // Buffer.alloc has been added with Buffer.from together, so check it instead
-        return Buffer.alloc ? Buffer.from(arrayBuffer) : new Buffer(arrayBuffer);
-      },mount:function (mount) {
-        assert(ENVIRONMENT_HAS_NODE);
-        return NODEFS.createNode(null, '/', NODEFS.getMode(mount.opts.root), 0);
-      },createNode:function (parent, name, mode, dev) {
-        if (!FS.isDir(mode) && !FS.isFile(mode) && !FS.isLink(mode)) {
-          throw new FS.ErrnoError(22);
-        }
-        var node = FS.createNode(parent, name, mode);
-        node.node_ops = NODEFS.node_ops;
-        node.stream_ops = NODEFS.stream_ops;
-        return node;
-      },getMode:function (path) {
-        var stat;
-        try {
-          stat = fs.lstatSync(path);
-          if (NODEFS.isWindows) {
-            // Node.js on Windows never represents permission bit 'x', so
-            // propagate read bits to execute bits
-            stat.mode = stat.mode | ((stat.mode & 292) >> 2);
-          }
-        } catch (e) {
-          if (!e.code) throw e;
-          throw new FS.ErrnoError(-e.errno); // syscall errnos are negated, node's are not
-        }
-        return stat.mode;
-      },realPath:function (node) {
-        var parts = [];
-        while (node.parent !== node) {
-          parts.push(node.name);
-          node = node.parent;
-        }
-        parts.push(node.mount.opts.root);
-        parts.reverse();
-        return PATH.join.apply(null, parts);
-      },flagsForNode:function (flags) {
-        flags &= ~0x200000 /*O_PATH*/; // Ignore this flag from musl, otherwise node.js fails to open the file.
-        flags &= ~0x800 /*O_NONBLOCK*/; // Ignore this flag from musl, otherwise node.js fails to open the file.
-        flags &= ~0x8000 /*O_LARGEFILE*/; // Ignore this flag from musl, otherwise node.js fails to open the file.
-        flags &= ~0x80000 /*O_CLOEXEC*/; // Some applications may pass it; it makes no sense for a single process.
-        var newFlags = 0;
-        for (var k in NODEFS.flagsForNodeMap) {
-          if (flags & k) {
-            newFlags |= NODEFS.flagsForNodeMap[k];
-            flags ^= k;
-          }
-        }
-  
-        if (!flags) {
-          return newFlags;
-        } else {
-          throw new FS.ErrnoError(22);
-        }
-      },node_ops:{getattr:function (node) {
-          var path = NODEFS.realPath(node);
-          var stat;
-          try {
-            stat = fs.lstatSync(path);
-          } catch (e) {
-            if (!e.code) throw e;
-            throw new FS.ErrnoError(-e.errno);
-          }
-          // node.js v0.10.20 doesn't report blksize and blocks on Windows. Fake them with default blksize of 4096.
-          // See http://support.microsoft.com/kb/140365
-          if (NODEFS.isWindows && !stat.blksize) {
-            stat.blksize = 4096;
-          }
-          if (NODEFS.isWindows && !stat.blocks) {
-            stat.blocks = (stat.size+stat.blksize-1)/stat.blksize|0;
-          }
-          return {
-            dev: stat.dev,
-            ino: stat.ino,
-            mode: stat.mode,
-            nlink: stat.nlink,
-            uid: stat.uid,
-            gid: stat.gid,
-            rdev: stat.rdev,
-            size: stat.size,
-            atime: stat.atime,
-            mtime: stat.mtime,
-            ctime: stat.ctime,
-            blksize: stat.blksize,
-            blocks: stat.blocks
-          };
-        },setattr:function (node, attr) {
-          var path = NODEFS.realPath(node);
-          try {
-            if (attr.mode !== undefined) {
-              fs.chmodSync(path, attr.mode);
-              // update the common node structure mode as well
-              node.mode = attr.mode;
-            }
-            if (attr.timestamp !== undefined) {
-              var date = new Date(attr.timestamp);
-              fs.utimesSync(path, date, date);
-            }
-            if (attr.size !== undefined) {
-              fs.truncateSync(path, attr.size);
-            }
-          } catch (e) {
-            if (!e.code) throw e;
-            throw new FS.ErrnoError(-e.errno);
-          }
-        },lookup:function (parent, name) {
-          var path = PATH.join2(NODEFS.realPath(parent), name);
-          var mode = NODEFS.getMode(path);
-          return NODEFS.createNode(parent, name, mode);
-        },mknod:function (parent, name, mode, dev) {
-          var node = NODEFS.createNode(parent, name, mode, dev);
-          // create the backing node for this in the fs root as well
-          var path = NODEFS.realPath(node);
-          try {
-            if (FS.isDir(node.mode)) {
-              fs.mkdirSync(path, node.mode);
-            } else {
-              fs.writeFileSync(path, '', { mode: node.mode });
-            }
-          } catch (e) {
-            if (!e.code) throw e;
-            throw new FS.ErrnoError(-e.errno);
-          }
-          return node;
-        },rename:function (oldNode, newDir, newName) {
-          var oldPath = NODEFS.realPath(oldNode);
-          var newPath = PATH.join2(NODEFS.realPath(newDir), newName);
-          try {
-            fs.renameSync(oldPath, newPath);
-          } catch (e) {
-            if (!e.code) throw e;
-            throw new FS.ErrnoError(-e.errno);
-          }
-        },unlink:function (parent, name) {
-          var path = PATH.join2(NODEFS.realPath(parent), name);
-          try {
-            fs.unlinkSync(path);
-          } catch (e) {
-            if (!e.code) throw e;
-            throw new FS.ErrnoError(-e.errno);
-          }
-        },rmdir:function (parent, name) {
-          var path = PATH.join2(NODEFS.realPath(parent), name);
-          try {
-            fs.rmdirSync(path);
-          } catch (e) {
-            if (!e.code) throw e;
-            throw new FS.ErrnoError(-e.errno);
-          }
-        },readdir:function (node) {
-          var path = NODEFS.realPath(node);
-          try {
-            return fs.readdirSync(path);
-          } catch (e) {
-            if (!e.code) throw e;
-            throw new FS.ErrnoError(-e.errno);
-          }
-        },symlink:function (parent, newName, oldPath) {
-          var newPath = PATH.join2(NODEFS.realPath(parent), newName);
-          try {
-            fs.symlinkSync(oldPath, newPath);
-          } catch (e) {
-            if (!e.code) throw e;
-            throw new FS.ErrnoError(-e.errno);
-          }
-        },readlink:function (node) {
-          var path = NODEFS.realPath(node);
-          try {
-            path = fs.readlinkSync(path);
-            path = NODEJS_PATH.relative(NODEJS_PATH.resolve(node.mount.opts.root), path);
-            return path;
-          } catch (e) {
-            if (!e.code) throw e;
-            throw new FS.ErrnoError(-e.errno);
-          }
-        }},stream_ops:{open:function (stream) {
-          var path = NODEFS.realPath(stream.node);
-          try {
-            if (FS.isFile(stream.node.mode)) {
-              stream.nfd = fs.openSync(path, NODEFS.flagsForNode(stream.flags));
-            }
-          } catch (e) {
-            if (!e.code) throw e;
-            throw new FS.ErrnoError(-e.errno);
-          }
-        },close:function (stream) {
-          try {
-            if (FS.isFile(stream.node.mode) && stream.nfd) {
-              fs.closeSync(stream.nfd);
-            }
-          } catch (e) {
-            if (!e.code) throw e;
-            throw new FS.ErrnoError(-e.errno);
-          }
-        },read:function (stream, buffer, offset, length, position) {
-          // Node.js < 6 compatibility: node errors on 0 length reads
-          if (length === 0) return 0;
-          try {
-            return fs.readSync(stream.nfd, NODEFS.bufferFrom(buffer.buffer), offset, length, position);
-          } catch (e) {
-            throw new FS.ErrnoError(-e.errno);
-          }
-        },write:function (stream, buffer, offset, length, position) {
-          try {
-            return fs.writeSync(stream.nfd, NODEFS.bufferFrom(buffer.buffer), offset, length, position);
-          } catch (e) {
-            throw new FS.ErrnoError(-e.errno);
-          }
-        },llseek:function (stream, offset, whence) {
-          var position = offset;
-          if (whence === 1) {  // SEEK_CUR.
-            position += stream.position;
-          } else if (whence === 2) {  // SEEK_END.
-            if (FS.isFile(stream.node.mode)) {
-              try {
-                var stat = fs.fstatSync(stream.nfd);
-                position += stat.size;
-              } catch (e) {
-                throw new FS.ErrnoError(-e.errno);
-              }
-            }
-          }
-  
-          if (position < 0) {
-            throw new FS.ErrnoError(22);
-          }
-  
-          return position;
-        }}};
   
   var WORKERFS={DIR_MODE:16895,FILE_MODE:33279,reader:null,mount:function (mount) {
         assert(ENVIRONMENT_IS_WORKER);
@@ -4462,16 +4092,6 @@ function copyTempDouble(ptr) {
           var randomBuffer = new Uint8Array(1);
           random_device = function() { crypto.getRandomValues(randomBuffer); return randomBuffer[0]; };
         } else
-        if (ENVIRONMENT_IS_NODE) {
-          // for nodejs with or without crypto support included
-          try {
-            var crypto_module = require('crypto');
-            // nodejs has crypto support
-            random_device = function() { return crypto_module['randomBytes'](1)[0]; };
-          } catch (e) {
-            // nodejs doesn't have crypto support
-          }
-        } else
         {}
         if (!random_device) {
           // we couldn't find a proper implementation, as Math.random() is not suitable for /dev/random, see emscripten-core/emscripten/pull/7096
@@ -4580,7 +4200,6 @@ function copyTempDouble(ptr) {
         FS.filesystems = {
           'MEMFS': MEMFS,
           'IDBFS': IDBFS,
-          'NODEFS': NODEFS,
           'WORKERFS': WORKERFS,
         };
       },init:function (input, output, error) {
@@ -5374,8 +4993,6 @@ function copyTempDouble(ptr) {
       // return whether emscripten_get_now is guaranteed monotonic; the Date.now
       // implementation is not :(
       return (0
-        || ENVIRONMENT_IS_NODE
-        || (typeof dateNow !== 'undefined')
         || (typeof performance === 'object' && performance && typeof performance['now'] === 'function')
         );
     }function _clock_gettime(clk_id, tp) {
@@ -6950,7 +6567,7 @@ function copyTempDouble(ptr) {
   
   
   
-  var __specialEventTargets=[0, typeof document !== 'undefined' ? document : 0, typeof window !== 'undefined' ? window : 0];function __findEventTarget(target) {
+  var __specialEventTargets=[0, document, window];function __findEventTarget(target) {
       warnOnce('Rules for selecting event targets in HTML5 API are changing: instead of using document.getElementById() that only can refer to elements by their DOM ID, new event target selection mechanism uses the more flexible function document.querySelector() that can look up element names, classes, and complex CSS selectors. Build with -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=1 to change to the new lookup rules. See https://github.com/emscripten-core/emscripten/pull/7977 for more details.');
       try {
         // The sensible "default" target varies between events, but use window as the default
@@ -7240,7 +6857,8 @@ function copyTempDouble(ptr) {
     }
 
   function _emscripten_get_device_pixel_ratio() {
-      return devicePixelRatio || 1.0;
+      // Save a little bit of code space: all Wasm-capable browsers support devicePixelRatio.
+      return devicePixelRatio;
     }
 
   function _emscripten_get_element_css_size(target, width, height) {
@@ -9218,9 +8836,6 @@ function copyTempDouble(ptr) {
       };
       JSEvents.registerOrRemoveHandler(eventHandler);
     }function _emscripten_set_visibilitychange_callback_on_thread(userData, useCapture, callbackfunc, targetThread) {
-    if (!__specialEventTargets[1]) {
-      return -4;
-    }
       __registerVisibilityChangeEventCallback(__specialEventTargets[1], userData, useCapture, callbackfunc, 21, "visibilitychange", targetThread);
       return 0;
     }
@@ -9397,13 +9012,7 @@ function copyTempDouble(ptr) {
 
 
 FS.staticInit();Module["FS_createFolder"] = FS.createFolder;Module["FS_createPath"] = FS.createPath;Module["FS_createDataFile"] = FS.createDataFile;Module["FS_createPreloadedFile"] = FS.createPreloadedFile;Module["FS_createLazyFile"] = FS.createLazyFile;Module["FS_createLink"] = FS.createLink;Module["FS_createDevice"] = FS.createDevice;Module["FS_unlink"] = FS.unlink;;
-if (ENVIRONMENT_HAS_NODE) { var fs = require("fs"); var NODEJS_PATH = require("path"); NODEFS.staticInit(); };
-if (ENVIRONMENT_IS_NODE) {
-    _emscripten_get_now = function _emscripten_get_now_actual() {
-      var t = process['hrtime']();
-      return t[0] * 1e3 + t[1] / 1e6;
-    };
-  } else if (typeof dateNow !== 'undefined') {
+if (typeof dateNow !== 'undefined') {
     _emscripten_get_now = dateNow;
   } else if (typeof performance === 'object' && performance && typeof performance['now'] === 'function') {
     _emscripten_get_now = function() { return performance['now'](); };
@@ -10418,13 +10027,38 @@ if (!Object.getOwnPropertyDescriptor(Module, "printErr")) Module["printErr"] = f
 if (!Object.getOwnPropertyDescriptor(Module, "getTempRet0")) Module["getTempRet0"] = function() { abort("'getTempRet0' was not exported. add it to EXTRA_EXPORTED_RUNTIME_METHODS (see the FAQ)") };
 if (!Object.getOwnPropertyDescriptor(Module, "setTempRet0")) Module["setTempRet0"] = function() { abort("'setTempRet0' was not exported. add it to EXTRA_EXPORTED_RUNTIME_METHODS (see the FAQ)") };
 if (!Object.getOwnPropertyDescriptor(Module, "callMain")) Module["callMain"] = function() { abort("'callMain' was not exported. add it to EXTRA_EXPORTED_RUNTIME_METHODS (see the FAQ)") };
-if (!Object.getOwnPropertyDescriptor(Module, "Pointer_stringify")) Module["Pointer_stringify"] = function() { abort("'Pointer_stringify' was not exported. add it to EXTRA_EXPORTED_RUNTIME_METHODS (see the FAQ)") };if (!Object.getOwnPropertyDescriptor(Module, "ALLOC_NORMAL")) Object.defineProperty(Module, "ALLOC_NORMAL", { get: function() { abort("'ALLOC_NORMAL' was not exported. add it to EXTRA_EXPORTED_RUNTIME_METHODS (see the FAQ)") } });
+if (!Object.getOwnPropertyDescriptor(Module, "Pointer_stringify")) Module["Pointer_stringify"] = function() { abort("'Pointer_stringify' was not exported. add it to EXTRA_EXPORTED_RUNTIME_METHODS (see the FAQ)") };
+if (!Object.getOwnPropertyDescriptor(Module, "writeStackCookie")) Module["writeStackCookie"] = function() { abort("'writeStackCookie' was not exported. add it to EXTRA_EXPORTED_RUNTIME_METHODS (see the FAQ)") };
+if (!Object.getOwnPropertyDescriptor(Module, "checkStackCookie")) Module["checkStackCookie"] = function() { abort("'checkStackCookie' was not exported. add it to EXTRA_EXPORTED_RUNTIME_METHODS (see the FAQ)") };
+if (!Object.getOwnPropertyDescriptor(Module, "abortStackOverflow")) Module["abortStackOverflow"] = function() { abort("'abortStackOverflow' was not exported. add it to EXTRA_EXPORTED_RUNTIME_METHODS (see the FAQ)") };if (!Object.getOwnPropertyDescriptor(Module, "ALLOC_NORMAL")) Object.defineProperty(Module, "ALLOC_NORMAL", { get: function() { abort("'ALLOC_NORMAL' was not exported. add it to EXTRA_EXPORTED_RUNTIME_METHODS (see the FAQ)") } });
 if (!Object.getOwnPropertyDescriptor(Module, "ALLOC_STACK")) Object.defineProperty(Module, "ALLOC_STACK", { get: function() { abort("'ALLOC_STACK' was not exported. add it to EXTRA_EXPORTED_RUNTIME_METHODS (see the FAQ)") } });
 if (!Object.getOwnPropertyDescriptor(Module, "ALLOC_DYNAMIC")) Object.defineProperty(Module, "ALLOC_DYNAMIC", { get: function() { abort("'ALLOC_DYNAMIC' was not exported. add it to EXTRA_EXPORTED_RUNTIME_METHODS (see the FAQ)") } });
 if (!Object.getOwnPropertyDescriptor(Module, "ALLOC_NONE")) Object.defineProperty(Module, "ALLOC_NONE", { get: function() { abort("'ALLOC_NONE' was not exported. add it to EXTRA_EXPORTED_RUNTIME_METHODS (see the FAQ)") } });
 
 
 
+// Modularize mode returns a function, which can be called to
+// create instances. The instances provide a then() method,
+// must like a Promise, that receives a callback. The callback
+// is called when the module is ready to run, with the module
+// as a parameter. (Like a Promise, it also returns the module
+// so you can use the output of .then(..)).
+Module['then'] = function(func) {
+  // We may already be ready to run code at this time. if
+  // so, just queue a call to the callback.
+  if (Module['calledRun']) {
+    func(Module);
+  } else {
+    // we are not ready to call then() yet. we must call it
+    // at the same time we would call onRuntimeInitialized.
+    var old = Module['onRuntimeInitialized'];
+    Module['onRuntimeInitialized'] = function() {
+      if (old) old();
+      func(Module);
+    };
+  }
+  return Module;
+};
 
 /**
  * @constructor
@@ -10610,3 +10244,16 @@ run();
 
 
 
+
+
+  return AWO_EM_MODULE
+}
+);
+})();
+if (typeof exports === 'object' && typeof module === 'object')
+      module.exports = AWO_EM_MODULE;
+    else if (typeof define === 'function' && define['amd'])
+      define([], function() { return AWO_EM_MODULE; });
+    else if (typeof exports === 'object')
+      exports["AWO_EM_MODULE"] = AWO_EM_MODULE;
+    
