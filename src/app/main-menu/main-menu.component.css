@@ -20,5 +20,11 @@
 
 .main-menu .list a {
     display: block;
-    border-bottom: 1px solid #ffe6d6;
+    border-bottom: 5px solid #ffe6d6;
+    padding: 10px 10px 5px;
+    font-size: 18px;
+}
+
+.main-menu .list a:hover {
+    background-color: #ffe6d6;
 }
