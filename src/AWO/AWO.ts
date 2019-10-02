@@ -20,7 +20,7 @@ export class AWO {
     public static mainAppComponentRef: AngularComponentRef;
 
     // Launch AWO game instance and stores pointer to the initialized Game object.
-    public static init() {
+    public static init(canvas: HTMLCanvasElement) {
         // Get width/height of user's window to pass to game
         const width: number  = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
         const height: number = window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight;
@@ -31,7 +31,7 @@ export class AWO {
 
         // Add small delay before running game, for a smoother transition
         setTimeout(() => {
-            document.getElementById("canvas").classList.add("show");
+            // document.getElementById("canvas").classList.add("show");
             AWO.emModuleObj.ccall("run_AWO", null, ["number"], [AWO.gamePtr]);
         }, 100);
     }

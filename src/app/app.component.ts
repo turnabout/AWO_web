@@ -49,7 +49,6 @@ export class AppComponent {
         loadAWO(
             this.gameCanvas.nativeElement as HTMLCanvasElement,
             () => {
-                AWO.init();
             }
         );
     }

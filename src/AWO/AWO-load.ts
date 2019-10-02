@@ -98,6 +98,7 @@ export function loadAWO(
 
         onRuntimeInitialized() {
             runtimeInitializedCb();
+            AWO.init(gameCanvas);
         },
 
         // Adjust location of files queried for
@@ -109,6 +110,8 @@ export function loadAWO(
         onAbort() {
         }
     };
+
+
 
     AWO.emModuleObj = AWO_EM_MODULE(moduleObj);
 }
