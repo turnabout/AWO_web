@@ -15,3 +15,18 @@ body {
     opacity: 0;
     transition: .5s ease-in-out all;
 }
+
+.box {
+    border: 1px solid #000;
+    background-color: #ffefef;
+    padding: 4px;
+    margin: 8px;
+    border-radius: 3px;
+}
+
+.box .inner {
+    border-style: solid;
+    border-width: 8px 4px;
+    border-color: #f7523a;
+    padding: 16px 16px 16px 32px;
+}

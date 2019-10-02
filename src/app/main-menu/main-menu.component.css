@@ -1,0 +1,24 @@
+.main-menu-wrapper {
+    padding: 0 30px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+.main-menu {
+    max-width: 500px;
+    margin: 30px auto;
+}
+
+.main-menu .list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.main-menu .list a {
+    display: block;
+    border-bottom: 1px solid #ffe6d6;
+}

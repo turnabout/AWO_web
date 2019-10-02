@@ -3,14 +3,20 @@ import { NgModule } from "@angular/core";
 
 import { AppComponent } from "./app.component";
 import { LoadingBarComponent } from "./loading-bar/loading-bar.component";
+import { AppRoutingModule } from "./app-routing.module";
+import { MainMenuComponent } from "./main-menu/main-menu.component";
+import { MessageBoxComponent } from "./message-box/message-box.component";
 
 @NgModule({
     declarations: [
         AppComponent,
-        LoadingBarComponent
+        LoadingBarComponent,
+        MainMenuComponent,
+        MessageBoxComponent
     ],
     imports: [
-        BrowserModule
+        BrowserModule,
+        AppRoutingModule
     ],
     providers: [],
     bootstrap: [AppComponent]
