@@ -5,7 +5,7 @@ import { AppModule } from "./app/app.module";
 import { environment } from "./environments/environment";
 
 import { AWO } from "./AWO/AWO";
-import loadAWO from "./AWO/AWO-load";
+import { loadAWO } from "./AWO/AWO-load";
 
 if (environment.production) {
     enableProdMode();
@@ -14,12 +14,13 @@ if (environment.production) {
 platformBrowserDynamic().bootstrapModule(AppModule)
     .catch(err => console.error(err))
     .then(() => {
-        loadGame();
+        // loadGame();
     });
 
 /**
  * Load the game.
  */
+/*
 function loadGame() {
     // Set loading bar
     AWO.mainAppComponentRef.zone.run(() => {
@@ -59,3 +60,4 @@ function loadGame() {
         }
     );
 }
+*/

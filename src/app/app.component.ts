@@ -1,5 +1,6 @@
-import { Component, NgZone } from "@angular/core";
+import { Component, ViewChild, ElementRef, NgZone } from "@angular/core";
 import { AWO } from "../AWO/AWO";
+import { loadAWO } from "../AWO/AWO-load";
 
 @Component({
     selector: "app-root",
@@ -8,6 +9,8 @@ import { AWO } from "../AWO/AWO";
 })
 export class AppComponent {
     title: string = "AWO-web";
+
+    @ViewChild("gameCanvas", {static: false}) gameCanvas: ElementRef;
 
     constructor(public zone: NgZone) {
         AWO.mainAppComponentRef = {
@@ -40,5 +43,14 @@ export class AppComponent {
      */
     public setLoadingStatus(newStatus: string) {
         this.loadingStatus = newStatus;
+    }
+
+    ngAfterViewInit() {
+        loadAWO(
+            this.gameCanvas.nativeElement as HTMLCanvasElement,
+            () => {
+                AWO.init();
+            }
+        );
     }
 }

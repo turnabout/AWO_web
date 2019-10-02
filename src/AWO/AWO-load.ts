@@ -7,11 +7,19 @@ import { AWO } from "./AWO";
  *
  * Stores the full emscripten module in the `AWO` class.
  */
-export default function loadAWO(
-    progressUpdateCb: (percentComplete: number) => void,
-    statusUpdateCb: (status: string) => void,
-    runtimeInitializedCb: () => void
-) {
+export function loadAWO(
+    // progressUpdateCb: (percentComplete: number) => void,
+    // statusUpdateCb: (status: string) => void,
+    // runtimeInitializedCb: () => void,
+    gameCanvas: HTMLCanvasElement,
+    runtimeInitializedCb: () => void,
+): void {
+
+    // Adjust canvas
+    gameCanvas.addEventListener("webglcontextlost", (e) => {
+        alert("WebGL context lost. You will need to reload the page.");
+        e.preventDefault();
+    }, false);
 
     // Object with custom properties for AWO emscripten module to use
     const moduleObj: any = {
@@ -38,15 +46,7 @@ export default function loadAWO(
 
         // Used by module to get the canvas element
         canvas: (() => {
-          const canvas = document.querySelector("#canvas");
-
-            // TODO: Change behavior to something more user-friendly for when webgl context is lost
-          canvas.addEventListener("webglcontextlost", (e) => {
-              alert("WebGL context lost. You will need to reload the page.");
-              e.preventDefault();
-          }, false);
-
-          return canvas;
+            return gameCanvas;
         })(),
 
         // Set the current loading status message
@@ -69,7 +69,7 @@ export default function loadAWO(
             this.setStatus.last.time = now;
             this.setStatus.last.text = text;
 
-            statusUpdateCb(text);
+            // statusUpdateCb(text);
         },
 
         totalDependencies: 0,
@@ -81,9 +81,11 @@ export default function loadAWO(
         monitorRunDependencies(remaining: number) {
 
             // Send updated progress percentage
+            /*
             progressUpdateCb(
                 ((++this.currentRDCalls) / this.maxRDCalls) * 100
             );
+            */
 
             this.totalDependencies = Math.max(this.totalDependencies, remaining);
 
@@ -94,7 +96,9 @@ export default function loadAWO(
             );
         },
 
-        onRuntimeInitialized() { runtimeInitializedCb(); },
+        onRuntimeInitialized() {
+            runtimeInitializedCb();
+        },
 
         // Adjust location of files queried for
         locateFile(path: string, prefix: string) {
