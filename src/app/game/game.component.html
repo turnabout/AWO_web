@@ -1,1 +1,4 @@
-<canvas #gameCanvas></canvas>
+<canvas
+    #gameCanvas
+    [@faded]="gameService.initialized ? 'in' : 'out'"
+></canvas>
