@@ -4,14 +4,14 @@ import { NgModule } from "@angular/core";
 import { AppComponent } from "./app.component";
 import { LoadingBarComponent } from "./loading-bar/loading-bar.component";
 import { AppRoutingModule } from "./app-routing.module";
-import { MainMenuComponent } from "./main-menu/main-menu.component";
+import { NavMenuComponent } from "./nav-menu/nav-menu.component";
 import { MessageBoxComponent } from "./message-box/message-box.component";
 
 @NgModule({
     declarations: [
         AppComponent,
         LoadingBarComponent,
-        MainMenuComponent,
+        NavMenuComponent,
         MessageBoxComponent
     ],
     imports: [
