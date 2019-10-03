@@ -1,21 +1,13 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 
-import { NavMenuComponent } from "./nav-menu/nav-menu.component";
+import { PageMainComponent } from "./page-main/page-main.component";
+import { PageDesignRoomComponent } from "./page-design-room/page-design-room.component";
 
 const routes: Routes = [
-    { path: "", component: NavMenuComponent },
-    { path: "design-room", component: NavMenuComponent },
+    { path: "", component: PageMainComponent },
+    { path: "design-room", component: PageDesignRoomComponent },
 ];
-
-/*
-const routes: Routes = [
-    { path: "", redirectTo: "/dashboard", pathMatch: "full" },
-    { path: "", component: DashboardComponent },
-    { path: "heroes", component: HeroesComponent },
-    { path: "detail/:id", component: HeroDetailComponent }
-];
-*/
 
 @NgModule({
     imports: [RouterModule.forRoot(routes)],
