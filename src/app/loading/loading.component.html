@@ -1,4 +1,7 @@
-<div class="progress" *ngIf="loadingService.loading">
+<div
+    class="progress"
+    [class.out]="!loadingService.loading"
+>
     <div
         class="progress-bar"
         [ngStyle]="{'width.%': loadingService.progress}"
@@ -8,10 +11,3 @@
         <div class="progress-status">{{ loadingService.message }}</div>
     </div>
 </div>
-
-
-<!--
-    [class.show]="loading" class="step loading-bar"
-    [progress]="loadingProgress"
-    [status]="loadingStatus"
--->

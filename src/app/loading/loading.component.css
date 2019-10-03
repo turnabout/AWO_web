@@ -7,6 +7,8 @@
     position: absolute;
     top: 0;
     left: 0;
+    opacity: 1;
+    z-index: 5;
 }
 
 .progress-bar {
@@ -43,4 +45,9 @@
     -moz-user-select: none; /* Firefox */
     -ms-user-select: none; /* IE10+/Edge */
     user-select: none; /* Standard */
+}
+
+.out {
+    opacity: 0 !important;
+    transition: 1s ease-out opacity;
 }

@@ -6,16 +6,6 @@ body {
     background-color: #ffefef;
 }
 
-/* Elements fade in/out support */
-.show {
-    opacity: 1 !important;
-}
-
-.step {
-    opacity: 0;
-    transition: .5s ease-in-out all;
-}
-
 .box {
     border: 1px solid #000;
     background-color: #ffefef;

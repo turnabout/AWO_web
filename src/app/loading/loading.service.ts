@@ -37,7 +37,5 @@ export class LoadingService {
      */
     public end() {
         this.loading = false;
-        this.progress = 0;
-        this.message = "";
     }
 }
