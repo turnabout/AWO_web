@@ -134,7 +134,10 @@ export function initGame(emModuleObj: any): number {
     // Initialize and start running game
     // TODO: Height should compensate for additional UI at bottom of screen
     gamePtr = emModuleObj.ccall("init_AWO", "number", ["number", "number"], [width, height]);
-    emModuleObj.ccall("run_AWO", null, ["number"], [gamePtr]);
+
+    setTimeout(() => {
+        emModuleObj.ccall("run_AWO", null, ["number"], [gamePtr]);
+    });
 
     return gamePtr;
 }

@@ -16,7 +16,10 @@ export class GameService {
     private emModuleObj: any;
 
     // Pointer to the main AWO Game instance.
-    private gamePtr: number;
+    public gamePtr: number;
+
+    // Whether the game surface is currently initialized or not.
+    public initialized = false;
 
     constructor(private loadingService: LoadingService) { }
 
@@ -31,6 +34,7 @@ export class GameService {
                 GameService.emDirPath,
                 () => {
                     this.gamePtr = initGame(this.emModuleObj);
+                    this.initialized = true;
                 },
             );
         });
