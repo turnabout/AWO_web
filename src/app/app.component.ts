@@ -1,5 +1,6 @@
-import { Component, ViewChild, ElementRef, NgZone } from "@angular/core";
-import { AWO } from "../AWO/AWO";
+import { Component, ViewChild, ElementRef } from "@angular/core";
+
+import { LoadingService } from "./loading/loading.service";
 import { loadAWO } from "../AWO/AWO-load";
 
 @Component({
@@ -8,48 +9,22 @@ import { loadAWO } from "../AWO/AWO-load";
     styleUrls: ["./app.component.css"]
 })
 export class AppComponent {
-    title: string = "AWO-web";
-
     @ViewChild("gameCanvas", {static: false}) gameCanvas: ElementRef;
 
-    constructor(public zone: NgZone) {
-        AWO.mainAppComponentRef = {
-            component: this,
-            zone: zone
-        };
-    }
-
-    // Loading bar support
-    private loading: boolean = false;
-    private loadingProgress: number = 0;
-    private loadingStatus: string = "";
+    constructor(public loadingService: LoadingService) {}
 
     /**
-     * Sets the new AWO loading state.
+     * Load the game once the view has been initialized.
      */
-    public setLoading(newLoading: boolean) {
-        this.loading = newLoading;
-    }
-
-    /**
-     * Sets the new loading progress percentage.
-     */
-    public setLoadingProgress(newProgress: number) {
-        this.loadingProgress = newProgress;
-    }
-
-    /**
-     * Sets the new loading status message.
-     */
-    public setLoadingStatus(newStatus: string) {
-        this.loadingStatus = newStatus;
-    }
-
     ngAfterViewInit() {
-        loadAWO(
-            this.gameCanvas.nativeElement as HTMLCanvasElement,
-            () => {
-            }
-        );
+        setTimeout(() => {
+            this.loadingService.start("Loading...");
+
+            loadAWO(
+                this.gameCanvas.nativeElement as HTMLCanvasElement,
+                () => {
+                }
+            );
+        });
     }
 }
