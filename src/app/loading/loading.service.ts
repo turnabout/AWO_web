@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Injectable } from "@angular/core";
+import { Injectable } from "@angular/core";
 
 @Injectable({
     providedIn: "root"
@@ -22,10 +22,12 @@ export class LoadingService {
     /**
      * Set new progress & message.
      */
-    public update(progress: number, msg?: string) {
-        this.progress = progress;
+    public update(progress?: number, msg?: string) {
+        if (progress !== undefined) {
+            this.progress = progress;
+        }
 
-        if (msg) {
+        if (msg !== undefined) {
             this.message = msg;
         }
     }
@@ -33,7 +35,7 @@ export class LoadingService {
     /**
      * Stop loading.
      */
-    public stop() {
+    public end() {
         this.loading = false;
         this.progress = 0;
         this.message = "";

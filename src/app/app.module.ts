@@ -8,6 +8,7 @@ import { NavMenuComponent } from "./nav-menu/nav-menu.component";
 import { MessageBoxComponent } from "./message-box/message-box.component";
 import { PageMainComponent } from "./page-main/page-main.component";
 import { PageDesignRoomComponent } from "./page-design-room/page-design-room.component";
+import { GameComponent } from "./game/game.component";
 
 @NgModule({
     declarations: [
@@ -16,7 +17,8 @@ import { PageDesignRoomComponent } from "./page-design-room/page-design-room.com
         NavMenuComponent,
         MessageBoxComponent,
         PageMainComponent,
-        PageDesignRoomComponent
+        PageDesignRoomComponent,
+        GameComponent
     ],
     imports: [
         BrowserModule,
