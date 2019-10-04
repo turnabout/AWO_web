@@ -1,5 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 
+import { EditorToolsComponent } from "./editor-tools/editor-tools.component";
+
 @Component({
     selector: "app-page-design-room",
     templateUrl: "./page-design-room.component.html",

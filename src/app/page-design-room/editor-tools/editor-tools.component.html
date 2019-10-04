@@ -1,0 +1,17 @@
+<div class="editor-tools ">
+    <div class="box">
+        <div class="inner">
+            <div>
+                <h2>Tiles</h2>
+                <select (change)="onTileTypeSelected($event)">
+                    <option
+                        *ngFor="let tileType of tileTypes; let i = index"
+                        [value]="i"
+                    >
+                        {{ tileType.name }}
+                    </option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>

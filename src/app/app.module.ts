@@ -10,6 +10,7 @@ import { MessageBoxComponent } from "./message-box/message-box.component";
 import { PageMainComponent } from "./page-main/page-main.component";
 import { PageDesignRoomComponent } from "./page-design-room/page-design-room.component";
 import { GameComponent } from "./game/game.component";
+import { EditorToolsComponent } from './page-design-room/editor-tools/editor-tools.component';
 
 @NgModule({
     declarations: [
@@ -19,7 +20,8 @@ import { GameComponent } from "./game/game.component";
         MessageBoxComponent,
         PageMainComponent,
         PageDesignRoomComponent,
-        GameComponent
+        GameComponent,
+        EditorToolsComponent
     ],
     imports: [
         BrowserAnimationsModule,
