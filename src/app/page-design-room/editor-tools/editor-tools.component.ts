@@ -1,8 +1,13 @@
 import { Component, OnInit } from "@angular/core";
 
-declare interface TileType {
+export declare interface TileVarData {
     name: string;
-    id: number;
+    val: number;
+}
+
+export declare interface TileTypeData {
+    name: string;
+    vars: TileVarData[];
 }
 
 @Component({
@@ -12,9 +17,15 @@ declare interface TileType {
 })
 export class EditorToolsComponent implements OnInit {
 
-    private tileTypes: TileType[] = [
-        {name: "Plain", id: 0},
-        {name: "Forest", id: 1}
+    private selectedTileType = 0;
+
+    private tileTypes: TileTypeData[] = [
+        {
+            name: "Plain",
+            vars: [
+                {name: "Default", val: 0}
+            ]
+        },
     ];
 
     constructor() { }

@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 
 import { LoadingService } from "../loading/loading.service";
 import { loadGame, initGame } from "./init";
+import { TileTypeData, TileVarData } from "../page-design-room/editor-tools/editor-tools.component";
 
 @Injectable({
     providedIn: "root"
@@ -38,5 +39,54 @@ export class GameService {
                 },
             );
         });
+
     }
+
+    /**
+     * Generates the array of TileTypeData used by the design room's editor tools component.
+     */
+    public generateEditorTilesData(): TileTypeData[] {
+
+        let result: TileTypeData[] = [];
+
+        // Wrap function to get tile variations' data
+        let get_next_tile_var: any = this.emModuleObj.cwrap(
+            "editor_get_next_tile_var",
+            "string",
+            ["number", "number", "number"]
+        );
+
+        // Loop every tile type
+        let ttString: string;
+        let ttVal: number = 0;
+        let varValuePtr: any = this.emModuleObj._malloc(1);
+
+        while (ttString = this.emModuleObj.ccall("editor_get_next_tile_type", "string", [])) {
+
+            // Create this tile type object
+            let tt: TileTypeData = {
+                name: ttString,
+                vars: []
+            };
+
+            // Add all of its variations' objects
+            let tvString: string;
+
+            // myFunc(this.gamePtr, 5, varValuePtr);
+            while (tvString = get_next_tile_var(this.gamePtr, ttVal, varValuePtr)) {
+                tt.vars.push({
+                    name: tvString,
+                    val: this.emModuleObj.getValue(varValuePtr, "i8")
+                });
+            }
+
+            result.push(tt);
+            ttVal++;
+        }
+
+        this.emModuleObj._free(varValuePtr);
+        return result;
+    }
+
+
 }

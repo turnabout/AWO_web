@@ -202,7 +202,7 @@ Module['FS_createPath']('/Resources', 'Font', true, true);
   }
 
  }
- loadPackage({"files": [{"start": 0, "audio": 0, "end": 100324, "filename": "/Resources/spritesheet.png"}, {"start": 100324, "audio": 0, "end": 180199, "filename": "/Resources/visuals.json"}, {"start": 180199, "audio": 0, "end": 198827, "filename": "/Resources/Font/aw2-gba.ttf"}, {"start": 198827, "audio": 0, "end": 199047, "filename": "/Resources/Font/license.txt"}, {"start": 199047, "audio": 0, "end": 199720, "filename": "/Resources/Font/readme.txt"}], "remote_package_size": 199720, "package_uuid": "92c5d256-fef5-4d8e-89c6-c07133d6ee9d"});
+ loadPackage({"files": [{"start": 0, "audio": 0, "end": 100324, "filename": "/Resources/spritesheet.png"}, {"start": 100324, "audio": 0, "end": 180199, "filename": "/Resources/visuals.json"}, {"start": 180199, "audio": 0, "end": 198827, "filename": "/Resources/Font/aw2-gba.ttf"}, {"start": 198827, "audio": 0, "end": 199047, "filename": "/Resources/Font/license.txt"}, {"start": 199047, "audio": 0, "end": 199720, "filename": "/Resources/Font/readme.txt"}], "remote_package_size": 199720, "package_uuid": "39f5d810-6539-4576-99b5-01fcbe48d4f6"});
 
 })();
 
@@ -1313,11 +1313,11 @@ function updateGlobalBufferViews() {
 
 
 var STATIC_BASE = 1024,
-    STACK_BASE = 173760,
+    STACK_BASE = 175216,
     STACKTOP = STACK_BASE,
-    STACK_MAX = 5416640,
-    DYNAMIC_BASE = 5416640,
-    DYNAMICTOP_PTR = 173728;
+    STACK_MAX = 5418096,
+    DYNAMIC_BASE = 5418096,
+    DYNAMICTOP_PTR = 175184;
 
 assert(STACK_BASE % 16 === 0, 'stack must start aligned');
 assert(DYNAMIC_BASE % 16 === 0, 'heap must start aligned');
@@ -1868,7 +1868,7 @@ function _emscripten_asm_const_iiii(code, a0, a1, a2) {
 
 
 
-// STATICTOP = STATIC_BASE + 172736;
+// STATICTOP = STATIC_BASE + 174192;
 /* global initializers */  __ATINIT__.push({ func: function() { ___emscripten_environ_constructor() } });
 
 
@@ -1879,7 +1879,7 @@ function _emscripten_asm_const_iiii(code, a0, a1, a2) {
 
 
 /* no memory initializer */
-var tempDoublePtr = 173744
+var tempDoublePtr = 175200
 assert(tempDoublePtr % 8 == 0);
 
 function copyTempFloat(ptr) { // functions, because inlining this code increases code size too much
@@ -9616,6 +9616,18 @@ var __get_environ = Module["__get_environ"] = function() {
   return Module["asm"]["__get_environ"].apply(null, arguments)
 };
 
+var _editor_get_next_tile_type = Module["_editor_get_next_tile_type"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return Module["asm"]["_editor_get_next_tile_type"].apply(null, arguments)
+};
+
+var _editor_get_next_tile_var = Module["_editor_get_next_tile_var"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return Module["asm"]["_editor_get_next_tile_var"].apply(null, arguments)
+};
+
 var _emscripten_GetProcAddress = Module["_emscripten_GetProcAddress"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
@@ -9722,6 +9734,12 @@ var _testSetjmp = Module["_testSetjmp"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
   return Module["asm"]["_testSetjmp"].apply(null, arguments)
+};
+
+var _update_game_size = Module["_update_game_size"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return Module["asm"]["_update_game_size"].apply(null, arguments)
 };
 
 var establishStackSpace = Module["establishStackSpace"] = function() {
@@ -9963,8 +9981,8 @@ if (!Object.getOwnPropertyDescriptor(Module, "intArrayFromString")) Module["intA
 if (!Object.getOwnPropertyDescriptor(Module, "intArrayToString")) Module["intArrayToString"] = function() { abort("'intArrayToString' was not exported. add it to EXTRA_EXPORTED_RUNTIME_METHODS (see the FAQ)") };
 Module["ccall"] = ccall;
 Module["cwrap"] = cwrap;
-if (!Object.getOwnPropertyDescriptor(Module, "setValue")) Module["setValue"] = function() { abort("'setValue' was not exported. add it to EXTRA_EXPORTED_RUNTIME_METHODS (see the FAQ)") };
-if (!Object.getOwnPropertyDescriptor(Module, "getValue")) Module["getValue"] = function() { abort("'getValue' was not exported. add it to EXTRA_EXPORTED_RUNTIME_METHODS (see the FAQ)") };
+Module["setValue"] = setValue;
+Module["getValue"] = getValue;
 if (!Object.getOwnPropertyDescriptor(Module, "allocate")) Module["allocate"] = function() { abort("'allocate' was not exported. add it to EXTRA_EXPORTED_RUNTIME_METHODS (see the FAQ)") };
 Module["getMemory"] = getMemory;
 if (!Object.getOwnPropertyDescriptor(Module, "AsciiToString")) Module["AsciiToString"] = function() { abort("'AsciiToString' was not exported. add it to EXTRA_EXPORTED_RUNTIME_METHODS (see the FAQ)") };
