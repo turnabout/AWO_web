@@ -1,13 +1,14 @@
 import { Component, OnInit } from "@angular/core";
-
-export declare interface TileVarData {
-    name: string;
-    val: number;
-}
+import { GameService} from "../../game/game.service";
 
 export declare interface TileTypeData {
     name: string;
     vars: TileVarData[];
+}
+
+export declare interface TileVarData {
+    name: string;
+    val: number;
 }
 
 @Component({
@@ -17,25 +18,20 @@ export declare interface TileTypeData {
 })
 export class EditorToolsComponent implements OnInit {
 
-    private selectedTileType = 0;
+    public selectedTileType: TileTypeData;
+    public selectedTileVar: TileVarData;
 
-    private tileTypes: TileTypeData[] = [
-        {
-            name: "Plain",
-            vars: [
-                {name: "Default", val: 0}
-            ]
-        },
-    ];
+    public tileTypeData: TileTypeData[] = [];
 
-    constructor() { }
+    constructor(private gameService: GameService) { }
 
     ngOnInit() {
+        if (this.gameService.initialized) {
+            this.tileTypeData = this.gameService.generateEditorTilesData();
+        } else {
+            this.gameService.initializedChange.subscribe((value) => {
+                this.tileTypeData = this.gameService.generateEditorTilesData();
+            });
+        }
     }
-
-    onTileTypeSelected(event) {
-        let selected: number = event.target.value;
-        console.log(selected);
-    }
-
 }

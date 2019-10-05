@@ -1,4 +1,5 @@
 import { Injectable } from "@angular/core";
+import { Observable, of, Subject } from "rxjs";
 
 import { LoadingService } from "../loading/loading.service";
 import { loadGame, initGame } from "./init";
@@ -21,8 +22,24 @@ export class GameService {
 
     // Whether the game surface is currently initialized or not.
     public initialized = false;
+    public initializedChange: Subject<boolean> = new Subject<boolean>();
 
-    constructor(private loadingService: LoadingService) { }
+    constructor(private loadingService: LoadingService) {
+        console.log("herro");
+
+        this.initializedChange.subscribe((value) => {
+            this.initialized = value;
+        });
+
+        /*
+        this.myBool = new Observable((observer) => {
+            const {next, error} = observer;
+            let watchId;
+
+
+        });
+        */
+    }
 
     /**
      * Perform the initial game load.
@@ -35,7 +52,7 @@ export class GameService {
                 GameService.emDirPath,
                 () => {
                     this.gamePtr = initGame(this.emModuleObj);
-                    this.initialized = true;
+                    this.initializedChange.next(true);
                 },
             );
         });

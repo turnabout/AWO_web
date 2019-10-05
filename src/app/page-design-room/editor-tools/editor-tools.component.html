@@ -1,17 +1,37 @@
-<div class="editor-tools ">
+<div class="editor-tools">
     <div class="box">
         <div class="inner">
-            <div>
-                <h2>Tiles</h2>
-                <select (change)="onTileTypeSelected($event)">
+
+            <div class="tiles" *ngIf="tileTypeData.length">
+                <h2>Tile</h2>
+
+                <select
+                    [(ngModel)]="selectedTileType"
+                    (ngModelChange)="selectedTileVar = $event.vars[0]"
+                >
                     <option
-                        *ngFor="let tileType of tileTypes; let i = index"
-                        [value]="i"
+                        *ngFor="let tileType of tileTypeData"
+                        [ngValue]="tileType"
                     >
                         {{ tileType.name }}
                     </option>
                 </select>
+
+                <div *ngIf="selectedTileType">
+                    <h3>Variation</h3>
+
+                    <select [(ngModel)]="selectedTileVar">
+                        <option
+                            *ngFor="let tileVar of selectedTileType.vars"
+                            [ngValue]="tileVar"
+                        >
+                            {{ tileVar.name }}
+                        </option>
+                    </select>
+                </div>
+
             </div>
+
         </div>
     </div>
 </div>
