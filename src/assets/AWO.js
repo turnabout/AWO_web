@@ -202,7 +202,7 @@ Module['FS_createPath']('/Resources', 'Font', true, true);
   }
 
  }
- loadPackage({"files": [{"start": 0, "audio": 0, "end": 100324, "filename": "/Resources/spritesheet.png"}, {"start": 100324, "audio": 0, "end": 180199, "filename": "/Resources/visuals.json"}, {"start": 180199, "audio": 0, "end": 198827, "filename": "/Resources/Font/aw2-gba.ttf"}, {"start": 198827, "audio": 0, "end": 199047, "filename": "/Resources/Font/license.txt"}, {"start": 199047, "audio": 0, "end": 199720, "filename": "/Resources/Font/readme.txt"}], "remote_package_size": 199720, "package_uuid": "39f5d810-6539-4576-99b5-01fcbe48d4f6"});
+ loadPackage({"files": [{"start": 0, "audio": 0, "end": 100324, "filename": "/Resources/spritesheet.png"}, {"start": 100324, "audio": 0, "end": 187008, "filename": "/Resources/visuals.json"}, {"start": 187008, "audio": 0, "end": 205636, "filename": "/Resources/Font/aw2-gba.ttf"}, {"start": 205636, "audio": 0, "end": 205856, "filename": "/Resources/Font/license.txt"}, {"start": 205856, "audio": 0, "end": 206529, "filename": "/Resources/Font/readme.txt"}], "remote_package_size": 206529, "package_uuid": "dd58923f-3b2e-4338-a0da-38615b13075f"});
 
 })();
 
@@ -1313,11 +1313,11 @@ function updateGlobalBufferViews() {
 
 
 var STATIC_BASE = 1024,
-    STACK_BASE = 175216,
+    STACK_BASE = 175232,
     STACKTOP = STACK_BASE,
-    STACK_MAX = 5418096,
-    DYNAMIC_BASE = 5418096,
-    DYNAMICTOP_PTR = 175184;
+    STACK_MAX = 5418112,
+    DYNAMIC_BASE = 5418112,
+    DYNAMICTOP_PTR = 175200;
 
 assert(STACK_BASE % 16 === 0, 'stack must start aligned');
 assert(DYNAMIC_BASE % 16 === 0, 'heap must start aligned');
@@ -1868,7 +1868,7 @@ function _emscripten_asm_const_iiii(code, a0, a1, a2) {
 
 
 
-// STATICTOP = STATIC_BASE + 174192;
+// STATICTOP = STATIC_BASE + 174208;
 /* global initializers */  __ATINIT__.push({ func: function() { ___emscripten_environ_constructor() } });
 
 
@@ -1879,7 +1879,7 @@ function _emscripten_asm_const_iiii(code, a0, a1, a2) {
 
 
 /* no memory initializer */
-var tempDoublePtr = 175200
+var tempDoublePtr = 175216
 assert(tempDoublePtr % 8 == 0);
 
 function copyTempFloat(ptr) { // functions, because inlining this code increases code size too much
@@ -9626,6 +9626,12 @@ var _editor_get_next_tile_var = Module["_editor_get_next_tile_var"] = function()
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
   return Module["asm"]["_editor_get_next_tile_var"].apply(null, arguments)
+};
+
+var _editor_update_tile_type = Module["_editor_update_tile_type"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return Module["asm"]["_editor_update_tile_type"].apply(null, arguments)
 };
 
 var _emscripten_GetProcAddress = Module["_emscripten_GetProcAddress"] = function() {
