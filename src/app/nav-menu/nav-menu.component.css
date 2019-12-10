@@ -23,6 +23,10 @@
     border-bottom: 5px solid #ffe6d6;
     padding: 10px 10px 5px;
     font-size: 18px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .main-menu .list a:hover {

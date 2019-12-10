@@ -126,7 +126,11 @@ Module.expectedDataFileDownloads++;
       if (!check) throw msg + new Error().stack;
     }
 Module['FS_createPath']('/', 'Resources', true, true);
-Module['FS_createPath']('/Resources', 'Font', true, true);
+Module['FS_createPath']('/Resources', 'Data', true, true);
+Module['FS_createPath']('/Resources', 'Fonts', true, true);
+Module['FS_createPath']('/Resources', 'Shaders', true, true);
+Module['FS_createPath']('/Resources', 'Shaders_ES', true, true);
+Module['FS_createPath']('/Resources', 'Textures', true, true);
 
     function DataRequest(start, end, audio) {
       this.start = start;
@@ -202,7 +206,7 @@ Module['FS_createPath']('/Resources', 'Font', true, true);
   }
 
  }
- loadPackage({"files": [{"start": 0, "audio": 0, "end": 100324, "filename": "/Resources/spritesheet.png"}, {"start": 100324, "audio": 0, "end": 187008, "filename": "/Resources/visuals.json"}, {"start": 187008, "audio": 0, "end": 205636, "filename": "/Resources/Font/aw2-gba.ttf"}, {"start": 205636, "audio": 0, "end": 205856, "filename": "/Resources/Font/license.txt"}, {"start": 205856, "audio": 0, "end": 206529, "filename": "/Resources/Font/readme.txt"}], "remote_package_size": 206529, "package_uuid": "dd58923f-3b2e-4338-a0da-38615b13075f"});
+ loadPackage({"files": [{"start": 0, "audio": 0, "end": 80889, "filename": "/Resources/Data/game_data.json"}, {"start": 80889, "audio": 0, "end": 99517, "filename": "/Resources/Fonts/aw2-gba.ttf"}, {"start": 99517, "audio": 0, "end": 99737, "filename": "/Resources/Fonts/license.txt"}, {"start": 99737, "audio": 0, "end": 100410, "filename": "/Resources/Fonts/readme.txt"}, {"start": 100410, "audio": 0, "end": 100860, "filename": "/Resources/Shaders/sprite.frag"}, {"start": 100860, "audio": 0, "end": 101239, "filename": "/Resources/Shaders/sprite.vert"}, {"start": 101239, "audio": 0, "end": 103032, "filename": "/Resources/Shaders/tiles.frag"}, {"start": 103032, "audio": 0, "end": 103344, "filename": "/Resources/Shaders/tiles.vert"}, {"start": 103344, "audio": 0, "end": 103813, "filename": "/Resources/Shaders_ES/sprite.frag"}, {"start": 103813, "audio": 0, "end": 104152, "filename": "/Resources/Shaders_ES/sprite.vert"}, {"start": 104152, "audio": 0, "end": 105963, "filename": "/Resources/Shaders_ES/tiles.frag"}, {"start": 105963, "audio": 0, "end": 106246, "filename": "/Resources/Shaders_ES/tiles.vert"}, {"start": 106246, "audio": 0, "end": 197052, "filename": "/Resources/Textures/spritesheet.png"}], "remote_package_size": 197052, "package_uuid": "29d19e99-a29a-4f4b-9e0a-b3a27e8d4a5e"});
 
 })();
 
@@ -365,7 +369,6 @@ if (!Object.getOwnPropertyDescriptor(Module, 'readBinary')) Object.definePropert
 
 
 // TODO remove when SDL2 is fixed (also see above)
-Module['setWindowTitle'] = setWindowTitle;
 
 
 
@@ -1313,11 +1316,11 @@ function updateGlobalBufferViews() {
 
 
 var STATIC_BASE = 1024,
-    STACK_BASE = 175232,
+    STACK_BASE = 22480,
     STACKTOP = STACK_BASE,
-    STACK_MAX = 5418112,
-    DYNAMIC_BASE = 5418112,
-    DYNAMICTOP_PTR = 175200;
+    STACK_MAX = 5265360,
+    DYNAMIC_BASE = 5265360,
+    DYNAMICTOP_PTR = 22448;
 
 assert(STACK_BASE % 16 === 0, 'stack must start aligned');
 assert(DYNAMIC_BASE % 16 === 0, 'heap must start aligned');
@@ -1802,8 +1805,8 @@ Module['asm'] = function(global, env, providedBuffer) {
   ;
   // import table
   env['table'] = wasmTable = new WebAssembly.Table({
-    'initial': 54528,
-    'maximum': 54528,
+    'initial': 9776,
+    'maximum': 9776,
     'element': 'anyfunc'
   });
   // With the wasm backend __memory_base and __table_base and only needed for
@@ -1823,53 +1826,14 @@ var tempI64;
 
 // === Body ===
 
-var ASM_CONSTS = [function() { return screen.width; },
- function() { return screen.height; },
- function($0) { if (typeof Module['setWindowTitle'] !== 'undefined') { Module['setWindowTitle'](UTF8ToString($0)); } return 0; },
- function($0, $1, $2) { var w = $0; var h = $1; var pixels = $2; if (!Module['SDL2']) Module['SDL2'] = {}; var SDL2 = Module['SDL2']; if (SDL2.ctxCanvas !== Module['canvas']) { SDL2.ctx = Module['createContext'](Module['canvas'], false, true); SDL2.ctxCanvas = Module['canvas']; } if (SDL2.w !== w || SDL2.h !== h || SDL2.imageCtx !== SDL2.ctx) { SDL2.image = SDL2.ctx.createImageData(w, h); SDL2.w = w; SDL2.h = h; SDL2.imageCtx = SDL2.ctx; } var data = SDL2.image.data; var src = pixels >> 2; var dst = 0; var num; if (typeof CanvasPixelArray !== 'undefined' && data instanceof CanvasPixelArray) { num = data.length; while (dst < num) { var val = HEAP32[src]; data[dst ] = val & 0xff; data[dst+1] = (val >> 8) & 0xff; data[dst+2] = (val >> 16) & 0xff; data[dst+3] = 0xff; src++; dst += 4; } } else { if (SDL2.data32Data !== data) { SDL2.data32 = new Int32Array(data.buffer); SDL2.data8 = new Uint8Array(data.buffer); } var data32 = SDL2.data32; num = data32.length; data32.set(HEAP32.subarray(src, src + num)); var data8 = SDL2.data8; var i = 3; var j = i + 4*num; if (num % 8 == 0) { while (i < j) { data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; } } else { while (i < j) { data8[i] = 0xff; i = i + 4 | 0; } } } SDL2.ctx.putImageData(SDL2.image, 0, 0); return 0; },
- function($0, $1, $2, $3, $4) { var w = $0; var h = $1; var hot_x = $2; var hot_y = $3; var pixels = $4; var canvas = document.createElement("canvas"); canvas.width = w; canvas.height = h; var ctx = canvas.getContext("2d"); var image = ctx.createImageData(w, h); var data = image.data; var src = pixels >> 2; var dst = 0; var num; if (typeof CanvasPixelArray !== 'undefined' && data instanceof CanvasPixelArray) { num = data.length; while (dst < num) { var val = HEAP32[src]; data[dst ] = val & 0xff; data[dst+1] = (val >> 8) & 0xff; data[dst+2] = (val >> 16) & 0xff; data[dst+3] = (val >> 24) & 0xff; src++; dst += 4; } } else { var data32 = new Int32Array(data.buffer); num = data32.length; data32.set(HEAP32.subarray(src, src + num)); } ctx.putImageData(image, 0, 0); var url = hot_x === 0 && hot_y === 0 ? "url(" + canvas.toDataURL() + "), auto" : "url(" + canvas.toDataURL() + ") " + hot_x + " " + hot_y + ", auto"; var urlBuf = _malloc(url.length + 1); stringToUTF8(url, urlBuf, url.length + 1); return urlBuf; },
- function($0) { if (Module['canvas']) { Module['canvas'].style['cursor'] = UTF8ToString($0); } return 0; },
- function() { if (Module['canvas']) { Module['canvas'].style['cursor'] = 'none'; } },
- function() { if (typeof(AudioContext) !== 'undefined') { return 1; } else if (typeof(webkitAudioContext) !== 'undefined') { return 1; } return 0; },
- function() { if ((typeof(navigator.mediaDevices) !== 'undefined') && (typeof(navigator.mediaDevices.getUserMedia) !== 'undefined')) { return 1; } else if (typeof(navigator.webkitGetUserMedia) !== 'undefined') { return 1; } return 0; },
- function($0) { if(typeof(Module['SDL2']) === 'undefined') { Module['SDL2'] = {}; } var SDL2 = Module['SDL2']; if (!$0) { SDL2.audio = {}; } else { SDL2.capture = {}; } if (!SDL2.audioContext) { if (typeof(AudioContext) !== 'undefined') { SDL2.audioContext = new AudioContext(); } else if (typeof(webkitAudioContext) !== 'undefined') { SDL2.audioContext = new webkitAudioContext(); } } return SDL2.audioContext === undefined ? -1 : 0; },
- function() { var SDL2 = Module['SDL2']; return SDL2.audioContext.sampleRate; },
- function($0, $1, $2, $3) { var SDL2 = Module['SDL2']; var have_microphone = function(stream) { if (SDL2.capture.silenceTimer !== undefined) { clearTimeout(SDL2.capture.silenceTimer); SDL2.capture.silenceTimer = undefined; } SDL2.capture.mediaStreamNode = SDL2.audioContext.createMediaStreamSource(stream); SDL2.capture.scriptProcessorNode = SDL2.audioContext.createScriptProcessor($1, $0, 1); SDL2.capture.scriptProcessorNode.onaudioprocess = function(audioProcessingEvent) { if ((SDL2 === undefined) || (SDL2.capture === undefined)) { return; } audioProcessingEvent.outputBuffer.getChannelData(0).fill(0.0); SDL2.capture.currentCaptureBuffer = audioProcessingEvent.inputBuffer; dynCall('vi', $2, [$3]); }; SDL2.capture.mediaStreamNode.connect(SDL2.capture.scriptProcessorNode); SDL2.capture.scriptProcessorNode.connect(SDL2.audioContext.destination); SDL2.capture.stream = stream; }; var no_microphone = function(error) { }; SDL2.capture.silenceBuffer = SDL2.audioContext.createBuffer($0, $1, SDL2.audioContext.sampleRate); SDL2.capture.silenceBuffer.getChannelData(0).fill(0.0); var silence_callback = function() { SDL2.capture.currentCaptureBuffer = SDL2.capture.silenceBuffer; dynCall('vi', $2, [$3]); }; SDL2.capture.silenceTimer = setTimeout(silence_callback, ($1 / SDL2.audioContext.sampleRate) * 1000); if ((navigator.mediaDevices !== undefined) && (navigator.mediaDevices.getUserMedia !== undefined)) { navigator.mediaDevices.getUserMedia({ audio: true, video: false }).then(have_microphone).catch(no_microphone); } else if (navigator.webkitGetUserMedia !== undefined) { navigator.webkitGetUserMedia({ audio: true, video: false }, have_microphone, no_microphone); } },
- function($0, $1, $2, $3) { var SDL2 = Module['SDL2']; SDL2.audio.scriptProcessorNode = SDL2.audioContext['createScriptProcessor']($1, 0, $0); SDL2.audio.scriptProcessorNode['onaudioprocess'] = function (e) { if ((SDL2 === undefined) || (SDL2.audio === undefined)) { return; } SDL2.audio.currentOutputBuffer = e['outputBuffer']; dynCall('vi', $2, [$3]); }; SDL2.audio.scriptProcessorNode['connect'](SDL2.audioContext['destination']); },
- function($0) { var SDL2 = Module['SDL2']; if ($0) { if (SDL2.capture.silenceTimer !== undefined) { clearTimeout(SDL2.capture.silenceTimer); } if (SDL2.capture.stream !== undefined) { var tracks = SDL2.capture.stream.getAudioTracks(); for (var i = 0; i < tracks.length; i++) { SDL2.capture.stream.removeTrack(tracks[i]); } SDL2.capture.stream = undefined; } if (SDL2.capture.scriptProcessorNode !== undefined) { SDL2.capture.scriptProcessorNode.onaudioprocess = function(audioProcessingEvent) {}; SDL2.capture.scriptProcessorNode.disconnect(); SDL2.capture.scriptProcessorNode = undefined; } if (SDL2.capture.mediaStreamNode !== undefined) { SDL2.capture.mediaStreamNode.disconnect(); SDL2.capture.mediaStreamNode = undefined; } if (SDL2.capture.silenceBuffer !== undefined) { SDL2.capture.silenceBuffer = undefined } SDL2.capture = undefined; } else { if (SDL2.audio.scriptProcessorNode != undefined) { SDL2.audio.scriptProcessorNode.disconnect(); SDL2.audio.scriptProcessorNode = undefined; } SDL2.audio = undefined; } if ((SDL2.audioContext !== undefined) && (SDL2.audio === undefined) && (SDL2.capture === undefined)) { SDL2.audioContext.close(); SDL2.audioContext = undefined; } },
- function($0, $1) { var SDL2 = Module['SDL2']; var numChannels = SDL2.capture.currentCaptureBuffer.numberOfChannels; for (var c = 0; c < numChannels; ++c) { var channelData = SDL2.capture.currentCaptureBuffer.getChannelData(c); if (channelData.length != $1) { throw 'Web Audio capture buffer length mismatch! Destination size: ' + channelData.length + ' samples vs expected ' + $1 + ' samples!'; } if (numChannels == 1) { for (var j = 0; j < $1; ++j) { setValue($0 + (j * 4), channelData[j], 'float'); } } else { for (var j = 0; j < $1; ++j) { setValue($0 + (((j * numChannels) + c) * 4), channelData[j], 'float'); } } } },
- function($0, $1) { var SDL2 = Module['SDL2']; var numChannels = SDL2.audio.currentOutputBuffer['numberOfChannels']; for (var c = 0; c < numChannels; ++c) { var channelData = SDL2.audio.currentOutputBuffer['getChannelData'](c); if (channelData.length != $1) { throw 'Web Audio output buffer length mismatch! Destination size: ' + channelData.length + ' samples vs expected ' + $1 + ' samples!'; } for (var j = 0; j < $1; ++j) { channelData[j] = HEAPF32[$0 + ((j*numChannels + c) << 2) >> 2]; } } },
- function($0) { var str = UTF8ToString($0) + '\n\n' + 'Abort/Retry/Ignore/AlwaysIgnore? [ariA] :'; var reply = window.prompt(str, "i"); if (reply === null) { reply = "i"; } return allocate(intArrayFromString(reply), 'i8', ALLOC_NORMAL); }];
-
-function _emscripten_asm_const_i(code) {
-  return ASM_CONSTS[code]();
-}
-
-function _emscripten_asm_const_ii(code, a0) {
-  return ASM_CONSTS[code](a0);
-}
-
-function _emscripten_asm_const_iiiii(code, a0, a1, a2, a3) {
-  return ASM_CONSTS[code](a0, a1, a2, a3);
-}
-
-function _emscripten_asm_const_iii(code, a0, a1) {
-  return ASM_CONSTS[code](a0, a1);
-}
-
-function _emscripten_asm_const_iiiiii(code, a0, a1, a2, a3, a4) {
-  return ASM_CONSTS[code](a0, a1, a2, a3, a4);
-}
-
-function _emscripten_asm_const_iiii(code, a0, a1, a2) {
-  return ASM_CONSTS[code](a0, a1, a2);
-}
+var ASM_CONSTS = [];
 
 
 
 
-// STATICTOP = STATIC_BASE + 174208;
-/* global initializers */  __ATINIT__.push({ func: function() { ___emscripten_environ_constructor() } });
+
+// STATICTOP = STATIC_BASE + 21456;
+/* global initializers */ /*__ATINIT__.push();*/
 
 
 
@@ -1879,7 +1843,7 @@ function _emscripten_asm_const_iiii(code, a0, a1, a2) {
 
 
 /* no memory initializer */
-var tempDoublePtr = 175216
+var tempDoublePtr = 22464
 assert(tempDoublePtr % 8 == 0);
 
 function copyTempFloat(ptr) { // functions, because inlining this code increases code size too much
@@ -1941,59 +1905,8 @@ function copyTempDouble(ptr) {
       return demangleAll(js);
     }
 
-  
-  var ENV={};function ___buildEnvironment(environ) {
-      // WARNING: Arbitrary limit!
-      var MAX_ENV_VALUES = 64;
-      var TOTAL_ENV_SIZE = 1024;
-  
-      // Statically allocate memory for the environment.
-      var poolPtr;
-      var envPtr;
-      if (!___buildEnvironment.called) {
-        ___buildEnvironment.called = true;
-        // Set default values. Use string keys for Closure Compiler compatibility.
-        ENV['USER'] = ENV['LOGNAME'] = 'web_user';
-        ENV['PATH'] = '/';
-        ENV['PWD'] = '/';
-        ENV['HOME'] = '/home/web_user';
-        ENV['LANG'] = 'C.UTF-8';
-        // Browser language detection #8751
-        ENV['LANG'] = ((typeof navigator === 'object' && navigator.languages && navigator.languages[0]) || 'C').replace('-', '_') + '.UTF-8';
-        ENV['_'] = thisProgram;
-        // Allocate memory.
-        poolPtr = getMemory(TOTAL_ENV_SIZE);
-        envPtr = getMemory(MAX_ENV_VALUES * 4);
-        HEAP32[((envPtr)>>2)]=poolPtr;
-        HEAP32[((environ)>>2)]=envPtr;
-      } else {
-        envPtr = HEAP32[((environ)>>2)];
-        poolPtr = HEAP32[((envPtr)>>2)];
-      }
-  
-      // Collect key=value lines.
-      var strings = [];
-      var totalSize = 0;
-      for (var key in ENV) {
-        if (typeof ENV[key] === 'string') {
-          var line = key + '=' + ENV[key];
-          strings.push(line);
-          totalSize += line.length;
-        }
-      }
-      if (totalSize > TOTAL_ENV_SIZE) {
-        throw new Error('Environment size exceeded TOTAL_ENV_SIZE!');
-      }
-  
-      // Make new.
-      var ptrSize = 4;
-      for (var i = 0; i < strings.length; i++) {
-        var line = strings[i];
-        writeAsciiToMemory(line, poolPtr);
-        HEAP32[(((envPtr)+(i * ptrSize))>>2)]=poolPtr;
-        poolPtr += line.length + 1;
-      }
-      HEAP32[(((envPtr)+(strings.length * ptrSize))>>2)]=0;
+  function ___assert_fail(condition, filename, line, func) {
+      abort('Assertion failed: ' + UTF8ToString(condition) + ', at: ' + [filename ? UTF8ToString(filename) : 'unknown filename', line, func ? UTF8ToString(func) : 'unknown function']);
     }
 
   function ___lock() {}
@@ -4982,201 +4895,2530 @@ function copyTempDouble(ptr) {
 
   function ___unlock() {}
 
-  function _abort() {
-      Module['abort']();
+  function _emscripten_get_heap_size() {
+      return HEAP8.length;
     }
 
   
-  function _emscripten_get_now() { abort() }
+  var GL={counter:1,lastError:0,buffers:[],mappedBuffers:{},programs:[],framebuffers:[],renderbuffers:[],textures:[],uniforms:[],shaders:[],vaos:[],contexts:{},currentContext:null,offscreenCanvases:{},timerQueriesEXT:[],queries:[],samplers:[],transformFeedbacks:[],syncs:[],programInfos:{},stringCache:{},stringiCache:{},unpackAlignment:4,init:function () {
+        GL.miniTempBuffer = new Float32Array(GL.MINI_TEMP_BUFFER_SIZE);
+        for (var i = 0; i < GL.MINI_TEMP_BUFFER_SIZE; i++) {
+          GL.miniTempBufferViews[i] = GL.miniTempBuffer.subarray(0, i+1);
+        }
+      },recordError:function recordError(errorCode) {
+        if (!GL.lastError) {
+          GL.lastError = errorCode;
+        }
+      },getNewId:function (table) {
+        var ret = GL.counter++;
+        for (var i = table.length; i < ret; i++) {
+          table[i] = null;
+        }
+        return ret;
+      },MINI_TEMP_BUFFER_SIZE:256,miniTempBuffer:null,miniTempBufferViews:[0],getSource:function (shader, count, string, length) {
+        var source = '';
+        for (var i = 0; i < count; ++i) {
+          var len = length ? HEAP32[(((length)+(i*4))>>2)] : -1;
+          source += UTF8ToString(HEAP32[(((string)+(i*4))>>2)], len < 0 ? undefined : len);
+        }
+        return source;
+      },createContext:function (canvas, webGLContextAttributes) {
   
-  function _emscripten_get_now_is_monotonic() {
-      // return whether emscripten_get_now is guaranteed monotonic; the Date.now
-      // implementation is not :(
-      return (0
-        || (typeof performance === 'object' && performance && typeof performance['now'] === 'function')
-        );
-    }function _clock_gettime(clk_id, tp) {
-      // int clock_gettime(clockid_t clk_id, struct timespec *tp);
-      var now;
-      if (clk_id === 0) {
-        now = Date.now();
-      } else if (clk_id === 1 && _emscripten_get_now_is_monotonic()) {
-        now = _emscripten_get_now();
+  
+  
+  
+        var ctx = 
+          (webGLContextAttributes.majorVersion > 1) ? canvas.getContext("webgl2", webGLContextAttributes) :
+          (canvas.getContext("webgl", webGLContextAttributes) || canvas.getContext("experimental-webgl", webGLContextAttributes));
+  
+  
+        return ctx ? GL.registerContext(ctx, webGLContextAttributes) : 0;
+      },registerContext:function (ctx, webGLContextAttributes) {
+        var handle = _malloc(8); // Make space on the heap to store GL context attributes that need to be accessible as shared between threads.
+        var context = {
+          handle: handle,
+          attributes: webGLContextAttributes,
+          version: webGLContextAttributes.majorVersion,
+          GLctx: ctx
+        };
+  
+        // BUG: Workaround Chrome WebGL 2 issue: the first shipped versions of WebGL 2 in Chrome did not actually implement the new WebGL 2 functions.
+        //      Those are supported only in Chrome 58 and newer.
+        function getChromeVersion() {
+          var raw = navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
+          return raw ? parseInt(raw[2], 10) : false;
+        }
+        context.supportsWebGL2EntryPoints = (context.version >= 2) && (getChromeVersion() === false || getChromeVersion() >= 58);
+  
+  
+        // Store the created context object so that we can access the context given a canvas without having to pass the parameters again.
+        if (ctx.canvas) ctx.canvas.GLctxObject = context;
+        GL.contexts[handle] = context;
+        if (typeof webGLContextAttributes.enableExtensionsByDefault === 'undefined' || webGLContextAttributes.enableExtensionsByDefault) {
+          GL.initExtensions(context);
+        }
+  
+  
+  
+  
+        return handle;
+      },makeContextCurrent:function (contextHandle) {
+  
+        GL.currentContext = GL.contexts[contextHandle]; // Active Emscripten GL layer context object.
+        Module.ctx = GLctx = GL.currentContext && GL.currentContext.GLctx; // Active WebGL context object.
+        return !(contextHandle && !GLctx);
+      },getContext:function (contextHandle) {
+        return GL.contexts[contextHandle];
+      },deleteContext:function (contextHandle) {
+        if (GL.currentContext === GL.contexts[contextHandle]) GL.currentContext = null;
+        if (typeof JSEvents === 'object') JSEvents.removeAllHandlersOnTarget(GL.contexts[contextHandle].GLctx.canvas); // Release all JS event handlers on the DOM element that the GL context is associated with since the context is now deleted.
+        if (GL.contexts[contextHandle] && GL.contexts[contextHandle].GLctx.canvas) GL.contexts[contextHandle].GLctx.canvas.GLctxObject = undefined; // Make sure the canvas object no longer refers to the context object so there are no GC surprises.
+        _free(GL.contexts[contextHandle]);
+        GL.contexts[contextHandle] = null;
+      },acquireInstancedArraysExtension:function (ctx) {
+        // Extension available in WebGL 1 from Firefox 26 and Google Chrome 30 onwards. Core feature in WebGL 2.
+        var ext = ctx.getExtension('ANGLE_instanced_arrays');
+        if (ext) {
+          ctx['vertexAttribDivisor'] = function(index, divisor) { ext['vertexAttribDivisorANGLE'](index, divisor); };
+          ctx['drawArraysInstanced'] = function(mode, first, count, primcount) { ext['drawArraysInstancedANGLE'](mode, first, count, primcount); };
+          ctx['drawElementsInstanced'] = function(mode, count, type, indices, primcount) { ext['drawElementsInstancedANGLE'](mode, count, type, indices, primcount); };
+        }
+      },acquireVertexArrayObjectExtension:function (ctx) {
+        // Extension available in WebGL 1 from Firefox 25 and WebKit 536.28/desktop Safari 6.0.3 onwards. Core feature in WebGL 2.
+        var ext = ctx.getExtension('OES_vertex_array_object');
+        if (ext) {
+          ctx['createVertexArray'] = function() { return ext['createVertexArrayOES'](); };
+          ctx['deleteVertexArray'] = function(vao) { ext['deleteVertexArrayOES'](vao); };
+          ctx['bindVertexArray'] = function(vao) { ext['bindVertexArrayOES'](vao); };
+          ctx['isVertexArray'] = function(vao) { return ext['isVertexArrayOES'](vao); };
+        }
+      },acquireDrawBuffersExtension:function (ctx) {
+        // Extension available in WebGL 1 from Firefox 28 onwards. Core feature in WebGL 2.
+        var ext = ctx.getExtension('WEBGL_draw_buffers');
+        if (ext) {
+          ctx['drawBuffers'] = function(n, bufs) { ext['drawBuffersWEBGL'](n, bufs); };
+        }
+      },initExtensions:function (context) {
+        // If this function is called without a specific context object, init the extensions of the currently active context.
+        if (!context) context = GL.currentContext;
+  
+        if (context.initExtensionsDone) return;
+        context.initExtensionsDone = true;
+  
+        var GLctx = context.GLctx;
+  
+        // Detect the presence of a few extensions manually, this GL interop layer itself will need to know if they exist.
+  
+        if (context.version < 2) {
+          GL.acquireInstancedArraysExtension(GLctx);
+          GL.acquireVertexArrayObjectExtension(GLctx);
+          GL.acquireDrawBuffersExtension(GLctx);
+        }
+  
+        GLctx.disjointTimerQueryExt = GLctx.getExtension("EXT_disjoint_timer_query");
+  
+        // These are the 'safe' feature-enabling extensions that don't add any performance impact related to e.g. debugging, and
+        // should be enabled by default so that client GLES2/GL code will not need to go through extra hoops to get its stuff working.
+        // As new extensions are ratified at http://www.khronos.org/registry/webgl/extensions/ , feel free to add your new extensions
+        // here, as long as they don't produce a performance impact for users that might not be using those extensions.
+        // E.g. debugging-related extensions should probably be off by default.
+        var automaticallyEnabledExtensions = [ // Khronos ratified WebGL extensions ordered by number (no debug extensions):
+                                               "OES_texture_float", "OES_texture_half_float", "OES_standard_derivatives",
+                                               "OES_vertex_array_object", "WEBGL_compressed_texture_s3tc", "WEBGL_depth_texture",
+                                               "OES_element_index_uint", "EXT_texture_filter_anisotropic", "EXT_frag_depth",
+                                               "WEBGL_draw_buffers", "ANGLE_instanced_arrays", "OES_texture_float_linear",
+                                               "OES_texture_half_float_linear", "EXT_blend_minmax", "EXT_shader_texture_lod",
+                                               // Community approved WebGL extensions ordered by number:
+                                               "WEBGL_compressed_texture_pvrtc", "EXT_color_buffer_half_float", "WEBGL_color_buffer_float",
+                                               "EXT_sRGB", "WEBGL_compressed_texture_etc1", "EXT_disjoint_timer_query",
+                                               "WEBGL_compressed_texture_etc", "WEBGL_compressed_texture_astc", "EXT_color_buffer_float",
+                                               "WEBGL_compressed_texture_s3tc_srgb", "EXT_disjoint_timer_query_webgl2"];
+  
+        function shouldEnableAutomatically(extension) {
+          var ret = false;
+          automaticallyEnabledExtensions.forEach(function(include) {
+            if (extension.indexOf(include) != -1) {
+              ret = true;
+            }
+          });
+          return ret;
+        }
+  
+        var exts = GLctx.getSupportedExtensions();
+        if (exts && exts.length > 0) {
+          GLctx.getSupportedExtensions().forEach(function(ext) {
+            if (automaticallyEnabledExtensions.indexOf(ext) != -1) {
+              GLctx.getExtension(ext); // Calling .getExtension enables that extension permanently, no need to store the return value to be enabled.
+            }
+          });
+        }
+      },populateUniformTable:function (program) {
+        var p = GL.programs[program];
+        var ptable = GL.programInfos[program] = {
+          uniforms: {},
+          maxUniformLength: 0, // This is eagerly computed below, since we already enumerate all uniforms anyway.
+          maxAttributeLength: -1, // This is lazily computed and cached, computed when/if first asked, "-1" meaning not computed yet.
+          maxUniformBlockNameLength: -1 // Lazily computed as well
+        };
+  
+        var utable = ptable.uniforms;
+        // A program's uniform table maps the string name of an uniform to an integer location of that uniform.
+        // The global GL.uniforms map maps integer locations to WebGLUniformLocations.
+        var numUniforms = GLctx.getProgramParameter(p, 0x8B86/*GL_ACTIVE_UNIFORMS*/);
+        for (var i = 0; i < numUniforms; ++i) {
+          var u = GLctx.getActiveUniform(p, i);
+  
+          var name = u.name;
+          ptable.maxUniformLength = Math.max(ptable.maxUniformLength, name.length+1);
+  
+          // If we are dealing with an array, e.g. vec4 foo[3], strip off the array index part to canonicalize that "foo", "foo[]",
+          // and "foo[0]" will mean the same. Loop below will populate foo[1] and foo[2].
+          if (name.slice(-1) == ']') {
+            name = name.slice(0, name.lastIndexOf('['));
+          }
+  
+          // Optimize memory usage slightly: If we have an array of uniforms, e.g. 'vec3 colors[3];', then
+          // only store the string 'colors' in utable, and 'colors[0]', 'colors[1]' and 'colors[2]' will be parsed as 'colors'+i.
+          // Note that for the GL.uniforms table, we still need to fetch the all WebGLUniformLocations for all the indices.
+          var loc = GLctx.getUniformLocation(p, name);
+          if (loc) {
+            var id = GL.getNewId(GL.uniforms);
+            utable[name] = [u.size, id];
+            GL.uniforms[id] = loc;
+  
+            for (var j = 1; j < u.size; ++j) {
+              var n = name + '['+j+']';
+              loc = GLctx.getUniformLocation(p, n);
+              id = GL.getNewId(GL.uniforms);
+  
+              GL.uniforms[id] = loc;
+            }
+          }
+        }
+      }};function _emscripten_glActiveTexture(x0) { GLctx['activeTexture'](x0) }
+
+  function _emscripten_glAttachShader(program, shader) {
+      GLctx.attachShader(GL.programs[program],
+                              GL.shaders[shader]);
+    }
+
+  function _emscripten_glBeginQuery(target, id) {
+      GLctx['beginQuery'](target, GL.queries[id]);
+    }
+
+  function _emscripten_glBeginQueryEXT(target, id) {
+      GLctx.disjointTimerQueryExt['beginQueryEXT'](target, GL.timerQueriesEXT[id]);
+    }
+
+  function _emscripten_glBeginTransformFeedback(x0) { GLctx['beginTransformFeedback'](x0) }
+
+  function _emscripten_glBindAttribLocation(program, index, name) {
+      GLctx.bindAttribLocation(GL.programs[program], index, UTF8ToString(name));
+    }
+
+  function _emscripten_glBindBuffer(target, buffer) {
+  
+      if (target == 0x88EB /*GL_PIXEL_PACK_BUFFER*/) {
+        // In WebGL 2 glReadPixels entry point, we need to use a different WebGL 2 API function call when a buffer is bound to
+        // GL_PIXEL_PACK_BUFFER_BINDING point, so must keep track whether that binding point is non-null to know what is
+        // the proper API function to call.
+        GLctx.currentPixelPackBufferBinding = buffer;
+      } else if (target == 0x88EC /*GL_PIXEL_UNPACK_BUFFER*/) {
+        // In WebGL 2 gl(Compressed)Tex(Sub)Image[23]D entry points, we need to
+        // use a different WebGL 2 API function call when a buffer is bound to
+        // GL_PIXEL_UNPACK_BUFFER_BINDING point, so must keep track whether that
+        // binding point is non-null to know what is the proper API function to
+        // call.
+        GLctx.currentPixelUnpackBufferBinding = buffer;
+      }
+      GLctx.bindBuffer(target, GL.buffers[buffer]);
+    }
+
+  function _emscripten_glBindBufferBase(target, index, buffer) {
+      GLctx['bindBufferBase'](target, index, GL.buffers[buffer]);
+    }
+
+  function _emscripten_glBindBufferRange(target, index, buffer, offset, ptrsize) {
+      GLctx['bindBufferRange'](target, index, GL.buffers[buffer], offset, ptrsize);
+    }
+
+  function _emscripten_glBindFramebuffer(target, framebuffer) {
+  
+      GLctx.bindFramebuffer(target, GL.framebuffers[framebuffer]);
+  
+    }
+
+  function _emscripten_glBindRenderbuffer(target, renderbuffer) {
+      GLctx.bindRenderbuffer(target, GL.renderbuffers[renderbuffer]);
+    }
+
+  function _emscripten_glBindSampler(unit, sampler) {
+      GLctx['bindSampler'](unit, GL.samplers[sampler]);
+    }
+
+  function _emscripten_glBindTexture(target, texture) {
+      GLctx.bindTexture(target, GL.textures[texture]);
+    }
+
+  function _emscripten_glBindTransformFeedback(target, id) {
+      GLctx['bindTransformFeedback'](target, GL.transformFeedbacks[id]);
+    }
+
+  function _emscripten_glBindVertexArray(vao) {
+      GLctx['bindVertexArray'](GL.vaos[vao]);
+    }
+
+  function _emscripten_glBindVertexArrayOES(vao) {
+      GLctx['bindVertexArray'](GL.vaos[vao]);
+    }
+
+  function _emscripten_glBlendColor(x0, x1, x2, x3) { GLctx['blendColor'](x0, x1, x2, x3) }
+
+  function _emscripten_glBlendEquation(x0) { GLctx['blendEquation'](x0) }
+
+  function _emscripten_glBlendEquationSeparate(x0, x1) { GLctx['blendEquationSeparate'](x0, x1) }
+
+  function _emscripten_glBlendFunc(x0, x1) { GLctx['blendFunc'](x0, x1) }
+
+  function _emscripten_glBlendFuncSeparate(x0, x1, x2, x3) { GLctx['blendFuncSeparate'](x0, x1, x2, x3) }
+
+  function _emscripten_glBlitFramebuffer(x0, x1, x2, x3, x4, x5, x6, x7, x8, x9) { GLctx['blitFramebuffer'](x0, x1, x2, x3, x4, x5, x6, x7, x8, x9) }
+
+  function _emscripten_glBufferData(target, size, data, usage) {
+      if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
+        if (data) {
+          GLctx.bufferData(target, HEAPU8, usage, data, size);
+        } else {
+          GLctx.bufferData(target, size, usage);
+        }
       } else {
-        ___setErrNo(22);
+        // N.b. here first form specifies a heap subarray, second form an integer size, so the ?: code here is polymorphic. It is advised to avoid
+        // randomly mixing both uses in calling code, to avoid any potential JS engine JIT issues.
+        GLctx.bufferData(target, data ? HEAPU8.subarray(data, data+size) : size, usage);
+      }
+    }
+
+  function _emscripten_glBufferSubData(target, offset, size, data) {
+      if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
+        GLctx.bufferSubData(target, offset, HEAPU8, data, size);
+        return;
+      }
+      GLctx.bufferSubData(target, offset, HEAPU8.subarray(data, data+size));
+    }
+
+  function _emscripten_glCheckFramebufferStatus(x0) { return GLctx['checkFramebufferStatus'](x0) }
+
+  function _emscripten_glClear(x0) { GLctx['clear'](x0) }
+
+  function _emscripten_glClearBufferfi(x0, x1, x2, x3) { GLctx['clearBufferfi'](x0, x1, x2, x3) }
+
+  function _emscripten_glClearBufferfv(buffer, drawbuffer, value) {
+  
+      GLctx['clearBufferfv'](buffer, drawbuffer, HEAPF32, value>>2);
+    }
+
+  function _emscripten_glClearBufferiv(buffer, drawbuffer, value) {
+  
+      GLctx['clearBufferiv'](buffer, drawbuffer, HEAP32, value>>2);
+    }
+
+  function _emscripten_glClearBufferuiv(buffer, drawbuffer, value) {
+  
+      GLctx['clearBufferuiv'](buffer, drawbuffer, HEAPU32, value>>2);
+    }
+
+  function _emscripten_glClearColor(x0, x1, x2, x3) { GLctx['clearColor'](x0, x1, x2, x3) }
+
+  function _emscripten_glClearDepthf(x0) { GLctx['clearDepth'](x0) }
+
+  function _emscripten_glClearStencil(x0) { GLctx['clearStencil'](x0) }
+
+  function _emscripten_glClientWaitSync(sync, flags, timeoutLo, timeoutHi) {
+      // WebGL2 vs GLES3 differences: in GLES3, the timeout parameter is a uint64, where 0xFFFFFFFFFFFFFFFFULL means GL_TIMEOUT_IGNORED.
+      // In JS, there's no 64-bit value types, so instead timeout is taken to be signed, and GL_TIMEOUT_IGNORED is given value -1.
+      // Inherently the value accepted in the timeout is lossy, and can't take in arbitrary u64 bit pattern (but most likely doesn't matter)
+      // See https://www.khronos.org/registry/webgl/specs/latest/2.0/#5.15
+      timeoutLo = timeoutLo >>> 0;
+      timeoutHi = timeoutHi >>> 0;
+      var timeout = (timeoutLo == 0xFFFFFFFF && timeoutHi == 0xFFFFFFFF) ? -1 : makeBigInt(timeoutLo, timeoutHi, true);
+      return GLctx.clientWaitSync(GL.syncs[sync], flags, timeout);
+    }
+
+  function _emscripten_glColorMask(red, green, blue, alpha) {
+      GLctx.colorMask(!!red, !!green, !!blue, !!alpha);
+    }
+
+  function _emscripten_glCompileShader(shader) {
+      GLctx.compileShader(GL.shaders[shader]);
+    }
+
+  function _emscripten_glCompressedTexImage2D(target, level, internalFormat, width, height, border, imageSize, data) {
+      if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
+        if (GLctx.currentPixelUnpackBufferBinding) {
+          GLctx['compressedTexImage2D'](target, level, internalFormat, width, height, border, imageSize, data);
+        } else {
+          GLctx['compressedTexImage2D'](target, level, internalFormat, width, height, border, HEAPU8, data, imageSize);
+        }
+        return;
+      }
+      GLctx['compressedTexImage2D'](target, level, internalFormat, width, height, border, data ? HEAPU8.subarray((data),(data+imageSize)) : null);
+    }
+
+  function _emscripten_glCompressedTexImage3D(target, level, internalFormat, width, height, depth, border, imageSize, data) {
+      if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
+        if (GLctx.currentPixelUnpackBufferBinding) {
+          GLctx['compressedTexImage3D'](target, level, internalFormat, width, height, depth, border, imageSize, data);
+        } else {
+          GLctx['compressedTexImage3D'](target, level, internalFormat, width, height, depth, border, HEAPU8, data, imageSize);
+        }
+      } else {
+        GLctx['compressedTexImage3D'](target, level, internalFormat, width, height, depth, border, data ? HEAPU8.subarray((data),(data+imageSize)) : null);
+      }
+    }
+
+  function _emscripten_glCompressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, data) {
+      if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
+        if (GLctx.currentPixelUnpackBufferBinding) {
+          GLctx['compressedTexSubImage2D'](target, level, xoffset, yoffset, width, height, format, imageSize, data);
+        } else {
+          GLctx['compressedTexSubImage2D'](target, level, xoffset, yoffset, width, height, format, HEAPU8, data, imageSize);
+        }
+        return;
+      }
+      GLctx['compressedTexSubImage2D'](target, level, xoffset, yoffset, width, height, format, data ? HEAPU8.subarray((data),(data+imageSize)) : null);
+    }
+
+  function _emscripten_glCompressedTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data) {
+      if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
+        if (GLctx.currentPixelUnpackBufferBinding) {
+          GLctx['compressedTexSubImage3D'](target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data);
+        } else {
+          GLctx['compressedTexSubImage3D'](target, level, xoffset, yoffset, zoffset, width, height, depth, format, HEAPU8, data, imageSize);
+        }
+      } else {
+        GLctx['compressedTexSubImage3D'](target, level, xoffset, yoffset, zoffset, width, height, depth, format, data ? HEAPU8.subarray((data),(data+imageSize)) : null);
+      }
+    }
+
+  function _emscripten_glCopyBufferSubData(x0, x1, x2, x3, x4) { GLctx['copyBufferSubData'](x0, x1, x2, x3, x4) }
+
+  function _emscripten_glCopyTexImage2D(x0, x1, x2, x3, x4, x5, x6, x7) { GLctx['copyTexImage2D'](x0, x1, x2, x3, x4, x5, x6, x7) }
+
+  function _emscripten_glCopyTexSubImage2D(x0, x1, x2, x3, x4, x5, x6, x7) { GLctx['copyTexSubImage2D'](x0, x1, x2, x3, x4, x5, x6, x7) }
+
+  function _emscripten_glCopyTexSubImage3D(x0, x1, x2, x3, x4, x5, x6, x7, x8) { GLctx['copyTexSubImage3D'](x0, x1, x2, x3, x4, x5, x6, x7, x8) }
+
+  function _emscripten_glCreateProgram() {
+      var id = GL.getNewId(GL.programs);
+      var program = GLctx.createProgram();
+      program.name = id;
+      GL.programs[id] = program;
+      return id;
+    }
+
+  function _emscripten_glCreateShader(shaderType) {
+      var id = GL.getNewId(GL.shaders);
+      GL.shaders[id] = GLctx.createShader(shaderType);
+      return id;
+    }
+
+  function _emscripten_glCullFace(x0) { GLctx['cullFace'](x0) }
+
+  function _emscripten_glDeleteBuffers(n, buffers) {
+      for (var i = 0; i < n; i++) {
+        var id = HEAP32[(((buffers)+(i*4))>>2)];
+        var buffer = GL.buffers[id];
+  
+        // From spec: "glDeleteBuffers silently ignores 0's and names that do not
+        // correspond to existing buffer objects."
+        if (!buffer) continue;
+  
+        GLctx.deleteBuffer(buffer);
+        buffer.name = 0;
+        GL.buffers[id] = null;
+  
+        if (id == GL.currArrayBuffer) GL.currArrayBuffer = 0;
+        if (id == GL.currElementArrayBuffer) GL.currElementArrayBuffer = 0;
+        if (id == GLctx.currentPixelPackBufferBinding) GLctx.currentPixelPackBufferBinding = 0;
+        if (id == GLctx.currentPixelUnpackBufferBinding) GLctx.currentPixelUnpackBufferBinding = 0;
+      }
+    }
+
+  function _emscripten_glDeleteFramebuffers(n, framebuffers) {
+      for (var i = 0; i < n; ++i) {
+        var id = HEAP32[(((framebuffers)+(i*4))>>2)];
+        var framebuffer = GL.framebuffers[id];
+        if (!framebuffer) continue; // GL spec: "glDeleteFramebuffers silently ignores 0s and names that do not correspond to existing framebuffer objects".
+        GLctx.deleteFramebuffer(framebuffer);
+        framebuffer.name = 0;
+        GL.framebuffers[id] = null;
+      }
+    }
+
+  function _emscripten_glDeleteProgram(id) {
+      if (!id) return;
+      var program = GL.programs[id];
+      if (!program) { // glDeleteProgram actually signals an error when deleting a nonexisting object, unlike some other GL delete functions.
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+      GLctx.deleteProgram(program);
+      program.name = 0;
+      GL.programs[id] = null;
+      GL.programInfos[id] = null;
+    }
+
+  function _emscripten_glDeleteQueries(n, ids) {
+      for (var i = 0; i < n; i++) {
+        var id = HEAP32[(((ids)+(i*4))>>2)];
+        var query = GL.queries[id];
+        if (!query) continue; // GL spec: "unused names in ids are ignored, as is the name zero."
+        GLctx['deleteQuery'](query);
+        GL.queries[id] = null;
+      }
+    }
+
+  function _emscripten_glDeleteQueriesEXT(n, ids) {
+      for (var i = 0; i < n; i++) {
+        var id = HEAP32[(((ids)+(i*4))>>2)];
+        var query = GL.timerQueriesEXT[id];
+        if (!query) continue; // GL spec: "unused names in ids are ignored, as is the name zero."
+        GLctx.disjointTimerQueryExt['deleteQueryEXT'](query);
+        GL.timerQueriesEXT[id] = null;
+      }
+    }
+
+  function _emscripten_glDeleteRenderbuffers(n, renderbuffers) {
+      for (var i = 0; i < n; i++) {
+        var id = HEAP32[(((renderbuffers)+(i*4))>>2)];
+        var renderbuffer = GL.renderbuffers[id];
+        if (!renderbuffer) continue; // GL spec: "glDeleteRenderbuffers silently ignores 0s and names that do not correspond to existing renderbuffer objects".
+        GLctx.deleteRenderbuffer(renderbuffer);
+        renderbuffer.name = 0;
+        GL.renderbuffers[id] = null;
+      }
+    }
+
+  function _emscripten_glDeleteSamplers(n, samplers) {
+      for (var i = 0; i < n; i++) {
+        var id = HEAP32[(((samplers)+(i*4))>>2)];
+        var sampler = GL.samplers[id];
+        if (!sampler) continue;
+        GLctx['deleteSampler'](sampler);
+        sampler.name = 0;
+        GL.samplers[id] = null;
+      }
+    }
+
+  function _emscripten_glDeleteShader(id) {
+      if (!id) return;
+      var shader = GL.shaders[id];
+      if (!shader) { // glDeleteShader actually signals an error when deleting a nonexisting object, unlike some other GL delete functions.
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+      GLctx.deleteShader(shader);
+      GL.shaders[id] = null;
+    }
+
+  function _emscripten_glDeleteSync(id) {
+      if (!id) return;
+      var sync = GL.syncs[id];
+      if (!sync) { // glDeleteSync signals an error when deleting a nonexisting object, unlike some other GL delete functions.
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+      GLctx.deleteSync(sync);
+      sync.name = 0;
+      GL.syncs[id] = null;
+    }
+
+  function _emscripten_glDeleteTextures(n, textures) {
+      for (var i = 0; i < n; i++) {
+        var id = HEAP32[(((textures)+(i*4))>>2)];
+        var texture = GL.textures[id];
+        if (!texture) continue; // GL spec: "glDeleteTextures silently ignores 0s and names that do not correspond to existing textures".
+        GLctx.deleteTexture(texture);
+        texture.name = 0;
+        GL.textures[id] = null;
+      }
+    }
+
+  function _emscripten_glDeleteTransformFeedbacks(n, ids) {
+      for (var i = 0; i < n; i++) {
+        var id = HEAP32[(((ids)+(i*4))>>2)];
+        var transformFeedback = GL.transformFeedbacks[id];
+        if (!transformFeedback) continue; // GL spec: "unused names in ids are ignored, as is the name zero."
+        GLctx['deleteTransformFeedback'](transformFeedback);
+        transformFeedback.name = 0;
+        GL.transformFeedbacks[id] = null;
+      }
+    }
+
+  function _emscripten_glDeleteVertexArrays(n, vaos) {
+      for (var i = 0; i < n; i++) {
+        var id = HEAP32[(((vaos)+(i*4))>>2)];
+        GLctx['deleteVertexArray'](GL.vaos[id]);
+        GL.vaos[id] = null;
+      }
+    }
+
+  function _emscripten_glDeleteVertexArraysOES(n, vaos) {
+      for (var i = 0; i < n; i++) {
+        var id = HEAP32[(((vaos)+(i*4))>>2)];
+        GLctx['deleteVertexArray'](GL.vaos[id]);
+        GL.vaos[id] = null;
+      }
+    }
+
+  function _emscripten_glDepthFunc(x0) { GLctx['depthFunc'](x0) }
+
+  function _emscripten_glDepthMask(flag) {
+      GLctx.depthMask(!!flag);
+    }
+
+  function _emscripten_glDepthRangef(x0, x1) { GLctx['depthRange'](x0, x1) }
+
+  function _emscripten_glDetachShader(program, shader) {
+      GLctx.detachShader(GL.programs[program],
+                              GL.shaders[shader]);
+    }
+
+  function _emscripten_glDisable(x0) { GLctx['disable'](x0) }
+
+  function _emscripten_glDisableVertexAttribArray(index) {
+      GLctx.disableVertexAttribArray(index);
+    }
+
+  function _emscripten_glDrawArrays(mode, first, count) {
+  
+      GLctx.drawArrays(mode, first, count);
+  
+    }
+
+  function _emscripten_glDrawArraysInstanced(mode, first, count, primcount) {
+      GLctx['drawArraysInstanced'](mode, first, count, primcount);
+    }
+
+  function _emscripten_glDrawArraysInstancedANGLE(mode, first, count, primcount) {
+      GLctx['drawArraysInstanced'](mode, first, count, primcount);
+    }
+
+  function _emscripten_glDrawArraysInstancedARB(mode, first, count, primcount) {
+      GLctx['drawArraysInstanced'](mode, first, count, primcount);
+    }
+
+  function _emscripten_glDrawArraysInstancedEXT(mode, first, count, primcount) {
+      GLctx['drawArraysInstanced'](mode, first, count, primcount);
+    }
+
+  function _emscripten_glDrawArraysInstancedNV(mode, first, count, primcount) {
+      GLctx['drawArraysInstanced'](mode, first, count, primcount);
+    }
+
+  
+  var __tempFixedLengthArray=[];function _emscripten_glDrawBuffers(n, bufs) {
+  
+      var bufArray = __tempFixedLengthArray[n];
+      for (var i = 0; i < n; i++) {
+        bufArray[i] = HEAP32[(((bufs)+(i*4))>>2)];
+      }
+  
+      GLctx['drawBuffers'](bufArray);
+    }
+
+  function _emscripten_glDrawBuffersEXT(n, bufs) {
+  
+      var bufArray = __tempFixedLengthArray[n];
+      for (var i = 0; i < n; i++) {
+        bufArray[i] = HEAP32[(((bufs)+(i*4))>>2)];
+      }
+  
+      GLctx['drawBuffers'](bufArray);
+    }
+
+  function _emscripten_glDrawBuffersWEBGL(n, bufs) {
+  
+      var bufArray = __tempFixedLengthArray[n];
+      for (var i = 0; i < n; i++) {
+        bufArray[i] = HEAP32[(((bufs)+(i*4))>>2)];
+      }
+  
+      GLctx['drawBuffers'](bufArray);
+    }
+
+  function _emscripten_glDrawElements(mode, count, type, indices) {
+  
+      GLctx.drawElements(mode, count, type, indices);
+  
+    }
+
+  function _emscripten_glDrawElementsInstanced(mode, count, type, indices, primcount) {
+      GLctx['drawElementsInstanced'](mode, count, type, indices, primcount);
+    }
+
+  function _emscripten_glDrawElementsInstancedANGLE(mode, count, type, indices, primcount) {
+      GLctx['drawElementsInstanced'](mode, count, type, indices, primcount);
+    }
+
+  function _emscripten_glDrawElementsInstancedARB(mode, count, type, indices, primcount) {
+      GLctx['drawElementsInstanced'](mode, count, type, indices, primcount);
+    }
+
+  function _emscripten_glDrawElementsInstancedEXT(mode, count, type, indices, primcount) {
+      GLctx['drawElementsInstanced'](mode, count, type, indices, primcount);
+    }
+
+  function _emscripten_glDrawElementsInstancedNV(mode, count, type, indices, primcount) {
+      GLctx['drawElementsInstanced'](mode, count, type, indices, primcount);
+    }
+
+  
+  function _glDrawElements(mode, count, type, indices) {
+  
+      GLctx.drawElements(mode, count, type, indices);
+  
+    }function _emscripten_glDrawRangeElements(mode, start, end, count, type, indices) {
+      // TODO: This should be a trivial pass-though function registered at the bottom of this page as
+      // glFuncs[6][1] += ' drawRangeElements';
+      // but due to https://bugzilla.mozilla.org/show_bug.cgi?id=1202427,
+      // we work around by ignoring the range.
+      _glDrawElements(mode, count, type, indices);
+    }
+
+  function _emscripten_glEnable(x0) { GLctx['enable'](x0) }
+
+  function _emscripten_glEnableVertexAttribArray(index) {
+      GLctx.enableVertexAttribArray(index);
+    }
+
+  function _emscripten_glEndQuery(x0) { GLctx['endQuery'](x0) }
+
+  function _emscripten_glEndQueryEXT(target) {
+      GLctx.disjointTimerQueryExt['endQueryEXT'](target);
+    }
+
+  function _emscripten_glEndTransformFeedback() { GLctx['endTransformFeedback']() }
+
+  function _emscripten_glFenceSync(condition, flags) {
+      var sync = GLctx.fenceSync(condition, flags);
+      if (sync) {
+        var id = GL.getNewId(GL.syncs);
+        sync.name = id;
+        GL.syncs[id] = sync;
+        return id;
+      } else {
+        return 0; // Failed to create a sync object
+      }
+    }
+
+  function _emscripten_glFinish() { GLctx['finish']() }
+
+  function _emscripten_glFlush() { GLctx['flush']() }
+
+  function _emscripten_glFlushMappedBufferRange() {
+  err('missing function: emscripten_glFlushMappedBufferRange'); abort(-1);
+  }
+
+  function _emscripten_glFramebufferRenderbuffer(target, attachment, renderbuffertarget, renderbuffer) {
+      GLctx.framebufferRenderbuffer(target, attachment, renderbuffertarget,
+                                         GL.renderbuffers[renderbuffer]);
+    }
+
+  function _emscripten_glFramebufferTexture2D(target, attachment, textarget, texture, level) {
+      GLctx.framebufferTexture2D(target, attachment, textarget,
+                                      GL.textures[texture], level);
+    }
+
+  function _emscripten_glFramebufferTextureLayer(target, attachment, texture, level, layer) {
+      GLctx.framebufferTextureLayer(target, attachment, GL.textures[texture], level, layer);
+    }
+
+  function _emscripten_glFrontFace(x0) { GLctx['frontFace'](x0) }
+
+  
+  function __glGenObject(n, buffers, createFunction, objectTable
+      ) {
+      for (var i = 0; i < n; i++) {
+        var buffer = GLctx[createFunction]();
+        var id = buffer && GL.getNewId(objectTable);
+        if (buffer) {
+          buffer.name = id;
+          objectTable[id] = buffer;
+        } else {
+          GL.recordError(0x0502 /* GL_INVALID_OPERATION */);
+        }
+        HEAP32[(((buffers)+(i*4))>>2)]=id;
+      }
+    }function _emscripten_glGenBuffers(n, buffers) {
+      __glGenObject(n, buffers, 'createBuffer', GL.buffers
+        );
+    }
+
+  function _emscripten_glGenFramebuffers(n, ids) {
+      __glGenObject(n, ids, 'createFramebuffer', GL.framebuffers
+        );
+    }
+
+  function _emscripten_glGenQueries(n, ids) {
+      __glGenObject(n, ids, 'createQuery', GL.queries
+        );
+    }
+
+  function _emscripten_glGenQueriesEXT(n, ids) {
+      for (var i = 0; i < n; i++) {
+        var query = GLctx.disjointTimerQueryExt['createQueryEXT']();
+        if (!query) {
+          GL.recordError(0x0502 /* GL_INVALID_OPERATION */);
+          while(i < n) HEAP32[(((ids)+(i++*4))>>2)]=0;
+          return;
+        }
+        var id = GL.getNewId(GL.timerQueriesEXT);
+        query.name = id;
+        GL.timerQueriesEXT[id] = query;
+        HEAP32[(((ids)+(i*4))>>2)]=id;
+      }
+    }
+
+  function _emscripten_glGenRenderbuffers(n, renderbuffers) {
+      __glGenObject(n, renderbuffers, 'createRenderbuffer', GL.renderbuffers
+        );
+    }
+
+  function _emscripten_glGenSamplers(n, samplers) {
+      __glGenObject(n, samplers, 'createSampler', GL.samplers
+        );
+    }
+
+  function _emscripten_glGenTextures(n, textures) {
+      __glGenObject(n, textures, 'createTexture', GL.textures
+        );
+    }
+
+  function _emscripten_glGenTransformFeedbacks(n, ids) {
+      __glGenObject(n, ids, 'createTransformFeedback', GL.transformFeedbacks
+        );
+    }
+
+  function _emscripten_glGenVertexArrays(n, arrays) {
+      __glGenObject(n, arrays, 'createVertexArray', GL.vaos
+        );
+    }
+
+  function _emscripten_glGenVertexArraysOES(n, arrays) {
+      __glGenObject(n, arrays, 'createVertexArray', GL.vaos
+        );
+    }
+
+  function _emscripten_glGenerateMipmap(x0) { GLctx['generateMipmap'](x0) }
+
+  function _emscripten_glGetActiveAttrib(program, index, bufSize, length, size, type, name) {
+      program = GL.programs[program];
+      var info = GLctx.getActiveAttrib(program, index);
+      if (!info) return; // If an error occurs, nothing will be written to length, size and type and name.
+  
+      var numBytesWrittenExclNull = (bufSize > 0 && name) ? stringToUTF8(info.name, name, bufSize) : 0;
+      if (length) HEAP32[((length)>>2)]=numBytesWrittenExclNull;
+      if (size) HEAP32[((size)>>2)]=info.size;
+      if (type) HEAP32[((type)>>2)]=info.type;
+    }
+
+  function _emscripten_glGetActiveUniform(program, index, bufSize, length, size, type, name) {
+      program = GL.programs[program];
+      var info = GLctx.getActiveUniform(program, index);
+      if (!info) return; // If an error occurs, nothing will be written to length, size, type and name.
+  
+      var numBytesWrittenExclNull = (bufSize > 0 && name) ? stringToUTF8(info.name, name, bufSize) : 0;
+      if (length) HEAP32[((length)>>2)]=numBytesWrittenExclNull;
+      if (size) HEAP32[((size)>>2)]=info.size;
+      if (type) HEAP32[((type)>>2)]=info.type;
+    }
+
+  function _emscripten_glGetActiveUniformBlockName(program, uniformBlockIndex, bufSize, length, uniformBlockName) {
+      program = GL.programs[program];
+  
+      var result = GLctx['getActiveUniformBlockName'](program, uniformBlockIndex);
+      if (!result) return; // If an error occurs, nothing will be written to uniformBlockName or length.
+      if (uniformBlockName && bufSize > 0) {
+        var numBytesWrittenExclNull = stringToUTF8(result, uniformBlockName, bufSize);
+        if (length) HEAP32[((length)>>2)]=numBytesWrittenExclNull;
+      } else {
+        if (length) HEAP32[((length)>>2)]=0;
+      }
+    }
+
+  function _emscripten_glGetActiveUniformBlockiv(program, uniformBlockIndex, pname, params) {
+      if (!params) {
+        // GLES2 specification does not specify how to behave if params is a null pointer. Since calling this function does not make sense
+        // if params == null, issue a GL error to notify user about it.
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+      program = GL.programs[program];
+  
+      switch(pname) {
+        case 0x8A41: /* GL_UNIFORM_BLOCK_NAME_LENGTH */
+          var name = GLctx['getActiveUniformBlockName'](program, uniformBlockIndex);
+          HEAP32[((params)>>2)]=name.length+1;
+          return;
+        default:
+          var result = GLctx['getActiveUniformBlockParameter'](program, uniformBlockIndex, pname);
+          if (!result) return; // If an error occurs, nothing will be written to params.
+          if (typeof result == 'number') {
+            HEAP32[((params)>>2)]=result;
+          } else {
+            for (var i = 0; i < result.length; i++) {
+              HEAP32[(((params)+(i*4))>>2)]=result[i];
+            }
+          }
+      }
+    }
+
+  function _emscripten_glGetActiveUniformsiv(program, uniformCount, uniformIndices, pname, params) {
+      if (!params) {
+        // GLES2 specification does not specify how to behave if params is a null pointer. Since calling this function does not make sense
+        // if params == null, issue a GL error to notify user about it.
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+      if (uniformCount > 0 && uniformIndices == 0) {
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+      program = GL.programs[program];
+      var ids = [];
+      for (var i = 0; i < uniformCount; i++) {
+        ids.push(HEAP32[(((uniformIndices)+(i*4))>>2)]);
+      }
+  
+      var result = GLctx['getActiveUniforms'](program, ids, pname);
+      if (!result) return; // GL spec: If an error is generated, nothing is written out to params.
+  
+      var len = result.length;
+      for (var i = 0; i < len; i++) {
+        HEAP32[(((params)+(i*4))>>2)]=result[i];
+      }
+    }
+
+  function _emscripten_glGetAttachedShaders(program, maxCount, count, shaders) {
+      var result = GLctx.getAttachedShaders(GL.programs[program]);
+      var len = result.length;
+      if (len > maxCount) {
+        len = maxCount;
+      }
+      HEAP32[((count)>>2)]=len;
+      for (var i = 0; i < len; ++i) {
+        var id = GL.shaders.indexOf(result[i]);
+        HEAP32[(((shaders)+(i*4))>>2)]=id;
+      }
+    }
+
+  function _emscripten_glGetAttribLocation(program, name) {
+      return GLctx.getAttribLocation(GL.programs[program], UTF8ToString(name));
+    }
+
+  
+  function emscriptenWebGLGet(name_, p, type) {
+      // Guard against user passing a null pointer.
+      // Note that GLES2 spec does not say anything about how passing a null pointer should be treated.
+      // Testing on desktop core GL 3, the application crashes on glGetIntegerv to a null pointer, but
+      // better to report an error instead of doing anything random.
+      if (!p) {
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+      var ret = undefined;
+      switch(name_) { // Handle a few trivial GLES values
+        case 0x8DFA: // GL_SHADER_COMPILER
+          ret = 1;
+          break;
+        case 0x8DF8: // GL_SHADER_BINARY_FORMATS
+          if (type != 0 && type != 1) {
+            GL.recordError(0x0500); // GL_INVALID_ENUM
+          }
+          return; // Do not write anything to the out pointer, since no binary formats are supported.
+        case 0x87FE: // GL_NUM_PROGRAM_BINARY_FORMATS
+        case 0x8DF9: // GL_NUM_SHADER_BINARY_FORMATS
+          ret = 0;
+          break;
+        case 0x86A2: // GL_NUM_COMPRESSED_TEXTURE_FORMATS
+          // WebGL doesn't have GL_NUM_COMPRESSED_TEXTURE_FORMATS (it's obsolete since GL_COMPRESSED_TEXTURE_FORMATS returns a JS array that can be queried for length),
+          // so implement it ourselves to allow C++ GLES2 code get the length.
+          var formats = GLctx.getParameter(0x86A3 /*GL_COMPRESSED_TEXTURE_FORMATS*/);
+          ret = formats ? formats.length : 0;
+          break;
+        case 0x821D: // GL_NUM_EXTENSIONS
+          if (GL.currentContext.version < 2) {
+            GL.recordError(0x0502 /* GL_INVALID_OPERATION */); // Calling GLES3/WebGL2 function with a GLES2/WebGL1 context
+            return;
+          }
+          var exts = GLctx.getSupportedExtensions();
+          if (exts === null) {
+            ret = 0;
+          } else {
+            ret = 2 * exts.length; // each extension is duplicated, first in unprefixed WebGL form, and then a second time with "GL_" prefix.
+          }
+          break;
+        case 0x821B: // GL_MAJOR_VERSION
+        case 0x821C: // GL_MINOR_VERSION
+          if (GL.currentContext.version < 2) {
+            GL.recordError(0x0500); // GL_INVALID_ENUM
+            return;
+          }
+          ret = name_ == 0x821B ? 3 : 0; // return version 3.0
+          break;
+      }
+  
+      if (ret === undefined) {
+        var result = GLctx.getParameter(name_);
+        switch (typeof(result)) {
+          case "number":
+            ret = result;
+            break;
+          case "boolean":
+            ret = result ? 1 : 0;
+            break;
+          case "string":
+            GL.recordError(0x0500); // GL_INVALID_ENUM
+            return;
+          case "object":
+            if (result === null) {
+              // null is a valid result for some (e.g., which buffer is bound - perhaps nothing is bound), but otherwise
+              // can mean an invalid name_, which we need to report as an error
+              switch(name_) {
+                case 0x8894: // ARRAY_BUFFER_BINDING
+                case 0x8B8D: // CURRENT_PROGRAM
+                case 0x8895: // ELEMENT_ARRAY_BUFFER_BINDING
+                case 0x8CA6: // FRAMEBUFFER_BINDING
+                case 0x8CA7: // RENDERBUFFER_BINDING
+                case 0x8069: // TEXTURE_BINDING_2D
+                case 0x85B5: // WebGL 2 GL_VERTEX_ARRAY_BINDING, or WebGL 1 extension OES_vertex_array_object GL_VERTEX_ARRAY_BINDING_OES
+                case 0x8919: // GL_SAMPLER_BINDING
+                case 0x8E25: // GL_TRANSFORM_FEEDBACK_BINDING
+                case 0x8514: { // TEXTURE_BINDING_CUBE_MAP
+                  ret = 0;
+                  break;
+                }
+                default: {
+                  GL.recordError(0x0500); // GL_INVALID_ENUM
+                  return;
+                }
+              }
+            } else if (result instanceof Float32Array ||
+                       result instanceof Uint32Array ||
+                       result instanceof Int32Array ||
+                       result instanceof Array) {
+              for (var i = 0; i < result.length; ++i) {
+                switch (type) {
+                  case 0: HEAP32[(((p)+(i*4))>>2)]=result[i]; break;
+                  case 2: HEAPF32[(((p)+(i*4))>>2)]=result[i]; break;
+                  case 4: HEAP8[(((p)+(i))>>0)]=result[i] ? 1 : 0; break;
+                }
+              }
+              return;
+            } else {
+              try {
+                ret = result.name | 0;
+              } catch(e) {
+                GL.recordError(0x0500); // GL_INVALID_ENUM
+                err('GL_INVALID_ENUM in glGet' + type + 'v: Unknown object returned from WebGL getParameter(' + name_ + ')! (error: ' + e + ')');
+                return;
+              }
+            }
+            break;
+          default:
+            GL.recordError(0x0500); // GL_INVALID_ENUM
+            err('GL_INVALID_ENUM in glGet' + type + 'v: Native code calling glGet' + type + 'v(' + name_ + ') and it returns ' + result + ' of type ' + typeof(result) + '!');
+            return;
+        }
+      }
+  
+      switch (type) {
+        case 1: (tempI64 = [ret>>>0,(tempDouble=ret,(+(Math_abs(tempDouble))) >= 1.0 ? (tempDouble > 0.0 ? ((Math_min((+(Math_floor((tempDouble)/4294967296.0))), 4294967295.0))|0)>>>0 : (~~((+(Math_ceil((tempDouble - +(((~~(tempDouble)))>>>0))/4294967296.0)))))>>>0) : 0)],HEAP32[((p)>>2)]=tempI64[0],HEAP32[(((p)+(4))>>2)]=tempI64[1]);    break;
+        case 0: HEAP32[((p)>>2)]=ret;    break;
+        case 2:   HEAPF32[((p)>>2)]=ret;  break;
+        case 4: HEAP8[((p)>>0)]=ret ? 1 : 0; break;
+      }
+    }function _emscripten_glGetBooleanv(name_, p) {
+      emscriptenWebGLGet(name_, p, 4);
+    }
+
+  function _emscripten_glGetBufferParameteri64v(target, value, data) {
+      if (!data) {
+        // GLES2 specification does not specify how to behave if data is a null pointer. Since calling this function does not make sense
+        // if data == null, issue a GL error to notify user about it.
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+      (tempI64 = [GLctx.getBufferParameter(target, value)>>>0,(tempDouble=GLctx.getBufferParameter(target, value),(+(Math_abs(tempDouble))) >= 1.0 ? (tempDouble > 0.0 ? ((Math_min((+(Math_floor((tempDouble)/4294967296.0))), 4294967295.0))|0)>>>0 : (~~((+(Math_ceil((tempDouble - +(((~~(tempDouble)))>>>0))/4294967296.0)))))>>>0) : 0)],HEAP32[((data)>>2)]=tempI64[0],HEAP32[(((data)+(4))>>2)]=tempI64[1]);
+    }
+
+  function _emscripten_glGetBufferParameteriv(target, value, data) {
+      if (!data) {
+        // GLES2 specification does not specify how to behave if data is a null pointer. Since calling this function does not make sense
+        // if data == null, issue a GL error to notify user about it.
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+      HEAP32[((data)>>2)]=GLctx.getBufferParameter(target, value);
+    }
+
+  function _emscripten_glGetBufferPointerv() {
+  err('missing function: emscripten_glGetBufferPointerv'); abort(-1);
+  }
+
+  function _emscripten_glGetError() {
+      var error = GLctx.getError() || GL.lastError;
+      GL.lastError = 0/*GL_NO_ERROR*/;
+      return error;
+    }
+
+  function _emscripten_glGetFloatv(name_, p) {
+      emscriptenWebGLGet(name_, p, 2);
+    }
+
+  function _emscripten_glGetFragDataLocation(program, name) {
+      return GLctx['getFragDataLocation'](GL.programs[program], UTF8ToString(name));
+    }
+
+  function _emscripten_glGetFramebufferAttachmentParameteriv(target, attachment, pname, params) {
+      var result = GLctx.getFramebufferAttachmentParameter(target, attachment, pname);
+      if (result instanceof WebGLRenderbuffer ||
+          result instanceof WebGLTexture) {
+        result = result.name | 0;
+      }
+      HEAP32[((params)>>2)]=result;
+    }
+
+  
+  function emscriptenWebGLGetIndexed(target, index, data, type) {
+      if (!data) {
+        // GLES2 specification does not specify how to behave if data is a null pointer. Since calling this function does not make sense
+        // if data == null, issue a GL error to notify user about it.
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+      var result = GLctx['getIndexedParameter'](target, index);
+      var ret;
+      switch (typeof result) {
+        case 'boolean':
+          ret = result ? 1 : 0;
+          break;
+        case 'number':
+          ret = result;
+          break;
+        case 'object':
+          if (result === null) {
+            switch (target) {
+              case 0x8C8F: // TRANSFORM_FEEDBACK_BUFFER_BINDING
+              case 0x8A28: // UNIFORM_BUFFER_BINDING
+                ret = 0;
+                break;
+              default: {
+                GL.recordError(0x0500); // GL_INVALID_ENUM
+                return;
+              }
+            }
+          } else if (result instanceof WebGLBuffer) {
+            ret = result.name | 0;
+          } else {
+            GL.recordError(0x0500); // GL_INVALID_ENUM
+            return;
+          }
+          break;
+        default:
+          GL.recordError(0x0500); // GL_INVALID_ENUM
+          return;
+      }
+  
+      switch (type) {
+        case 1: (tempI64 = [ret>>>0,(tempDouble=ret,(+(Math_abs(tempDouble))) >= 1.0 ? (tempDouble > 0.0 ? ((Math_min((+(Math_floor((tempDouble)/4294967296.0))), 4294967295.0))|0)>>>0 : (~~((+(Math_ceil((tempDouble - +(((~~(tempDouble)))>>>0))/4294967296.0)))))>>>0) : 0)],HEAP32[((data)>>2)]=tempI64[0],HEAP32[(((data)+(4))>>2)]=tempI64[1]); break;
+        case 0: HEAP32[((data)>>2)]=ret; break;
+        case 2: HEAPF32[((data)>>2)]=ret; break;
+        case 4: HEAP8[((data)>>0)]=ret ? 1 : 0; break;
+        default: throw 'internal emscriptenWebGLGetIndexed() error, bad type: ' + type;
+      }
+    }function _emscripten_glGetInteger64i_v(target, index, data) {
+      emscriptenWebGLGetIndexed(target, index, data, 1);
+    }
+
+  function _emscripten_glGetInteger64v(name_, p) {
+      emscriptenWebGLGet(name_, p, 1);
+    }
+
+  function _emscripten_glGetIntegeri_v(target, index, data) {
+      emscriptenWebGLGetIndexed(target, index, data, 0);
+    }
+
+  function _emscripten_glGetIntegerv(name_, p) {
+      emscriptenWebGLGet(name_, p, 0);
+    }
+
+  function _emscripten_glGetInternalformativ(target, internalformat, pname, bufSize, params) {
+      if (bufSize < 0) {
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+      if (!params) {
+        // GLES3 specification does not specify how to behave if values is a null pointer. Since calling this function does not make sense
+        // if values == null, issue a GL error to notify user about it.
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+      var ret = GLctx['getInternalformatParameter'](target, internalformat, pname);
+      if (ret === null) return;
+      for (var i = 0; i < ret.length && i < bufSize; ++i) {
+        HEAP32[(((params)+(i))>>2)]=ret[i];
+      }
+    }
+
+  function _emscripten_glGetProgramBinary(program, bufSize, length, binaryFormat, binary) {
+      GL.recordError(0x0502/*GL_INVALID_OPERATION*/);
+    }
+
+  function _emscripten_glGetProgramInfoLog(program, maxLength, length, infoLog) {
+      var log = GLctx.getProgramInfoLog(GL.programs[program]);
+      if (log === null) log = '(unknown error)';
+      var numBytesWrittenExclNull = (maxLength > 0 && infoLog) ? stringToUTF8(log, infoLog, maxLength) : 0;
+      if (length) HEAP32[((length)>>2)]=numBytesWrittenExclNull;
+    }
+
+  function _emscripten_glGetProgramiv(program, pname, p) {
+      if (!p) {
+        // GLES2 specification does not specify how to behave if p is a null pointer. Since calling this function does not make sense
+        // if p == null, issue a GL error to notify user about it.
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+  
+      if (program >= GL.counter) {
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+  
+      var ptable = GL.programInfos[program];
+      if (!ptable) {
+        GL.recordError(0x0502 /* GL_INVALID_OPERATION */);
+        return;
+      }
+  
+      if (pname == 0x8B84) { // GL_INFO_LOG_LENGTH
+        var log = GLctx.getProgramInfoLog(GL.programs[program]);
+        if (log === null) log = '(unknown error)';
+        HEAP32[((p)>>2)]=log.length + 1;
+      } else if (pname == 0x8B87 /* GL_ACTIVE_UNIFORM_MAX_LENGTH */) {
+        HEAP32[((p)>>2)]=ptable.maxUniformLength;
+      } else if (pname == 0x8B8A /* GL_ACTIVE_ATTRIBUTE_MAX_LENGTH */) {
+        if (ptable.maxAttributeLength == -1) {
+          program = GL.programs[program];
+          var numAttribs = GLctx.getProgramParameter(program, 0x8B89/*GL_ACTIVE_ATTRIBUTES*/);
+          ptable.maxAttributeLength = 0; // Spec says if there are no active attribs, 0 must be returned.
+          for (var i = 0; i < numAttribs; ++i) {
+            var activeAttrib = GLctx.getActiveAttrib(program, i);
+            ptable.maxAttributeLength = Math.max(ptable.maxAttributeLength, activeAttrib.name.length+1);
+          }
+        }
+        HEAP32[((p)>>2)]=ptable.maxAttributeLength;
+      } else if (pname == 0x8A35 /* GL_ACTIVE_UNIFORM_BLOCK_MAX_NAME_LENGTH */) {
+        if (ptable.maxUniformBlockNameLength == -1) {
+          program = GL.programs[program];
+          var numBlocks = GLctx.getProgramParameter(program, 0x8A36/*GL_ACTIVE_UNIFORM_BLOCKS*/);
+          ptable.maxUniformBlockNameLength = 0;
+          for (var i = 0; i < numBlocks; ++i) {
+            var activeBlockName = GLctx.getActiveUniformBlockName(program, i);
+            ptable.maxUniformBlockNameLength = Math.max(ptable.maxUniformBlockNameLength, activeBlockName.length+1);
+          }
+        }
+        HEAP32[((p)>>2)]=ptable.maxUniformBlockNameLength;
+      } else {
+        HEAP32[((p)>>2)]=GLctx.getProgramParameter(GL.programs[program], pname);
+      }
+    }
+
+  function _emscripten_glGetQueryObjecti64vEXT(id, pname, params) {
+      if (!params) {
+        // GLES2 specification does not specify how to behave if params is a null pointer. Since calling this function does not make sense
+        // if p == null, issue a GL error to notify user about it.
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+      var query = GL.timerQueriesEXT[id];
+      var param = GLctx.disjointTimerQueryExt['getQueryObjectEXT'](query, pname);
+      var ret;
+      if (typeof param == 'boolean') {
+        ret = param ? 1 : 0;
+      } else {
+        ret = param;
+      }
+      (tempI64 = [ret>>>0,(tempDouble=ret,(+(Math_abs(tempDouble))) >= 1.0 ? (tempDouble > 0.0 ? ((Math_min((+(Math_floor((tempDouble)/4294967296.0))), 4294967295.0))|0)>>>0 : (~~((+(Math_ceil((tempDouble - +(((~~(tempDouble)))>>>0))/4294967296.0)))))>>>0) : 0)],HEAP32[((params)>>2)]=tempI64[0],HEAP32[(((params)+(4))>>2)]=tempI64[1]);
+    }
+
+  function _emscripten_glGetQueryObjectivEXT(id, pname, params) {
+      if (!params) {
+        // GLES2 specification does not specify how to behave if params is a null pointer. Since calling this function does not make sense
+        // if p == null, issue a GL error to notify user about it.
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+      var query = GL.timerQueriesEXT[id];
+      var param = GLctx.disjointTimerQueryExt['getQueryObjectEXT'](query, pname);
+      var ret;
+      if (typeof param == 'boolean') {
+        ret = param ? 1 : 0;
+      } else {
+        ret = param;
+      }
+      HEAP32[((params)>>2)]=ret;
+    }
+
+  function _emscripten_glGetQueryObjectui64vEXT(id, pname, params) {
+      if (!params) {
+        // GLES2 specification does not specify how to behave if params is a null pointer. Since calling this function does not make sense
+        // if p == null, issue a GL error to notify user about it.
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+      var query = GL.timerQueriesEXT[id];
+      var param = GLctx.disjointTimerQueryExt['getQueryObjectEXT'](query, pname);
+      var ret;
+      if (typeof param == 'boolean') {
+        ret = param ? 1 : 0;
+      } else {
+        ret = param;
+      }
+      (tempI64 = [ret>>>0,(tempDouble=ret,(+(Math_abs(tempDouble))) >= 1.0 ? (tempDouble > 0.0 ? ((Math_min((+(Math_floor((tempDouble)/4294967296.0))), 4294967295.0))|0)>>>0 : (~~((+(Math_ceil((tempDouble - +(((~~(tempDouble)))>>>0))/4294967296.0)))))>>>0) : 0)],HEAP32[((params)>>2)]=tempI64[0],HEAP32[(((params)+(4))>>2)]=tempI64[1]);
+    }
+
+  function _emscripten_glGetQueryObjectuiv(id, pname, params) {
+      if (!params) {
+        // GLES2 specification does not specify how to behave if params is a null pointer. Since calling this function does not make sense
+        // if p == null, issue a GL error to notify user about it.
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+      var query = GL.queries[id];
+      var param = GLctx['getQueryParameter'](query, pname);
+      var ret;
+      if (typeof param == 'boolean') {
+        ret = param ? 1 : 0;
+      } else {
+        ret = param;
+      }
+      HEAP32[((params)>>2)]=ret;
+    }
+
+  function _emscripten_glGetQueryObjectuivEXT(id, pname, params) {
+      if (!params) {
+        // GLES2 specification does not specify how to behave if params is a null pointer. Since calling this function does not make sense
+        // if p == null, issue a GL error to notify user about it.
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+      var query = GL.timerQueriesEXT[id];
+      var param = GLctx.disjointTimerQueryExt['getQueryObjectEXT'](query, pname);
+      var ret;
+      if (typeof param == 'boolean') {
+        ret = param ? 1 : 0;
+      } else {
+        ret = param;
+      }
+      HEAP32[((params)>>2)]=ret;
+    }
+
+  function _emscripten_glGetQueryiv(target, pname, params) {
+      if (!params) {
+        // GLES2 specification does not specify how to behave if params is a null pointer. Since calling this function does not make sense
+        // if p == null, issue a GL error to notify user about it.
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+      HEAP32[((params)>>2)]=GLctx['getQuery'](target, pname);
+    }
+
+  function _emscripten_glGetQueryivEXT(target, pname, params) {
+      if (!params) {
+        // GLES2 specification does not specify how to behave if params is a null pointer. Since calling this function does not make sense
+        // if p == null, issue a GL error to notify user about it.
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+      HEAP32[((params)>>2)]=GLctx.disjointTimerQueryExt['getQueryEXT'](target, pname);
+    }
+
+  function _emscripten_glGetRenderbufferParameteriv(target, pname, params) {
+      if (!params) {
+        // GLES2 specification does not specify how to behave if params is a null pointer. Since calling this function does not make sense
+        // if params == null, issue a GL error to notify user about it.
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+      HEAP32[((params)>>2)]=GLctx.getRenderbufferParameter(target, pname);
+    }
+
+  function _emscripten_glGetSamplerParameterfv(sampler, pname, params) {
+      if (!params) {
+        // GLES3 specification does not specify how to behave if params is a null pointer. Since calling this function does not make sense
+        // if p == null, issue a GL error to notify user about it.
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+      sampler = GL.samplers[sampler];
+      HEAPF32[((params)>>2)]=GLctx['getSamplerParameter'](sampler, pname);
+    }
+
+  function _emscripten_glGetSamplerParameteriv(sampler, pname, params) {
+      if (!params) {
+        // GLES3 specification does not specify how to behave if params is a null pointer. Since calling this function does not make sense
+        // if p == null, issue a GL error to notify user about it.
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+      sampler = GL.samplers[sampler];
+      HEAP32[((params)>>2)]=GLctx['getSamplerParameter'](sampler, pname);
+    }
+
+  function _emscripten_glGetShaderInfoLog(shader, maxLength, length, infoLog) {
+      var log = GLctx.getShaderInfoLog(GL.shaders[shader]);
+      if (log === null) log = '(unknown error)';
+      var numBytesWrittenExclNull = (maxLength > 0 && infoLog) ? stringToUTF8(log, infoLog, maxLength) : 0;
+      if (length) HEAP32[((length)>>2)]=numBytesWrittenExclNull;
+    }
+
+  function _emscripten_glGetShaderPrecisionFormat(shaderType, precisionType, range, precision) {
+      var result = GLctx.getShaderPrecisionFormat(shaderType, precisionType);
+      HEAP32[((range)>>2)]=result.rangeMin;
+      HEAP32[(((range)+(4))>>2)]=result.rangeMax;
+      HEAP32[((precision)>>2)]=result.precision;
+    }
+
+  function _emscripten_glGetShaderSource(shader, bufSize, length, source) {
+      var result = GLctx.getShaderSource(GL.shaders[shader]);
+      if (!result) return; // If an error occurs, nothing will be written to length or source.
+      var numBytesWrittenExclNull = (bufSize > 0 && source) ? stringToUTF8(result, source, bufSize) : 0;
+      if (length) HEAP32[((length)>>2)]=numBytesWrittenExclNull;
+    }
+
+  function _emscripten_glGetShaderiv(shader, pname, p) {
+      if (!p) {
+        // GLES2 specification does not specify how to behave if p is a null pointer. Since calling this function does not make sense
+        // if p == null, issue a GL error to notify user about it.
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+      if (pname == 0x8B84) { // GL_INFO_LOG_LENGTH
+        var log = GLctx.getShaderInfoLog(GL.shaders[shader]);
+        if (log === null) log = '(unknown error)';
+        HEAP32[((p)>>2)]=log.length + 1;
+      } else if (pname == 0x8B88) { // GL_SHADER_SOURCE_LENGTH
+        var source = GLctx.getShaderSource(GL.shaders[shader]);
+        var sourceLength = (source === null || source.length == 0) ? 0 : source.length + 1;
+        HEAP32[((p)>>2)]=sourceLength;
+      } else {
+        HEAP32[((p)>>2)]=GLctx.getShaderParameter(GL.shaders[shader], pname);
+      }
+    }
+
+  
+  function stringToNewUTF8(jsString) {
+      var length = lengthBytesUTF8(jsString)+1;
+      var cString = _malloc(length);
+      stringToUTF8(jsString, cString, length);
+      return cString;
+    }function _emscripten_glGetString(name_) {
+      if (GL.stringCache[name_]) return GL.stringCache[name_];
+      var ret;
+      switch(name_) {
+        case 0x1F03 /* GL_EXTENSIONS */:
+          var exts = GLctx.getSupportedExtensions();
+          var gl_exts = [];
+          for (var i = 0; i < exts.length; ++i) {
+            gl_exts.push(exts[i]);
+            gl_exts.push("GL_" + exts[i]);
+          }
+          ret = stringToNewUTF8(gl_exts.join(' '));
+          break;
+        case 0x1F00 /* GL_VENDOR */:
+        case 0x1F01 /* GL_RENDERER */:
+        case 0x9245 /* UNMASKED_VENDOR_WEBGL */:
+        case 0x9246 /* UNMASKED_RENDERER_WEBGL */:
+          var s = GLctx.getParameter(name_);
+          if (!s) {
+            GL.recordError(0x0500/*GL_INVALID_ENUM*/);
+          }
+          ret = stringToNewUTF8(s);
+          break;
+  
+        case 0x1F02 /* GL_VERSION */:
+          var glVersion = GLctx.getParameter(GLctx.VERSION);
+          // return GLES version string corresponding to the version of the WebGL context
+          if (GL.currentContext.version >= 2) glVersion = 'OpenGL ES 3.0 (' + glVersion + ')';
+          else
+          {
+            glVersion = 'OpenGL ES 2.0 (' + glVersion + ')';
+          }
+          ret = stringToNewUTF8(glVersion);
+          break;
+        case 0x8B8C /* GL_SHADING_LANGUAGE_VERSION */:
+          var glslVersion = GLctx.getParameter(GLctx.SHADING_LANGUAGE_VERSION);
+          // extract the version number 'N.M' from the string 'WebGL GLSL ES N.M ...'
+          var ver_re = /^WebGL GLSL ES ([0-9]\.[0-9][0-9]?)(?:$| .*)/;
+          var ver_num = glslVersion.match(ver_re);
+          if (ver_num !== null) {
+            if (ver_num[1].length == 3) ver_num[1] = ver_num[1] + '0'; // ensure minor version has 2 digits
+            glslVersion = 'OpenGL ES GLSL ES ' + ver_num[1] + ' (' + glslVersion + ')';
+          }
+          ret = stringToNewUTF8(glslVersion);
+          break;
+        default:
+          GL.recordError(0x0500/*GL_INVALID_ENUM*/);
+          return 0;
+      }
+      GL.stringCache[name_] = ret;
+      return ret;
+    }
+
+  function _emscripten_glGetStringi(name, index) {
+      if (GL.currentContext.version < 2) {
+        GL.recordError(0x0502 /* GL_INVALID_OPERATION */); // Calling GLES3/WebGL2 function with a GLES2/WebGL1 context
+        return 0;
+      }
+      var stringiCache = GL.stringiCache[name];
+      if (stringiCache) {
+        if (index < 0 || index >= stringiCache.length) {
+          GL.recordError(0x0501/*GL_INVALID_VALUE*/);
+          return 0;
+        }
+        return stringiCache[index];
+      }
+      switch(name) {
+        case 0x1F03 /* GL_EXTENSIONS */:
+          var exts = GLctx.getSupportedExtensions();
+          var gl_exts = [];
+          for (var i = 0; i < exts.length; ++i) {
+            gl_exts.push(stringToNewUTF8(exts[i]));
+            // each extension is duplicated, first in unprefixed WebGL form, and then a second time with "GL_" prefix.
+            gl_exts.push(stringToNewUTF8('GL_' + exts[i]));
+          }
+          stringiCache = GL.stringiCache[name] = gl_exts;
+          if (index < 0 || index >= stringiCache.length) {
+            GL.recordError(0x0501/*GL_INVALID_VALUE*/);
+            return 0;
+          }
+          return stringiCache[index];
+        default:
+          GL.recordError(0x0500/*GL_INVALID_ENUM*/);
+          return 0;
+      }
+    }
+
+  function _emscripten_glGetSynciv(sync, pname, bufSize, length, values) {
+      if (bufSize < 0) {
+        // GLES3 specification does not specify how to behave if bufSize < 0, however in the spec wording for glGetInternalformativ, it does say that GL_INVALID_VALUE should be raised,
+        // so raise GL_INVALID_VALUE here as well.
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+      if (!values) {
+        // GLES3 specification does not specify how to behave if values is a null pointer. Since calling this function does not make sense
+        // if values == null, issue a GL error to notify user about it.
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+      var ret = GLctx.getSyncParameter(GL.syncs[sync], pname);
+      HEAP32[((length)>>2)]=ret;
+      if (ret !== null && length) HEAP32[((length)>>2)]=1; // Report a single value outputted.
+    }
+
+  function _emscripten_glGetTexParameterfv(target, pname, params) {
+      if (!params) {
+        // GLES2 specification does not specify how to behave if params is a null pointer. Since calling this function does not make sense
+        // if p == null, issue a GL error to notify user about it.
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+      HEAPF32[((params)>>2)]=GLctx.getTexParameter(target, pname);
+    }
+
+  function _emscripten_glGetTexParameteriv(target, pname, params) {
+      if (!params) {
+        // GLES2 specification does not specify how to behave if params is a null pointer. Since calling this function does not make sense
+        // if p == null, issue a GL error to notify user about it.
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+      HEAP32[((params)>>2)]=GLctx.getTexParameter(target, pname);
+    }
+
+  function _emscripten_glGetTransformFeedbackVarying(program, index, bufSize, length, size, type, name) {
+      program = GL.programs[program];
+      var info = GLctx['getTransformFeedbackVarying'](program, index);
+      if (!info) return; // If an error occurred, the return parameters length, size, type and name will be unmodified.
+  
+      if (name && bufSize > 0) {
+        var numBytesWrittenExclNull = stringToUTF8(info.name, name, bufSize);
+        if (length) HEAP32[((length)>>2)]=numBytesWrittenExclNull;
+      } else {
+        if (length) HEAP32[((length)>>2)]=0;
+      }
+  
+      if (size) HEAP32[((size)>>2)]=info.size;
+      if (type) HEAP32[((type)>>2)]=info.type;
+    }
+
+  function _emscripten_glGetUniformBlockIndex(program, uniformBlockName) {
+      return GLctx['getUniformBlockIndex'](GL.programs[program], UTF8ToString(uniformBlockName));
+    }
+
+  function _emscripten_glGetUniformIndices(program, uniformCount, uniformNames, uniformIndices) {
+      if (!uniformIndices) {
+        // GLES2 specification does not specify how to behave if uniformIndices is a null pointer. Since calling this function does not make sense
+        // if uniformIndices == null, issue a GL error to notify user about it.
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+      if (uniformCount > 0 && (uniformNames == 0 || uniformIndices == 0)) {
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+      program = GL.programs[program];
+      var names = [];
+      for (var i = 0; i < uniformCount; i++)
+        names.push(UTF8ToString(HEAP32[(((uniformNames)+(i*4))>>2)]));
+  
+      var result = GLctx['getUniformIndices'](program, names);
+      if (!result) return; // GL spec: If an error is generated, nothing is written out to uniformIndices.
+  
+      var len = result.length;
+      for (var i = 0; i < len; i++) {
+        HEAP32[(((uniformIndices)+(i*4))>>2)]=result[i];
+      }
+    }
+
+  function _emscripten_glGetUniformLocation(program, name) {
+      name = UTF8ToString(name);
+  
+      var arrayIndex = 0;
+      // If user passed an array accessor "[index]", parse the array index off the accessor.
+      if (name[name.length - 1] == ']') {
+        var leftBrace = name.lastIndexOf('[');
+        arrayIndex = name[leftBrace+1] != ']' ? parseInt(name.slice(leftBrace + 1)) : 0; // "index]", parseInt will ignore the ']' at the end; but treat "foo[]" as "foo[0]"
+        name = name.slice(0, leftBrace);
+      }
+  
+      var uniformInfo = GL.programInfos[program] && GL.programInfos[program].uniforms[name]; // returns pair [ dimension_of_uniform_array, uniform_location ]
+      if (uniformInfo && arrayIndex >= 0 && arrayIndex < uniformInfo[0]) { // Check if user asked for an out-of-bounds element, i.e. for 'vec4 colors[3];' user could ask for 'colors[10]' which should return -1.
+        return uniformInfo[1] + arrayIndex;
+      } else {
         return -1;
       }
-      HEAP32[((tp)>>2)]=(now/1000)|0; // seconds
-      HEAP32[(((tp)+(4))>>2)]=((now % 1000)*1000*1000)|0; // nanoseconds
-      return 0;
     }
 
   
-  function _dlopen(/* ... */) {
-      abort("To use dlopen, you need to use Emscripten's linking support, see https://github.com/emscripten-core/emscripten/wiki/Linking");
-    }function _dlclose() {
-  return _dlopen.apply(null, arguments)
-  }
-
-  function _dlerror() {
-  return _dlopen.apply(null, arguments)
-  }
-
-  function _dlsym() {
-  return _dlopen.apply(null, arguments)
-  }
-
-  
-  
-  
-  
-  function _emscripten_set_main_loop_timing(mode, value) {
-      Browser.mainLoop.timingMode = mode;
-      Browser.mainLoop.timingValue = value;
-  
-      if (!Browser.mainLoop.func) {
-        console.error('emscripten_set_main_loop_timing: Cannot set timing mode for main loop since a main loop does not exist! Call emscripten_set_main_loop first to set one up.');
-        return 1; // Return non-zero on failure, can't set timing mode when there is no main loop.
+  function emscriptenWebGLGetUniform(program, location, params, type) {
+      if (!params) {
+        // GLES2 specification does not specify how to behave if params is a null pointer. Since calling this function does not make sense
+        // if params == null, issue a GL error to notify user about it.
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
       }
-  
-      if (mode == 0 /*EM_TIMING_SETTIMEOUT*/) {
-        Browser.mainLoop.scheduler = function Browser_mainLoop_scheduler_setTimeout() {
-          var timeUntilNextTick = Math.max(0, Browser.mainLoop.tickStartTime + value - _emscripten_get_now())|0;
-          setTimeout(Browser.mainLoop.runner, timeUntilNextTick); // doing this each time means that on exception, we stop
-        };
-        Browser.mainLoop.method = 'timeout';
-      } else if (mode == 1 /*EM_TIMING_RAF*/) {
-        Browser.mainLoop.scheduler = function Browser_mainLoop_scheduler_rAF() {
-          Browser.requestAnimationFrame(Browser.mainLoop.runner);
-        };
-        Browser.mainLoop.method = 'rAF';
-      } else if (mode == 2 /*EM_TIMING_SETIMMEDIATE*/) {
-        if (typeof setImmediate === 'undefined') {
-          // Emulate setImmediate. (note: not a complete polyfill, we don't emulate clearImmediate() to keep code size to minimum, since not needed)
-          var setImmediates = [];
-          var emscriptenMainLoopMessageId = 'setimmediate';
-          var Browser_setImmediate_messageHandler = function(event) {
-            // When called in current thread or Worker, the main loop ID is structured slightly different to accommodate for --proxy-to-worker runtime listening to Worker events,
-            // so check for both cases.
-            if (event.data === emscriptenMainLoopMessageId || event.data.target === emscriptenMainLoopMessageId) {
-              event.stopPropagation();
-              setImmediates.shift()();
-            }
-          }
-          addEventListener("message", Browser_setImmediate_messageHandler, true);
-          setImmediate = function Browser_emulated_setImmediate(func) {
-            setImmediates.push(func);
-            if (ENVIRONMENT_IS_WORKER) {
-              if (Module['setImmediates'] === undefined) Module['setImmediates'] = [];
-              Module['setImmediates'].push(func);
-              postMessage({target: emscriptenMainLoopMessageId}); // In --proxy-to-worker, route the message via proxyClient.js
-            } else postMessage(emscriptenMainLoopMessageId, "*"); // On the main thread, can just send the message to itself.
-          }
+      var data = GLctx.getUniform(GL.programs[program], GL.uniforms[location]);
+      if (typeof data == 'number' || typeof data == 'boolean') {
+        switch (type) {
+          case 0: HEAP32[((params)>>2)]=data; break;
+          case 2: HEAPF32[((params)>>2)]=data; break;
+          default: throw 'internal emscriptenWebGLGetUniform() error, bad type: ' + type;
         }
-        Browser.mainLoop.scheduler = function Browser_mainLoop_scheduler_setImmediate() {
-          setImmediate(Browser.mainLoop.runner);
-        };
-        Browser.mainLoop.method = 'immediate';
-      }
-      return 0;
-    }function _emscripten_set_main_loop(func, fps, simulateInfiniteLoop, arg, noSetTiming) {
-      Module['noExitRuntime'] = true;
-  
-      assert(!Browser.mainLoop.func, 'emscripten_set_main_loop: there can only be one main loop function at once: call emscripten_cancel_main_loop to cancel the previous one before setting a new one with different parameters.');
-  
-      Browser.mainLoop.func = func;
-      Browser.mainLoop.arg = arg;
-  
-      var browserIterationFunc;
-      if (typeof arg !== 'undefined') {
-        browserIterationFunc = function() {
-          Module['dynCall_vi'](func, arg);
-        };
       } else {
-        browserIterationFunc = function() {
-          Module['dynCall_v'](func);
-        };
-      }
-  
-      var thisMainLoopId = Browser.mainLoop.currentlyRunningMainloop;
-  
-      Browser.mainLoop.runner = function Browser_mainLoop_runner() {
-        if (ABORT) return;
-        if (Browser.mainLoop.queue.length > 0) {
-          var start = Date.now();
-          var blocker = Browser.mainLoop.queue.shift();
-          blocker.func(blocker.arg);
-          if (Browser.mainLoop.remainingBlockers) {
-            var remaining = Browser.mainLoop.remainingBlockers;
-            var next = remaining%1 == 0 ? remaining-1 : Math.floor(remaining);
-            if (blocker.counted) {
-              Browser.mainLoop.remainingBlockers = next;
-            } else {
-              // not counted, but move the progress along a tiny bit
-              next = next + 0.5; // do not steal all the next one's progress
-              Browser.mainLoop.remainingBlockers = (8*remaining + next)/9;
-            }
+        for (var i = 0; i < data.length; i++) {
+          switch (type) {
+            case 0: HEAP32[(((params)+(i*4))>>2)]=data[i]; break;
+            case 2: HEAPF32[(((params)+(i*4))>>2)]=data[i]; break;
+            default: throw 'internal emscriptenWebGLGetUniform() error, bad type: ' + type;
           }
-          console.log('main loop blocker "' + blocker.name + '" took ' + (Date.now() - start) + ' ms'); //, left: ' + Browser.mainLoop.remainingBlockers);
-          Browser.mainLoop.updateStatus();
-  
-          // catches pause/resume main loop from blocker execution
-          if (thisMainLoopId < Browser.mainLoop.currentlyRunningMainloop) return;
-  
-          setTimeout(Browser.mainLoop.runner, 0);
-          return;
         }
+      }
+    }function _emscripten_glGetUniformfv(program, location, params) {
+      emscriptenWebGLGetUniform(program, location, params, 2);
+    }
+
+  function _emscripten_glGetUniformiv(program, location, params) {
+      emscriptenWebGLGetUniform(program, location, params, 0);
+    }
+
+  function _emscripten_glGetUniformuiv(program, location, params) {
+      emscriptenWebGLGetUniform(program, location, params, 0);
+    }
+
   
-        // catch pauses from non-main loop sources
-        if (thisMainLoopId < Browser.mainLoop.currentlyRunningMainloop) return;
-  
-        // Implement very basic swap interval control
-        Browser.mainLoop.currentFrameNumber = Browser.mainLoop.currentFrameNumber + 1 | 0;
-        if (Browser.mainLoop.timingMode == 1/*EM_TIMING_RAF*/ && Browser.mainLoop.timingValue > 1 && Browser.mainLoop.currentFrameNumber % Browser.mainLoop.timingValue != 0) {
-          // Not the scheduled time to render this frame - skip.
-          Browser.mainLoop.scheduler();
-          return;
-        } else if (Browser.mainLoop.timingMode == 0/*EM_TIMING_SETTIMEOUT*/) {
-          Browser.mainLoop.tickStartTime = _emscripten_get_now();
+  function emscriptenWebGLGetVertexAttrib(index, pname, params, type) {
+      if (!params) {
+        // GLES2 specification does not specify how to behave if params is a null pointer. Since calling this function does not make sense
+        // if params == null, issue a GL error to notify user about it.
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+      var data = GLctx.getVertexAttrib(index, pname);
+      if (pname == 0x889F/*VERTEX_ATTRIB_ARRAY_BUFFER_BINDING*/) {
+        HEAP32[((params)>>2)]=data["name"];
+      } else if (typeof data == 'number' || typeof data == 'boolean') {
+        switch (type) {
+          case 0: HEAP32[((params)>>2)]=data; break;
+          case 2: HEAPF32[((params)>>2)]=data; break;
+          case 5: HEAP32[((params)>>2)]=Math.fround(data); break;
+          default: throw 'internal emscriptenWebGLGetVertexAttrib() error, bad type: ' + type;
         }
-  
-        // Signal GL rendering layer that processing of a new frame is about to start. This helps it optimize
-        // VBO double-buffering and reduce GPU stalls.
-  
-  
-  
-        if (Browser.mainLoop.method === 'timeout' && Module.ctx) {
-          err('Looks like you are rendering without using requestAnimationFrame for the main loop. You should use 0 for the frame rate in emscripten_set_main_loop in order to use requestAnimationFrame, as that can greatly improve your frame rates!');
-          Browser.mainLoop.method = ''; // just warn once per call to set main loop
+      } else {
+        for (var i = 0; i < data.length; i++) {
+          switch (type) {
+            case 0: HEAP32[(((params)+(i*4))>>2)]=data[i]; break;
+            case 2: HEAPF32[(((params)+(i*4))>>2)]=data[i]; break;
+            case 5: HEAP32[(((params)+(i*4))>>2)]=Math.fround(data[i]); break;
+            default: throw 'internal emscriptenWebGLGetVertexAttrib() error, bad type: ' + type;
+          }
         }
-  
-        Browser.mainLoop.runIter(browserIterationFunc);
-  
-        checkStackCookie();
-  
-        // catch pauses from the main loop itself
-        if (thisMainLoopId < Browser.mainLoop.currentlyRunningMainloop) return;
-  
-        // Queue new audio data. This is important to be right after the main loop invocation, so that we will immediately be able
-        // to queue the newest produced audio samples.
-        // TODO: Consider adding pre- and post- rAF callbacks so that GL.newRenderingFrameStarted() and SDL.audio.queueNewAudioData()
-        //       do not need to be hardcoded into this function, but can be more generic.
-        if (typeof SDL === 'object' && SDL.audio && SDL.audio.queueNewAudioData) SDL.audio.queueNewAudioData();
-  
-        Browser.mainLoop.scheduler();
+      }
+    }function _emscripten_glGetVertexAttribIiv(index, pname, params) {
+      // N.B. This function may only be called if the vertex attribute was specified using the function glVertexAttribI4iv(),
+      // otherwise the results are undefined. (GLES3 spec 6.1.12)
+      emscriptenWebGLGetVertexAttrib(index, pname, params, 0);
+    }
+
+  function _emscripten_glGetVertexAttribIuiv(index, pname, params) {
+      // N.B. This function may only be called if the vertex attribute was specified using the function glVertexAttribI4iv(),
+      // otherwise the results are undefined. (GLES3 spec 6.1.12)
+      emscriptenWebGLGetVertexAttrib(index, pname, params, 0);
+    }
+
+  function _emscripten_glGetVertexAttribPointerv(index, pname, pointer) {
+      if (!pointer) {
+        // GLES2 specification does not specify how to behave if pointer is a null pointer. Since calling this function does not make sense
+        // if pointer == null, issue a GL error to notify user about it.
+        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
+        return;
+      }
+      HEAP32[((pointer)>>2)]=GLctx.getVertexAttribOffset(index, pname);
+    }
+
+  function _emscripten_glGetVertexAttribfv(index, pname, params) {
+      // N.B. This function may only be called if the vertex attribute was specified using the function glVertexAttrib*f(),
+      // otherwise the results are undefined. (GLES3 spec 6.1.12)
+      emscriptenWebGLGetVertexAttrib(index, pname, params, 2);
+    }
+
+  function _emscripten_glGetVertexAttribiv(index, pname, params) {
+      // N.B. This function may only be called if the vertex attribute was specified using the function glVertexAttrib*f(),
+      // otherwise the results are undefined. (GLES3 spec 6.1.12)
+      emscriptenWebGLGetVertexAttrib(index, pname, params, 5);
+    }
+
+  function _emscripten_glHint(x0, x1) { GLctx['hint'](x0, x1) }
+
+  function _emscripten_glInvalidateFramebuffer(target, numAttachments, attachments) {
+      var list = __tempFixedLengthArray[numAttachments];
+      for (var i = 0; i < numAttachments; i++) {
+        list[i] = HEAP32[(((attachments)+(i*4))>>2)];
       }
   
-      if (!noSetTiming) {
-        if (fps && fps > 0) _emscripten_set_main_loop_timing(0/*EM_TIMING_SETTIMEOUT*/, 1000.0 / fps);
-        else _emscripten_set_main_loop_timing(1/*EM_TIMING_RAF*/, 1); // Do rAF by rendering each frame (no decimating)
-  
-        Browser.mainLoop.scheduler();
+      GLctx['invalidateFramebuffer'](target, list);
+    }
+
+  function _emscripten_glInvalidateSubFramebuffer(target, numAttachments, attachments, x, y, width, height) {
+      var list = __tempFixedLengthArray[numAttachments];
+      for (var i = 0; i < numAttachments; i++) {
+        list[i] = HEAP32[(((attachments)+(i*4))>>2)];
       }
   
-      if (simulateInfiniteLoop) {
-        throw 'SimulateInfiniteLoop';
+      GLctx['invalidateSubFramebuffer'](target, list, x, y, width, height);
+    }
+
+  function _emscripten_glIsBuffer(buffer) {
+      var b = GL.buffers[buffer];
+      if (!b) return 0;
+      return GLctx.isBuffer(b);
+    }
+
+  function _emscripten_glIsEnabled(x0) { return GLctx['isEnabled'](x0) }
+
+  function _emscripten_glIsFramebuffer(framebuffer) {
+      var fb = GL.framebuffers[framebuffer];
+      if (!fb) return 0;
+      return GLctx.isFramebuffer(fb);
+    }
+
+  function _emscripten_glIsProgram(program) {
+      program = GL.programs[program];
+      if (!program) return 0;
+      return GLctx.isProgram(program);
+    }
+
+  function _emscripten_glIsQuery(id) {
+      var query = GL.queries[id];
+      if (!query) return 0;
+      return GLctx['isQuery'](query);
+    }
+
+  function _emscripten_glIsQueryEXT(id) {
+      var query = GL.timerQueriesEXT[id];
+      if (!query) return 0;
+      return GLctx.disjointTimerQueryExt['isQueryEXT'](query);
+    }
+
+  function _emscripten_glIsRenderbuffer(renderbuffer) {
+      var rb = GL.renderbuffers[renderbuffer];
+      if (!rb) return 0;
+      return GLctx.isRenderbuffer(rb);
+    }
+
+  function _emscripten_glIsSampler(id) {
+      var sampler = GL.samplers[id];
+      if (!sampler) return 0;
+      return GLctx['isSampler'](sampler);
+    }
+
+  function _emscripten_glIsShader(shader) {
+      var s = GL.shaders[shader];
+      if (!s) return 0;
+      return GLctx.isShader(s);
+    }
+
+  function _emscripten_glIsSync(sync) {
+      var sync = GL.syncs[sync];
+      if (!sync) return 0;
+      return GLctx.isSync(sync);
+    }
+
+  function _emscripten_glIsTexture(id) {
+      var texture = GL.textures[id];
+      if (!texture) return 0;
+      return GLctx.isTexture(texture);
+    }
+
+  function _emscripten_glIsTransformFeedback(id) {
+      return GLctx['isTransformFeedback'](GL.transformFeedbacks[id]);
+    }
+
+  function _emscripten_glIsVertexArray(array) {
+  
+      var vao = GL.vaos[array];
+      if (!vao) return 0;
+      return GLctx['isVertexArray'](vao);
+    }
+
+  function _emscripten_glIsVertexArrayOES(array) {
+  
+      var vao = GL.vaos[array];
+      if (!vao) return 0;
+      return GLctx['isVertexArray'](vao);
+    }
+
+  function _emscripten_glLineWidth(x0) { GLctx['lineWidth'](x0) }
+
+  function _emscripten_glLinkProgram(program) {
+      GLctx.linkProgram(GL.programs[program]);
+      GL.populateUniformTable(program);
+    }
+
+  function _emscripten_glMapBufferRange() {
+  err('missing function: emscripten_glMapBufferRange'); abort(-1);
+  }
+
+  function _emscripten_glPauseTransformFeedback() { GLctx['pauseTransformFeedback']() }
+
+  function _emscripten_glPixelStorei(pname, param) {
+      if (pname == 0x0cf5 /* GL_UNPACK_ALIGNMENT */) {
+        GL.unpackAlignment = param;
       }
-    }var Browser={mainLoop:{scheduler:null,method:"",currentlyRunningMainloop:0,func:null,arg:0,timingMode:0,timingValue:0,currentFrameNumber:0,queue:[],pause:function () {
+      GLctx.pixelStorei(pname, param);
+    }
+
+  function _emscripten_glPolygonOffset(x0, x1) { GLctx['polygonOffset'](x0, x1) }
+
+  function _emscripten_glProgramBinary(program, binaryFormat, binary, length) {
+      GL.recordError(0x0500/*GL_INVALID_ENUM*/);
+    }
+
+  function _emscripten_glProgramParameteri(program, pname, value) {
+      GL.recordError(0x0500/*GL_INVALID_ENUM*/);
+    }
+
+  function _emscripten_glQueryCounterEXT(id, target) {
+      GLctx.disjointTimerQueryExt['queryCounterEXT'](GL.timerQueriesEXT[id], target);
+    }
+
+  function _emscripten_glReadBuffer(x0) { GLctx['readBuffer'](x0) }
+
+  
+  
+  function __computeUnpackAlignedImageSize(width, height, sizePerPixel, alignment) {
+      function roundedToNextMultipleOf(x, y) {
+        return (x + y - 1) & -y;
+      }
+      var plainRowSize = width * sizePerPixel;
+      var alignedRowSize = roundedToNextMultipleOf(plainRowSize, alignment);
+      return height * alignedRowSize;
+    }
+  
+  var __colorChannelsInGlTextureFormat={6402:1,6403:1,6406:1,6407:3,6408:4,6409:1,6410:2,33319:2,33320:2,35904:3,35906:4,36244:1,36248:3,36249:4};
+  
+  var __sizeOfGlTextureElementType={5120:1,5121:1,5122:2,5123:2,5124:4,5125:4,5126:4,5131:2,32819:2,32820:2,33635:2,33640:4,34042:4,35899:4,35902:4,36193:2};function emscriptenWebGLGetTexPixelData(type, format, width, height, pixels, internalFormat) {
+      var sizePerPixel = __colorChannelsInGlTextureFormat[format] * __sizeOfGlTextureElementType[type];
+      if (!sizePerPixel) {
+        GL.recordError(0x0500); // GL_INVALID_ENUM
+        return;
+      }
+      var bytes = __computeUnpackAlignedImageSize(width, height, sizePerPixel, GL.unpackAlignment);
+      var end = pixels + bytes;
+      switch(type) {
+        case 0x1400 /* GL_BYTE */:
+          return HEAP8.subarray(pixels, end);
+        case 0x1401 /* GL_UNSIGNED_BYTE */:
+          return HEAPU8.subarray(pixels, end);
+        case 0x1402 /* GL_SHORT */:
+          return HEAP16.subarray(pixels>>1, end>>1);
+        case 0x1404 /* GL_INT */:
+          return HEAP32.subarray(pixels>>2, end>>2);
+        case 0x1406 /* GL_FLOAT */:
+          return HEAPF32.subarray(pixels>>2, end>>2);
+        case 0x1405 /* GL_UNSIGNED_INT */:
+        case 0x84FA /* GL_UNSIGNED_INT_24_8_WEBGL/GL_UNSIGNED_INT_24_8 */:
+        case 0x8C3E /* GL_UNSIGNED_INT_5_9_9_9_REV */:
+        case 0x8368 /* GL_UNSIGNED_INT_2_10_10_10_REV */:
+        case 0x8C3B /* GL_UNSIGNED_INT_10F_11F_11F_REV */:
+          return HEAPU32.subarray(pixels>>2, end>>2);
+        case 0x1403 /* GL_UNSIGNED_SHORT */:
+        case 0x8363 /* GL_UNSIGNED_SHORT_5_6_5 */:
+        case 0x8033 /* GL_UNSIGNED_SHORT_4_4_4_4 */:
+        case 0x8034 /* GL_UNSIGNED_SHORT_5_5_5_1 */:
+        case 0x8D61 /* GL_HALF_FLOAT_OES */:
+        case 0x140B /* GL_HALF_FLOAT */:
+          return HEAPU16.subarray(pixels>>1, end>>1);
+        default:
+          GL.recordError(0x0500); // GL_INVALID_ENUM
+      }
+    }
+  
+  function __heapObjectForWebGLType(type) {
+      switch(type) {
+        case 0x1400 /* GL_BYTE */:
+          return HEAP8;
+        case 0x1401 /* GL_UNSIGNED_BYTE */:
+          return HEAPU8;
+        case 0x1402 /* GL_SHORT */:
+          return HEAP16;
+        case 0x1403 /* GL_UNSIGNED_SHORT */:
+        case 0x8363 /* GL_UNSIGNED_SHORT_5_6_5 */:
+        case 0x8033 /* GL_UNSIGNED_SHORT_4_4_4_4 */:
+        case 0x8034 /* GL_UNSIGNED_SHORT_5_5_5_1 */:
+        case 0x8D61 /* GL_HALF_FLOAT_OES */:
+        case 0x140B /* GL_HALF_FLOAT */:
+          return HEAPU16;
+        case 0x1404 /* GL_INT */:
+          return HEAP32;
+        case 0x1405 /* GL_UNSIGNED_INT */:
+        case 0x84FA /* GL_UNSIGNED_INT_24_8_WEBGL/GL_UNSIGNED_INT_24_8 */:
+        case 0x8C3E /* GL_UNSIGNED_INT_5_9_9_9_REV */:
+        case 0x8368 /* GL_UNSIGNED_INT_2_10_10_10_REV */:
+        case 0x8C3B /* GL_UNSIGNED_INT_10F_11F_11F_REV */:
+        case 0x84FA /* GL_UNSIGNED_INT_24_8 */:
+          return HEAPU32;
+        case 0x1406 /* GL_FLOAT */:
+          return HEAPF32;
+      }
+    }
+  
+  var __heapAccessShiftForWebGLType={5122:1,5123:1,5124:2,5125:2,5126:2,5131:1,32819:1,32820:1,33635:1,33640:2,34042:2,35899:2,35902:2,36193:1};function _emscripten_glReadPixels(x, y, width, height, format, type, pixels) {
+      if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
+        if (GLctx.currentPixelPackBufferBinding) {
+          GLctx.readPixels(x, y, width, height, format, type, pixels);
+        } else {
+          GLctx.readPixels(x, y, width, height, format, type, __heapObjectForWebGLType(type), pixels >> (__heapAccessShiftForWebGLType[type]|0));
+        }
+        return;
+      }
+      var pixelData = emscriptenWebGLGetTexPixelData(type, format, width, height, pixels, format);
+      if (!pixelData) {
+        GL.recordError(0x0500/*GL_INVALID_ENUM*/);
+        return;
+      }
+      GLctx.readPixels(x, y, width, height, format, type, pixelData);
+    }
+
+  function _emscripten_glReleaseShaderCompiler() {
+      // NOP (as allowed by GLES 2.0 spec)
+    }
+
+  function _emscripten_glRenderbufferStorage(x0, x1, x2, x3) { GLctx['renderbufferStorage'](x0, x1, x2, x3) }
+
+  function _emscripten_glRenderbufferStorageMultisample(x0, x1, x2, x3, x4) { GLctx['renderbufferStorageMultisample'](x0, x1, x2, x3, x4) }
+
+  function _emscripten_glResumeTransformFeedback() { GLctx['resumeTransformFeedback']() }
+
+  function _emscripten_glSampleCoverage(value, invert) {
+      GLctx.sampleCoverage(value, !!invert);
+    }
+
+  function _emscripten_glSamplerParameterf(sampler, pname, param) {
+      GLctx['samplerParameterf'](GL.samplers[sampler], pname, param);
+    }
+
+  function _emscripten_glSamplerParameterfv(sampler, pname, params) {
+      var param = HEAPF32[((params)>>2)];
+      GLctx['samplerParameterf'](GL.samplers[sampler], pname, param);
+    }
+
+  function _emscripten_glSamplerParameteri(sampler, pname, param) {
+      GLctx['samplerParameteri'](GL.samplers[sampler], pname, param);
+    }
+
+  function _emscripten_glSamplerParameteriv(sampler, pname, params) {
+      var param = HEAP32[((params)>>2)];
+      GLctx['samplerParameteri'](GL.samplers[sampler], pname, param);
+    }
+
+  function _emscripten_glScissor(x0, x1, x2, x3) { GLctx['scissor'](x0, x1, x2, x3) }
+
+  function _emscripten_glShaderBinary() {
+      GL.recordError(0x0500/*GL_INVALID_ENUM*/);
+    }
+
+  function _emscripten_glShaderSource(shader, count, string, length) {
+      var source = GL.getSource(shader, count, string, length);
+  
+  
+      GLctx.shaderSource(GL.shaders[shader], source);
+    }
+
+  function _emscripten_glStencilFunc(x0, x1, x2) { GLctx['stencilFunc'](x0, x1, x2) }
+
+  function _emscripten_glStencilFuncSeparate(x0, x1, x2, x3) { GLctx['stencilFuncSeparate'](x0, x1, x2, x3) }
+
+  function _emscripten_glStencilMask(x0) { GLctx['stencilMask'](x0) }
+
+  function _emscripten_glStencilMaskSeparate(x0, x1) { GLctx['stencilMaskSeparate'](x0, x1) }
+
+  function _emscripten_glStencilOp(x0, x1, x2) { GLctx['stencilOp'](x0, x1, x2) }
+
+  function _emscripten_glStencilOpSeparate(x0, x1, x2, x3) { GLctx['stencilOpSeparate'](x0, x1, x2, x3) }
+
+  function _emscripten_glTexImage2D(target, level, internalFormat, width, height, border, format, type, pixels) {
+      if (GL.currentContext.supportsWebGL2EntryPoints) {
+        // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
+        if (GLctx.currentPixelUnpackBufferBinding) {
+          GLctx.texImage2D(target, level, internalFormat, width, height, border, format, type, pixels);
+        } else if (pixels != 0) {
+          GLctx.texImage2D(target, level, internalFormat, width, height, border, format, type, __heapObjectForWebGLType(type), pixels >> (__heapAccessShiftForWebGLType[type]|0));
+        } else {
+          GLctx.texImage2D(target, level, internalFormat, width, height, border, format, type, null);
+        }
+        return;
+      }
+      GLctx.texImage2D(target, level, internalFormat, width, height, border, format, type, pixels ? emscriptenWebGLGetTexPixelData(type, format, width, height, pixels, internalFormat) : null);
+    }
+
+  function _emscripten_glTexImage3D(target, level, internalFormat, width, height, depth, border, format, type, pixels) {
+      if (GLctx.currentPixelUnpackBufferBinding) {
+        GLctx['texImage3D'](target, level, internalFormat, width, height, depth, border, format, type, pixels);
+      } else if (pixels != 0) {
+        GLctx['texImage3D'](target, level, internalFormat, width, height, depth, border, format, type, __heapObjectForWebGLType(type), pixels >> (__heapAccessShiftForWebGLType[type]|0));
+      } else {
+        GLctx['texImage3D'](target, level, internalFormat, width, height, depth, border, format, type, null);
+      }
+    }
+
+  function _emscripten_glTexParameterf(x0, x1, x2) { GLctx['texParameterf'](x0, x1, x2) }
+
+  function _emscripten_glTexParameterfv(target, pname, params) {
+      var param = HEAPF32[((params)>>2)];
+      GLctx.texParameterf(target, pname, param);
+    }
+
+  function _emscripten_glTexParameteri(x0, x1, x2) { GLctx['texParameteri'](x0, x1, x2) }
+
+  function _emscripten_glTexParameteriv(target, pname, params) {
+      var param = HEAP32[((params)>>2)];
+      GLctx.texParameteri(target, pname, param);
+    }
+
+  function _emscripten_glTexStorage2D(x0, x1, x2, x3, x4) { GLctx['texStorage2D'](x0, x1, x2, x3, x4) }
+
+  function _emscripten_glTexStorage3D(x0, x1, x2, x3, x4, x5) { GLctx['texStorage3D'](x0, x1, x2, x3, x4, x5) }
+
+  function _emscripten_glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels) {
+      if (GL.currentContext.supportsWebGL2EntryPoints) {
+        // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
+        if (GLctx.currentPixelUnpackBufferBinding) {
+          GLctx.texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
+        } else if (pixels != 0) {
+          GLctx.texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, __heapObjectForWebGLType(type), pixels >> (__heapAccessShiftForWebGLType[type]|0));
+        } else {
+          GLctx.texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, null);
+        }
+        return;
+      }
+      var pixelData = null;
+      if (pixels) pixelData = emscriptenWebGLGetTexPixelData(type, format, width, height, pixels, 0);
+      GLctx.texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixelData);
+    }
+
+  function _emscripten_glTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, pixels) {
+      if (GLctx.currentPixelUnpackBufferBinding) {
+        GLctx['texSubImage3D'](target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, pixels);
+      } else if (pixels != 0) {
+        GLctx['texSubImage3D'](target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, __heapObjectForWebGLType(type), pixels >> (__heapAccessShiftForWebGLType[type]|0));
+      } else {
+        GLctx['texSubImage3D'](target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, null);
+      }
+    }
+
+  function _emscripten_glTransformFeedbackVaryings(program, count, varyings, bufferMode) {
+      program = GL.programs[program];
+      var vars = [];
+      for (var i = 0; i < count; i++)
+        vars.push(UTF8ToString(HEAP32[(((varyings)+(i*4))>>2)]));
+  
+      GLctx['transformFeedbackVaryings'](program, vars, bufferMode);
+    }
+
+  function _emscripten_glUniform1f(location, v0) {
+      GLctx.uniform1f(GL.uniforms[location], v0);
+    }
+
+  function _emscripten_glUniform1fv(location, count, value) {
+  
+      if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
+        GLctx.uniform1fv(GL.uniforms[location], HEAPF32, value>>2, count);
+        return;
+      }
+  
+      if (count <= GL.MINI_TEMP_BUFFER_SIZE) {
+        // avoid allocation when uploading few enough uniforms
+        var view = GL.miniTempBufferViews[count-1];
+        for (var i = 0; i < count; ++i) {
+          view[i] = HEAPF32[(((value)+(4*i))>>2)];
+        }
+      } else
+      {
+        var view = HEAPF32.subarray((value)>>2,(value+count*4)>>2);
+      }
+      GLctx.uniform1fv(GL.uniforms[location], view);
+    }
+
+  function _emscripten_glUniform1i(location, v0) {
+      GLctx.uniform1i(GL.uniforms[location], v0);
+    }
+
+  function _emscripten_glUniform1iv(location, count, value) {
+  
+      if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
+        GLctx.uniform1iv(GL.uniforms[location], HEAP32, value>>2, count);
+        return;
+      }
+  
+      GLctx.uniform1iv(GL.uniforms[location], HEAP32.subarray((value)>>2,(value+count*4)>>2));
+    }
+
+  function _emscripten_glUniform1ui(location, v0) {
+      GLctx.uniform1ui(GL.uniforms[location], v0);
+    }
+
+  function _emscripten_glUniform1uiv(location, count, value) {
+      if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
+        GLctx.uniform1uiv(GL.uniforms[location], HEAPU32, value>>2, count);
+      } else {
+        GLctx.uniform1uiv(GL.uniforms[location], HEAPU32.subarray((value)>>2,(value+count*4)>>2));
+      }
+    }
+
+  function _emscripten_glUniform2f(location, v0, v1) {
+      GLctx.uniform2f(GL.uniforms[location], v0, v1);
+    }
+
+  function _emscripten_glUniform2fv(location, count, value) {
+  
+      if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
+        GLctx.uniform2fv(GL.uniforms[location], HEAPF32, value>>2, count*2);
+        return;
+      }
+  
+      if (2*count <= GL.MINI_TEMP_BUFFER_SIZE) {
+        // avoid allocation when uploading few enough uniforms
+        var view = GL.miniTempBufferViews[2*count-1];
+        for (var i = 0; i < 2*count; i += 2) {
+          view[i] = HEAPF32[(((value)+(4*i))>>2)];
+          view[i+1] = HEAPF32[(((value)+(4*i+4))>>2)];
+        }
+      } else
+      {
+        var view = HEAPF32.subarray((value)>>2,(value+count*8)>>2);
+      }
+      GLctx.uniform2fv(GL.uniforms[location], view);
+    }
+
+  function _emscripten_glUniform2i(location, v0, v1) {
+      GLctx.uniform2i(GL.uniforms[location], v0, v1);
+    }
+
+  function _emscripten_glUniform2iv(location, count, value) {
+  
+      if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
+        GLctx.uniform2iv(GL.uniforms[location], HEAP32, value>>2, count*2);
+        return;
+      }
+  
+      GLctx.uniform2iv(GL.uniforms[location], HEAP32.subarray((value)>>2,(value+count*8)>>2));
+    }
+
+  function _emscripten_glUniform2ui(location, v0, v1) {
+      GLctx.uniform2ui(GL.uniforms[location], v0, v1);
+    }
+
+  function _emscripten_glUniform2uiv(location, count, value) {
+      if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
+        GLctx.uniform2uiv(GL.uniforms[location], HEAPU32, value>>2, count*2);
+      } else {
+        GLctx.uniform2uiv(GL.uniforms[location], HEAPU32.subarray((value)>>2,(value+count*8)>>2));
+      }
+    }
+
+  function _emscripten_glUniform3f(location, v0, v1, v2) {
+      GLctx.uniform3f(GL.uniforms[location], v0, v1, v2);
+    }
+
+  function _emscripten_glUniform3fv(location, count, value) {
+  
+      if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
+        GLctx.uniform3fv(GL.uniforms[location], HEAPF32, value>>2, count*3);
+        return;
+      }
+  
+      if (3*count <= GL.MINI_TEMP_BUFFER_SIZE) {
+        // avoid allocation when uploading few enough uniforms
+        var view = GL.miniTempBufferViews[3*count-1];
+        for (var i = 0; i < 3*count; i += 3) {
+          view[i] = HEAPF32[(((value)+(4*i))>>2)];
+          view[i+1] = HEAPF32[(((value)+(4*i+4))>>2)];
+          view[i+2] = HEAPF32[(((value)+(4*i+8))>>2)];
+        }
+      } else
+      {
+        var view = HEAPF32.subarray((value)>>2,(value+count*12)>>2);
+      }
+      GLctx.uniform3fv(GL.uniforms[location], view);
+    }
+
+  function _emscripten_glUniform3i(location, v0, v1, v2) {
+      GLctx.uniform3i(GL.uniforms[location], v0, v1, v2);
+    }
+
+  function _emscripten_glUniform3iv(location, count, value) {
+  
+      if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
+        GLctx.uniform3iv(GL.uniforms[location], HEAP32, value>>2, count*3);
+        return;
+      }
+  
+      GLctx.uniform3iv(GL.uniforms[location], HEAP32.subarray((value)>>2,(value+count*12)>>2));
+    }
+
+  function _emscripten_glUniform3ui(location, v0, v1, v2) {
+      GLctx.uniform3ui(GL.uniforms[location], v0, v1, v2);
+    }
+
+  function _emscripten_glUniform3uiv(location, count, value) {
+      if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
+        GLctx.uniform3uiv(GL.uniforms[location], HEAPU32, value>>2, count*3);
+      } else {
+        GLctx.uniform3uiv(GL.uniforms[location], HEAPU32.subarray((value)>>2,(value+count*12)>>2));
+      }
+    }
+
+  function _emscripten_glUniform4f(location, v0, v1, v2, v3) {
+      GLctx.uniform4f(GL.uniforms[location], v0, v1, v2, v3);
+    }
+
+  function _emscripten_glUniform4fv(location, count, value) {
+  
+      if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
+        GLctx.uniform4fv(GL.uniforms[location], HEAPF32, value>>2, count*4);
+        return;
+      }
+  
+      if (4*count <= GL.MINI_TEMP_BUFFER_SIZE) {
+        // avoid allocation when uploading few enough uniforms
+        var view = GL.miniTempBufferViews[4*count-1];
+        for (var i = 0; i < 4*count; i += 4) {
+          view[i] = HEAPF32[(((value)+(4*i))>>2)];
+          view[i+1] = HEAPF32[(((value)+(4*i+4))>>2)];
+          view[i+2] = HEAPF32[(((value)+(4*i+8))>>2)];
+          view[i+3] = HEAPF32[(((value)+(4*i+12))>>2)];
+        }
+      } else
+      {
+        var view = HEAPF32.subarray((value)>>2,(value+count*16)>>2);
+      }
+      GLctx.uniform4fv(GL.uniforms[location], view);
+    }
+
+  function _emscripten_glUniform4i(location, v0, v1, v2, v3) {
+      GLctx.uniform4i(GL.uniforms[location], v0, v1, v2, v3);
+    }
+
+  function _emscripten_glUniform4iv(location, count, value) {
+  
+      if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
+        GLctx.uniform4iv(GL.uniforms[location], HEAP32, value>>2, count*4);
+        return;
+      }
+  
+      GLctx.uniform4iv(GL.uniforms[location], HEAP32.subarray((value)>>2,(value+count*16)>>2));
+    }
+
+  function _emscripten_glUniform4ui(location, v0, v1, v2, v3) {
+      GLctx.uniform4ui(GL.uniforms[location], v0, v1, v2, v3);
+    }
+
+  function _emscripten_glUniform4uiv(location, count, value) {
+      if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
+        GLctx.uniform4uiv(GL.uniforms[location], HEAPU32, value>>2, count*4);
+      } else {
+        GLctx.uniform4uiv(GL.uniforms[location], HEAPU32.subarray((value)>>2,(value+count*16)>>2));
+      }
+    }
+
+  function _emscripten_glUniformBlockBinding(program, uniformBlockIndex, uniformBlockBinding) {
+      program = GL.programs[program];
+  
+      GLctx['uniformBlockBinding'](program, uniformBlockIndex, uniformBlockBinding);
+    }
+
+  function _emscripten_glUniformMatrix2fv(location, count, transpose, value) {
+  
+      if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
+        GLctx.uniformMatrix2fv(GL.uniforms[location], !!transpose, HEAPF32, value>>2, count*4);
+        return;
+      }
+  
+      if (4*count <= GL.MINI_TEMP_BUFFER_SIZE) {
+        // avoid allocation when uploading few enough uniforms
+        var view = GL.miniTempBufferViews[4*count-1];
+        for (var i = 0; i < 4*count; i += 4) {
+          view[i] = HEAPF32[(((value)+(4*i))>>2)];
+          view[i+1] = HEAPF32[(((value)+(4*i+4))>>2)];
+          view[i+2] = HEAPF32[(((value)+(4*i+8))>>2)];
+          view[i+3] = HEAPF32[(((value)+(4*i+12))>>2)];
+        }
+      } else
+      {
+        var view = HEAPF32.subarray((value)>>2,(value+count*16)>>2);
+      }
+      GLctx.uniformMatrix2fv(GL.uniforms[location], !!transpose, view);
+    }
+
+  function _emscripten_glUniformMatrix2x3fv(location, count, transpose, value) {
+      if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
+        GLctx.uniformMatrix2x3fv(GL.uniforms[location], !!transpose, HEAPF32, value>>2, count*6);
+      } else {
+        GLctx.uniformMatrix2x3fv(GL.uniforms[location], !!transpose, HEAPF32.subarray((value)>>2,(value+count*24)>>2));
+      }
+    }
+
+  function _emscripten_glUniformMatrix2x4fv(location, count, transpose, value) {
+      if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
+        GLctx.uniformMatrix2x4fv(GL.uniforms[location], !!transpose, HEAPF32, value>>2, count*8);
+      } else {
+        GLctx.uniformMatrix2x4fv(GL.uniforms[location], !!transpose, HEAPF32.subarray((value)>>2,(value+count*32)>>2));
+      }
+    }
+
+  function _emscripten_glUniformMatrix3fv(location, count, transpose, value) {
+  
+      if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
+        GLctx.uniformMatrix3fv(GL.uniforms[location], !!transpose, HEAPF32, value>>2, count*9);
+        return;
+      }
+  
+      if (9*count <= GL.MINI_TEMP_BUFFER_SIZE) {
+        // avoid allocation when uploading few enough uniforms
+        var view = GL.miniTempBufferViews[9*count-1];
+        for (var i = 0; i < 9*count; i += 9) {
+          view[i] = HEAPF32[(((value)+(4*i))>>2)];
+          view[i+1] = HEAPF32[(((value)+(4*i+4))>>2)];
+          view[i+2] = HEAPF32[(((value)+(4*i+8))>>2)];
+          view[i+3] = HEAPF32[(((value)+(4*i+12))>>2)];
+          view[i+4] = HEAPF32[(((value)+(4*i+16))>>2)];
+          view[i+5] = HEAPF32[(((value)+(4*i+20))>>2)];
+          view[i+6] = HEAPF32[(((value)+(4*i+24))>>2)];
+          view[i+7] = HEAPF32[(((value)+(4*i+28))>>2)];
+          view[i+8] = HEAPF32[(((value)+(4*i+32))>>2)];
+        }
+      } else
+      {
+        var view = HEAPF32.subarray((value)>>2,(value+count*36)>>2);
+      }
+      GLctx.uniformMatrix3fv(GL.uniforms[location], !!transpose, view);
+    }
+
+  function _emscripten_glUniformMatrix3x2fv(location, count, transpose, value) {
+      if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
+        GLctx.uniformMatrix3x2fv(GL.uniforms[location], !!transpose, HEAPF32, value>>2, count*6);
+      } else {
+        GLctx.uniformMatrix3x2fv(GL.uniforms[location], !!transpose, HEAPF32.subarray((value)>>2,(value+count*24)>>2));
+      }
+    }
+
+  function _emscripten_glUniformMatrix3x4fv(location, count, transpose, value) {
+      if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
+        GLctx.uniformMatrix3x4fv(GL.uniforms[location], !!transpose, HEAPF32, value>>2, count*12);
+      } else {
+        GLctx.uniformMatrix3x4fv(GL.uniforms[location], !!transpose, HEAPF32.subarray((value)>>2,(value+count*48)>>2));
+      }
+    }
+
+  function _emscripten_glUniformMatrix4fv(location, count, transpose, value) {
+  
+      if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
+        GLctx.uniformMatrix4fv(GL.uniforms[location], !!transpose, HEAPF32, value>>2, count*16);
+        return;
+      }
+  
+      if (16*count <= GL.MINI_TEMP_BUFFER_SIZE) {
+        // avoid allocation when uploading few enough uniforms
+        var view = GL.miniTempBufferViews[16*count-1];
+        for (var i = 0; i < 16*count; i += 16) {
+          view[i] = HEAPF32[(((value)+(4*i))>>2)];
+          view[i+1] = HEAPF32[(((value)+(4*i+4))>>2)];
+          view[i+2] = HEAPF32[(((value)+(4*i+8))>>2)];
+          view[i+3] = HEAPF32[(((value)+(4*i+12))>>2)];
+          view[i+4] = HEAPF32[(((value)+(4*i+16))>>2)];
+          view[i+5] = HEAPF32[(((value)+(4*i+20))>>2)];
+          view[i+6] = HEAPF32[(((value)+(4*i+24))>>2)];
+          view[i+7] = HEAPF32[(((value)+(4*i+28))>>2)];
+          view[i+8] = HEAPF32[(((value)+(4*i+32))>>2)];
+          view[i+9] = HEAPF32[(((value)+(4*i+36))>>2)];
+          view[i+10] = HEAPF32[(((value)+(4*i+40))>>2)];
+          view[i+11] = HEAPF32[(((value)+(4*i+44))>>2)];
+          view[i+12] = HEAPF32[(((value)+(4*i+48))>>2)];
+          view[i+13] = HEAPF32[(((value)+(4*i+52))>>2)];
+          view[i+14] = HEAPF32[(((value)+(4*i+56))>>2)];
+          view[i+15] = HEAPF32[(((value)+(4*i+60))>>2)];
+        }
+      } else
+      {
+        var view = HEAPF32.subarray((value)>>2,(value+count*64)>>2);
+      }
+      GLctx.uniformMatrix4fv(GL.uniforms[location], !!transpose, view);
+    }
+
+  function _emscripten_glUniformMatrix4x2fv(location, count, transpose, value) {
+      if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
+        GLctx.uniformMatrix4x2fv(GL.uniforms[location], !!transpose, HEAPF32, value>>2, count*8);
+      } else {
+        GLctx.uniformMatrix4x2fv(GL.uniforms[location], !!transpose, HEAPF32.subarray((value)>>2,(value+count*32)>>2));
+      }
+    }
+
+  function _emscripten_glUniformMatrix4x3fv(location, count, transpose, value) {
+      if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
+        GLctx.uniformMatrix4x3fv(GL.uniforms[location], !!transpose, HEAPF32, value>>2, count*12);
+      } else {
+        GLctx.uniformMatrix4x3fv(GL.uniforms[location], !!transpose, HEAPF32.subarray((value)>>2,(value+count*48)>>2));
+      }
+    }
+
+  function _emscripten_glUnmapBuffer() {
+  err('missing function: emscripten_glUnmapBuffer'); abort(-1);
+  }
+
+  function _emscripten_glUseProgram(program) {
+      GLctx.useProgram(GL.programs[program]);
+    }
+
+  function _emscripten_glValidateProgram(program) {
+      GLctx.validateProgram(GL.programs[program]);
+    }
+
+  function _emscripten_glVertexAttrib1f(x0, x1) { GLctx['vertexAttrib1f'](x0, x1) }
+
+  function _emscripten_glVertexAttrib1fv(index, v) {
+  
+      GLctx.vertexAttrib1f(index, HEAPF32[v>>2]);
+    }
+
+  function _emscripten_glVertexAttrib2f(x0, x1, x2) { GLctx['vertexAttrib2f'](x0, x1, x2) }
+
+  function _emscripten_glVertexAttrib2fv(index, v) {
+  
+      GLctx.vertexAttrib2f(index, HEAPF32[v>>2], HEAPF32[v+4>>2]);
+    }
+
+  function _emscripten_glVertexAttrib3f(x0, x1, x2, x3) { GLctx['vertexAttrib3f'](x0, x1, x2, x3) }
+
+  function _emscripten_glVertexAttrib3fv(index, v) {
+  
+      GLctx.vertexAttrib3f(index, HEAPF32[v>>2], HEAPF32[v+4>>2], HEAPF32[v+8>>2]);
+    }
+
+  function _emscripten_glVertexAttrib4f(x0, x1, x2, x3, x4) { GLctx['vertexAttrib4f'](x0, x1, x2, x3, x4) }
+
+  function _emscripten_glVertexAttrib4fv(index, v) {
+  
+      GLctx.vertexAttrib4f(index, HEAPF32[v>>2], HEAPF32[v+4>>2], HEAPF32[v+8>>2], HEAPF32[v+12>>2]);
+    }
+
+  function _emscripten_glVertexAttribDivisor(index, divisor) {
+      GLctx['vertexAttribDivisor'](index, divisor);
+    }
+
+  function _emscripten_glVertexAttribDivisorANGLE(index, divisor) {
+      GLctx['vertexAttribDivisor'](index, divisor);
+    }
+
+  function _emscripten_glVertexAttribDivisorARB(index, divisor) {
+      GLctx['vertexAttribDivisor'](index, divisor);
+    }
+
+  function _emscripten_glVertexAttribDivisorEXT(index, divisor) {
+      GLctx['vertexAttribDivisor'](index, divisor);
+    }
+
+  function _emscripten_glVertexAttribDivisorNV(index, divisor) {
+      GLctx['vertexAttribDivisor'](index, divisor);
+    }
+
+  function _emscripten_glVertexAttribI4i(x0, x1, x2, x3, x4) { GLctx['vertexAttribI4i'](x0, x1, x2, x3, x4) }
+
+  function _emscripten_glVertexAttribI4iv(index, v) {
+      GLctx.vertexAttribI4i(index, HEAP32[v>>2], HEAP32[v+4>>2], HEAP32[v+8>>2], HEAP32[v+12>>2]);
+    }
+
+  function _emscripten_glVertexAttribI4ui(x0, x1, x2, x3, x4) { GLctx['vertexAttribI4ui'](x0, x1, x2, x3, x4) }
+
+  function _emscripten_glVertexAttribI4uiv(index, v) {
+      GLctx.vertexAttribI4ui(index, HEAPU32[v>>2], HEAPU32[v+4>>2], HEAPU32[v+8>>2], HEAPU32[v+12>>2]);
+    }
+
+  function _emscripten_glVertexAttribIPointer(index, size, type, stride, ptr) {
+      GLctx['vertexAttribIPointer'](index, size, type, stride, ptr);
+    }
+
+  function _emscripten_glVertexAttribPointer(index, size, type, normalized, stride, ptr) {
+      GLctx.vertexAttribPointer(index, size, type, !!normalized, stride, ptr);
+    }
+
+  function _emscripten_glViewport(x0, x1, x2, x3) { GLctx['viewport'](x0, x1, x2, x3) }
+
+  function _emscripten_glWaitSync(sync, flags, timeoutLo, timeoutHi) {
+      // See WebGL2 vs GLES3 difference on GL_TIMEOUT_IGNORED above (https://www.khronos.org/registry/webgl/specs/latest/2.0/#5.15)
+      timeoutLo = timeoutLo >>> 0;
+      timeoutHi = timeoutHi >>> 0;
+      var timeout = (timeoutLo == 0xFFFFFFFF && timeoutHi == 0xFFFFFFFF) ? -1 : makeBigInt(timeoutLo, timeoutHi, true);
+      GLctx.waitSync(GL.syncs[sync], flags, timeout);
+    }
+
+  
+  
+  
+  var Browser={mainLoop:{scheduler:null,method:"",currentlyRunningMainloop:0,func:null,arg:0,timingMode:0,timingValue:0,currentFrameNumber:0,queue:[],pause:function () {
           Browser.mainLoop.scheduler = null;
           Browser.mainLoop.currentlyRunningMainloop++; // Incrementing this signals the previous main loop that it's now become old, and it must return.
         },resume:function () {
@@ -5413,7 +7655,7 @@ function copyTempDouble(ptr) {
           var contextAttributes = {
             antialias: false,
             alpha: false,
-            majorVersion: 1,
+            majorVersion: (typeof WebGL2RenderingContext !== 'undefined') ? 2 : 1,
           };
   
           if (webGLContextAttributes) {
@@ -5821,3121 +8063,978 @@ function copyTempDouble(ptr) {
         var handle = Browser.nextWgetRequestHandle;
         Browser.nextWgetRequestHandle++;
         return handle;
-      }};var EGL={errorCode:12288,defaultDisplayInitialized:false,currentContext:0,currentReadSurface:0,currentDrawSurface:0,contextAttributes:{alpha:false,depth:false,stencil:false,antialias:false},stringCache:{},setErrorCode:function (code) {
-        EGL.errorCode = code;
-      },chooseConfig:function (display, attribList, config, config_size, numConfigs) {
-        if (display != 62000 /* Magic ID for Emscripten 'default display' */) {
-          EGL.setErrorCode(0x3008 /* EGL_BAD_DISPLAY */);
-          return 0;
-        }
+      }};function _emscripten_set_main_loop_timing(mode, value) {
+      Browser.mainLoop.timingMode = mode;
+      Browser.mainLoop.timingValue = value;
   
-        if (attribList) {
-          // read attribList if it is non-null
-          for(;;) {
-            var param = HEAP32[((attribList)>>2)];
-            if (param == 0x3021 /*EGL_ALPHA_SIZE*/) {
-              var alphaSize = HEAP32[(((attribList)+(4))>>2)];
-              EGL.contextAttributes.alpha = (alphaSize > 0);
-            } else if (param == 0x3025 /*EGL_DEPTH_SIZE*/) {
-              var depthSize = HEAP32[(((attribList)+(4))>>2)];
-              EGL.contextAttributes.depth = (depthSize > 0);
-            } else if (param == 0x3026 /*EGL_STENCIL_SIZE*/) {
-              var stencilSize = HEAP32[(((attribList)+(4))>>2)];
-              EGL.contextAttributes.stencil = (stencilSize > 0);
-            } else if (param == 0x3031 /*EGL_SAMPLES*/) {
-              var samples = HEAP32[(((attribList)+(4))>>2)];
-              EGL.contextAttributes.antialias = (samples > 0);
-            } else if (param == 0x3032 /*EGL_SAMPLE_BUFFERS*/) {
-              var samples = HEAP32[(((attribList)+(4))>>2)];
-              EGL.contextAttributes.antialias = (samples == 1);
-            } else if (param == 0x3100 /*EGL_CONTEXT_PRIORITY_LEVEL_IMG*/) {
-              var requestedPriority = HEAP32[(((attribList)+(4))>>2)];
-              EGL.contextAttributes.lowLatency = (requestedPriority != 0x3103 /*EGL_CONTEXT_PRIORITY_LOW_IMG*/);
-            } else if (param == 0x3038 /*EGL_NONE*/) {
-                break;
-            }
-            attribList += 8;
-          }
-        }
-  
-        if ((!config || !config_size) && !numConfigs) {
-          EGL.setErrorCode(0x300C /* EGL_BAD_PARAMETER */);
-          return 0;
-        }
-        if (numConfigs) {
-          HEAP32[((numConfigs)>>2)]=1; // Total number of supported configs: 1.
-        }
-        if (config && config_size > 0) {
-          HEAP32[((config)>>2)]=62002;
-        }
-  
-        EGL.setErrorCode(0x3000 /* EGL_SUCCESS */);
-        return 1;
-      }};function _eglBindAPI(api) {
-      if (api == 0x30A0 /* EGL_OPENGL_ES_API */) {
-        EGL.setErrorCode(0x3000 /* EGL_SUCCESS */);
-        return 1;
-      } else { // if (api == 0x30A1 /* EGL_OPENVG_API */ || api == 0x30A2 /* EGL_OPENGL_API */) {
-        EGL.setErrorCode(0x300C /* EGL_BAD_PARAMETER */);
-        return 0;
+      if (!Browser.mainLoop.func) {
+        console.error('emscripten_set_main_loop_timing: Cannot set timing mode for main loop since a main loop does not exist! Call emscripten_set_main_loop first to set one up.');
+        return 1; // Return non-zero on failure, can't set timing mode when there is no main loop.
       }
-    }
-
-  function _eglChooseConfig(display, attrib_list, configs, config_size, numConfigs) {
-      return EGL.chooseConfig(display, attrib_list, configs, config_size, numConfigs);
-    }
-
   
-  var GL={counter:1,lastError:0,buffers:[],mappedBuffers:{},programs:[],framebuffers:[],renderbuffers:[],textures:[],uniforms:[],shaders:[],vaos:[],contexts:{},currentContext:null,offscreenCanvases:{},timerQueriesEXT:[],programInfos:{},stringCache:{},unpackAlignment:4,init:function () {
-        GL.miniTempBuffer = new Float32Array(GL.MINI_TEMP_BUFFER_SIZE);
-        for (var i = 0; i < GL.MINI_TEMP_BUFFER_SIZE; i++) {
-          GL.miniTempBufferViews[i] = GL.miniTempBuffer.subarray(0, i+1);
-        }
-      },recordError:function recordError(errorCode) {
-        if (!GL.lastError) {
-          GL.lastError = errorCode;
-        }
-      },getNewId:function (table) {
-        var ret = GL.counter++;
-        for (var i = table.length; i < ret; i++) {
-          table[i] = null;
-        }
-        return ret;
-      },MINI_TEMP_BUFFER_SIZE:256,miniTempBuffer:null,miniTempBufferViews:[0],getSource:function (shader, count, string, length) {
-        var source = '';
-        for (var i = 0; i < count; ++i) {
-          var len = length ? HEAP32[(((length)+(i*4))>>2)] : -1;
-          source += UTF8ToString(HEAP32[(((string)+(i*4))>>2)], len < 0 ? undefined : len);
-        }
-        return source;
-      },createContext:function (canvas, webGLContextAttributes) {
-  
-  
-  
-  
-        var ctx = 
-          (canvas.getContext("webgl", webGLContextAttributes) || canvas.getContext("experimental-webgl", webGLContextAttributes));
-  
-  
-        return ctx ? GL.registerContext(ctx, webGLContextAttributes) : 0;
-      },registerContext:function (ctx, webGLContextAttributes) {
-        var handle = _malloc(8); // Make space on the heap to store GL context attributes that need to be accessible as shared between threads.
-        var context = {
-          handle: handle,
-          attributes: webGLContextAttributes,
-          version: webGLContextAttributes.majorVersion,
-          GLctx: ctx
+      if (mode == 0 /*EM_TIMING_SETTIMEOUT*/) {
+        Browser.mainLoop.scheduler = function Browser_mainLoop_scheduler_setTimeout() {
+          var timeUntilNextTick = Math.max(0, Browser.mainLoop.tickStartTime + value - _emscripten_get_now())|0;
+          setTimeout(Browser.mainLoop.runner, timeUntilNextTick); // doing this each time means that on exception, we stop
         };
-  
-  
-  
-        // Store the created context object so that we can access the context given a canvas without having to pass the parameters again.
-        if (ctx.canvas) ctx.canvas.GLctxObject = context;
-        GL.contexts[handle] = context;
-        if (typeof webGLContextAttributes.enableExtensionsByDefault === 'undefined' || webGLContextAttributes.enableExtensionsByDefault) {
-          GL.initExtensions(context);
-        }
-  
-  
-  
-  
-        return handle;
-      },makeContextCurrent:function (contextHandle) {
-  
-        GL.currentContext = GL.contexts[contextHandle]; // Active Emscripten GL layer context object.
-        Module.ctx = GLctx = GL.currentContext && GL.currentContext.GLctx; // Active WebGL context object.
-        return !(contextHandle && !GLctx);
-      },getContext:function (contextHandle) {
-        return GL.contexts[contextHandle];
-      },deleteContext:function (contextHandle) {
-        if (GL.currentContext === GL.contexts[contextHandle]) GL.currentContext = null;
-        if (typeof JSEvents === 'object') JSEvents.removeAllHandlersOnTarget(GL.contexts[contextHandle].GLctx.canvas); // Release all JS event handlers on the DOM element that the GL context is associated with since the context is now deleted.
-        if (GL.contexts[contextHandle] && GL.contexts[contextHandle].GLctx.canvas) GL.contexts[contextHandle].GLctx.canvas.GLctxObject = undefined; // Make sure the canvas object no longer refers to the context object so there are no GC surprises.
-        _free(GL.contexts[contextHandle]);
-        GL.contexts[contextHandle] = null;
-      },acquireInstancedArraysExtension:function (ctx) {
-        // Extension available in WebGL 1 from Firefox 26 and Google Chrome 30 onwards. Core feature in WebGL 2.
-        var ext = ctx.getExtension('ANGLE_instanced_arrays');
-        if (ext) {
-          ctx['vertexAttribDivisor'] = function(index, divisor) { ext['vertexAttribDivisorANGLE'](index, divisor); };
-          ctx['drawArraysInstanced'] = function(mode, first, count, primcount) { ext['drawArraysInstancedANGLE'](mode, first, count, primcount); };
-          ctx['drawElementsInstanced'] = function(mode, count, type, indices, primcount) { ext['drawElementsInstancedANGLE'](mode, count, type, indices, primcount); };
-        }
-      },acquireVertexArrayObjectExtension:function (ctx) {
-        // Extension available in WebGL 1 from Firefox 25 and WebKit 536.28/desktop Safari 6.0.3 onwards. Core feature in WebGL 2.
-        var ext = ctx.getExtension('OES_vertex_array_object');
-        if (ext) {
-          ctx['createVertexArray'] = function() { return ext['createVertexArrayOES'](); };
-          ctx['deleteVertexArray'] = function(vao) { ext['deleteVertexArrayOES'](vao); };
-          ctx['bindVertexArray'] = function(vao) { ext['bindVertexArrayOES'](vao); };
-          ctx['isVertexArray'] = function(vao) { return ext['isVertexArrayOES'](vao); };
-        }
-      },acquireDrawBuffersExtension:function (ctx) {
-        // Extension available in WebGL 1 from Firefox 28 onwards. Core feature in WebGL 2.
-        var ext = ctx.getExtension('WEBGL_draw_buffers');
-        if (ext) {
-          ctx['drawBuffers'] = function(n, bufs) { ext['drawBuffersWEBGL'](n, bufs); };
-        }
-      },initExtensions:function (context) {
-        // If this function is called without a specific context object, init the extensions of the currently active context.
-        if (!context) context = GL.currentContext;
-  
-        if (context.initExtensionsDone) return;
-        context.initExtensionsDone = true;
-  
-        var GLctx = context.GLctx;
-  
-        // Detect the presence of a few extensions manually, this GL interop layer itself will need to know if they exist.
-  
-        if (context.version < 2) {
-          GL.acquireInstancedArraysExtension(GLctx);
-          GL.acquireVertexArrayObjectExtension(GLctx);
-          GL.acquireDrawBuffersExtension(GLctx);
-        }
-  
-        GLctx.disjointTimerQueryExt = GLctx.getExtension("EXT_disjoint_timer_query");
-  
-        // These are the 'safe' feature-enabling extensions that don't add any performance impact related to e.g. debugging, and
-        // should be enabled by default so that client GLES2/GL code will not need to go through extra hoops to get its stuff working.
-        // As new extensions are ratified at http://www.khronos.org/registry/webgl/extensions/ , feel free to add your new extensions
-        // here, as long as they don't produce a performance impact for users that might not be using those extensions.
-        // E.g. debugging-related extensions should probably be off by default.
-        var automaticallyEnabledExtensions = [ // Khronos ratified WebGL extensions ordered by number (no debug extensions):
-                                               "OES_texture_float", "OES_texture_half_float", "OES_standard_derivatives",
-                                               "OES_vertex_array_object", "WEBGL_compressed_texture_s3tc", "WEBGL_depth_texture",
-                                               "OES_element_index_uint", "EXT_texture_filter_anisotropic", "EXT_frag_depth",
-                                               "WEBGL_draw_buffers", "ANGLE_instanced_arrays", "OES_texture_float_linear",
-                                               "OES_texture_half_float_linear", "EXT_blend_minmax", "EXT_shader_texture_lod",
-                                               // Community approved WebGL extensions ordered by number:
-                                               "WEBGL_compressed_texture_pvrtc", "EXT_color_buffer_half_float", "WEBGL_color_buffer_float",
-                                               "EXT_sRGB", "WEBGL_compressed_texture_etc1", "EXT_disjoint_timer_query",
-                                               "WEBGL_compressed_texture_etc", "WEBGL_compressed_texture_astc", "EXT_color_buffer_float",
-                                               "WEBGL_compressed_texture_s3tc_srgb", "EXT_disjoint_timer_query_webgl2"];
-  
-        function shouldEnableAutomatically(extension) {
-          var ret = false;
-          automaticallyEnabledExtensions.forEach(function(include) {
-            if (extension.indexOf(include) != -1) {
-              ret = true;
-            }
-          });
-          return ret;
-        }
-  
-        var exts = GLctx.getSupportedExtensions();
-        if (exts && exts.length > 0) {
-          GLctx.getSupportedExtensions().forEach(function(ext) {
-            if (automaticallyEnabledExtensions.indexOf(ext) != -1) {
-              GLctx.getExtension(ext); // Calling .getExtension enables that extension permanently, no need to store the return value to be enabled.
-            }
-          });
-        }
-      },populateUniformTable:function (program) {
-        var p = GL.programs[program];
-        var ptable = GL.programInfos[program] = {
-          uniforms: {},
-          maxUniformLength: 0, // This is eagerly computed below, since we already enumerate all uniforms anyway.
-          maxAttributeLength: -1, // This is lazily computed and cached, computed when/if first asked, "-1" meaning not computed yet.
-          maxUniformBlockNameLength: -1 // Lazily computed as well
+        Browser.mainLoop.method = 'timeout';
+      } else if (mode == 1 /*EM_TIMING_RAF*/) {
+        Browser.mainLoop.scheduler = function Browser_mainLoop_scheduler_rAF() {
+          Browser.requestAnimationFrame(Browser.mainLoop.runner);
         };
-  
-        var utable = ptable.uniforms;
-        // A program's uniform table maps the string name of an uniform to an integer location of that uniform.
-        // The global GL.uniforms map maps integer locations to WebGLUniformLocations.
-        var numUniforms = GLctx.getProgramParameter(p, 0x8B86/*GL_ACTIVE_UNIFORMS*/);
-        for (var i = 0; i < numUniforms; ++i) {
-          var u = GLctx.getActiveUniform(p, i);
-  
-          var name = u.name;
-          ptable.maxUniformLength = Math.max(ptable.maxUniformLength, name.length+1);
-  
-          // If we are dealing with an array, e.g. vec4 foo[3], strip off the array index part to canonicalize that "foo", "foo[]",
-          // and "foo[0]" will mean the same. Loop below will populate foo[1] and foo[2].
-          if (name.slice(-1) == ']') {
-            name = name.slice(0, name.lastIndexOf('['));
-          }
-  
-          // Optimize memory usage slightly: If we have an array of uniforms, e.g. 'vec3 colors[3];', then
-          // only store the string 'colors' in utable, and 'colors[0]', 'colors[1]' and 'colors[2]' will be parsed as 'colors'+i.
-          // Note that for the GL.uniforms table, we still need to fetch the all WebGLUniformLocations for all the indices.
-          var loc = GLctx.getUniformLocation(p, name);
-          if (loc) {
-            var id = GL.getNewId(GL.uniforms);
-            utable[name] = [u.size, id];
-            GL.uniforms[id] = loc;
-  
-            for (var j = 1; j < u.size; ++j) {
-              var n = name + '['+j+']';
-              loc = GLctx.getUniformLocation(p, n);
-              id = GL.getNewId(GL.uniforms);
-  
-              GL.uniforms[id] = loc;
+        Browser.mainLoop.method = 'rAF';
+      } else if (mode == 2 /*EM_TIMING_SETIMMEDIATE*/) {
+        if (typeof setImmediate === 'undefined') {
+          // Emulate setImmediate. (note: not a complete polyfill, we don't emulate clearImmediate() to keep code size to minimum, since not needed)
+          var setImmediates = [];
+          var emscriptenMainLoopMessageId = 'setimmediate';
+          var Browser_setImmediate_messageHandler = function(event) {
+            // When called in current thread or Worker, the main loop ID is structured slightly different to accommodate for --proxy-to-worker runtime listening to Worker events,
+            // so check for both cases.
+            if (event.data === emscriptenMainLoopMessageId || event.data.target === emscriptenMainLoopMessageId) {
+              event.stopPropagation();
+              setImmediates.shift()();
             }
           }
-        }
-      }};function _eglCreateContext(display, config, hmm, contextAttribs) {
-      if (display != 62000 /* Magic ID for Emscripten 'default display' */) {
-        EGL.setErrorCode(0x3008 /* EGL_BAD_DISPLAY */);
-        return 0;
-      }
-  
-      // EGL 1.4 spec says default EGL_CONTEXT_CLIENT_VERSION is GLES1, but this is not supported by Emscripten.
-      // So user must pass EGL_CONTEXT_CLIENT_VERSION == 2 to initialize EGL.
-      var glesContextVersion = 1;
-      for(;;) {
-        var param = HEAP32[((contextAttribs)>>2)];
-        if (param == 0x3098 /*EGL_CONTEXT_CLIENT_VERSION*/) {
-          glesContextVersion = HEAP32[(((contextAttribs)+(4))>>2)];
-        } else if (param == 0x3038 /*EGL_NONE*/) {
-          break;
-        } else {
-          /* EGL1.4 specifies only EGL_CONTEXT_CLIENT_VERSION as supported attribute */
-          EGL.setErrorCode(0x3004 /*EGL_BAD_ATTRIBUTE*/);
-          return 0;
-        }
-        contextAttribs += 8;
-      }
-      if (glesContextVersion != 2) {
-        EGL.setErrorCode(0x3005 /* EGL_BAD_CONFIG */);
-        return 0; /* EGL_NO_CONTEXT */
-      }
-  
-      EGL.contextAttributes.majorVersion = glesContextVersion - 1; // WebGL 1 is GLES 2, WebGL2 is GLES3
-      EGL.contextAttributes.minorVersion = 0;
-  
-      EGL.context = GL.createContext(Module['canvas'], EGL.contextAttributes);
-  
-      if (EGL.context != 0) {
-        EGL.setErrorCode(0x3000 /* EGL_SUCCESS */);
-  
-        // Run callbacks so that GL emulation works
-        GL.makeContextCurrent(EGL.context);
-        Module.useWebGL = true;
-        Browser.moduleContextCreatedCallbacks.forEach(function(callback) { callback() });
-  
-        // Note: This function only creates a context, but it shall not make it active.
-        GL.makeContextCurrent(null);
-        return 62004; // Magic ID for Emscripten EGLContext
-      } else {
-        EGL.setErrorCode(0x3009 /* EGL_BAD_MATCH */); // By the EGL 1.4 spec, an implementation that does not support GLES2 (WebGL in this case), this error code is set.
-        return 0; /* EGL_NO_CONTEXT */
-      }
-    }
-
-  function _eglCreateWindowSurface(display, config, win, attrib_list) {
-      if (display != 62000 /* Magic ID for Emscripten 'default display' */) {
-        EGL.setErrorCode(0x3008 /* EGL_BAD_DISPLAY */);
-        return 0;
-      }
-      if (config != 62002 /* Magic ID for the only EGLConfig supported by Emscripten */) {
-        EGL.setErrorCode(0x3005 /* EGL_BAD_CONFIG */);
-        return 0;
-      }
-      // TODO: Examine attrib_list! Parameters that can be present there are:
-      // - EGL_RENDER_BUFFER (must be EGL_BACK_BUFFER)
-      // - EGL_VG_COLORSPACE (can't be set)
-      // - EGL_VG_ALPHA_FORMAT (can't be set)
-      EGL.setErrorCode(0x3000 /* EGL_SUCCESS */);
-      return 62006; /* Magic ID for Emscripten 'default surface' */
-    }
-
-  function _eglDestroyContext(display, context) {
-      if (display != 62000 /* Magic ID for Emscripten 'default display' */) {
-        EGL.setErrorCode(0x3008 /* EGL_BAD_DISPLAY */);
-        return 0;
-      }
-      if (context != 62004 /* Magic ID for Emscripten EGLContext */) {
-        EGL.setErrorCode(0x3006 /* EGL_BAD_CONTEXT */);
-        return 0;
-      }
-  
-      GL.deleteContext(EGL.context);
-      EGL.setErrorCode(0x3000 /* EGL_SUCCESS */);
-      if (EGL.currentContext == context) {
-        EGL.currentContext = 0;
-      }
-      return 1 /* EGL_TRUE */;
-    }
-
-  function _eglDestroySurface(display, surface) {
-      if (display != 62000 /* Magic ID for Emscripten 'default display' */) {
-        EGL.setErrorCode(0x3008 /* EGL_BAD_DISPLAY */);
-        return 0;
-      }
-      if (surface != 62006 /* Magic ID for the only EGLSurface supported by Emscripten */) {
-        EGL.setErrorCode(0x300D /* EGL_BAD_SURFACE */);
-        return 1;
-      }
-      if (EGL.currentReadSurface == surface) {
-        EGL.currentReadSurface = 0;
-      }
-      if (EGL.currentDrawSurface == surface) {
-        EGL.currentDrawSurface = 0;
-      }
-      EGL.setErrorCode(0x3000 /* EGL_SUCCESS */);
-      return 1; /* Magic ID for Emscripten 'default surface' */
-    }
-
-  function _eglGetConfigAttrib(display, config, attribute, value) {
-      if (display != 62000 /* Magic ID for Emscripten 'default display' */) {
-        EGL.setErrorCode(0x3008 /* EGL_BAD_DISPLAY */);
-        return 0;
-      }
-      if (config != 62002 /* Magic ID for the only EGLConfig supported by Emscripten */) {
-        EGL.setErrorCode(0x3005 /* EGL_BAD_CONFIG */);
-        return 0;
-      }
-      if (!value) {
-        EGL.setErrorCode(0x300C /* EGL_BAD_PARAMETER */);
-        return 0;
-      }
-      EGL.setErrorCode(0x3000 /* EGL_SUCCESS */);
-      switch(attribute) {
-      case 0x3020: // EGL_BUFFER_SIZE
-        HEAP32[((value)>>2)]=EGL.contextAttributes.alpha ? 32 : 24;
-        return 1;
-      case 0x3021: // EGL_ALPHA_SIZE
-        HEAP32[((value)>>2)]=EGL.contextAttributes.alpha ? 8 : 0;
-        return 1;
-      case 0x3022: // EGL_BLUE_SIZE
-        HEAP32[((value)>>2)]=8;
-        return 1;
-      case 0x3023: // EGL_GREEN_SIZE
-        HEAP32[((value)>>2)]=8;
-        return 1;
-      case 0x3024: // EGL_RED_SIZE
-        HEAP32[((value)>>2)]=8;
-        return 1;
-      case 0x3025: // EGL_DEPTH_SIZE
-        HEAP32[((value)>>2)]=EGL.contextAttributes.depth ? 24 : 0;
-        return 1;
-      case 0x3026: // EGL_STENCIL_SIZE
-        HEAP32[((value)>>2)]=EGL.contextAttributes.stencil ? 8 : 0;
-        return 1;
-      case 0x3027: // EGL_CONFIG_CAVEAT
-        // We can return here one of EGL_NONE (0x3038), EGL_SLOW_CONFIG (0x3050) or EGL_NON_CONFORMANT_CONFIG (0x3051).
-        HEAP32[((value)>>2)]=0x3038;
-        return 1;
-      case 0x3028: // EGL_CONFIG_ID
-        HEAP32[((value)>>2)]=62002;
-        return 1;
-      case 0x3029: // EGL_LEVEL
-        HEAP32[((value)>>2)]=0;
-        return 1;
-      case 0x302A: // EGL_MAX_PBUFFER_HEIGHT
-        HEAP32[((value)>>2)]=4096;
-        return 1;
-      case 0x302B: // EGL_MAX_PBUFFER_PIXELS
-        HEAP32[((value)>>2)]=16777216;
-        return 1;
-      case 0x302C: // EGL_MAX_PBUFFER_WIDTH
-        HEAP32[((value)>>2)]=4096;
-        return 1;
-      case 0x302D: // EGL_NATIVE_RENDERABLE
-        HEAP32[((value)>>2)]=0;
-        return 1;
-      case 0x302E: // EGL_NATIVE_VISUAL_ID
-        HEAP32[((value)>>2)]=0;
-        return 1;
-      case 0x302F: // EGL_NATIVE_VISUAL_TYPE
-        HEAP32[((value)>>2)]=0x3038;
-        return 1;
-      case 0x3031: // EGL_SAMPLES
-        HEAP32[((value)>>2)]=EGL.contextAttributes.antialias ? 4 : 0;
-        return 1;
-      case 0x3032: // EGL_SAMPLE_BUFFERS
-        HEAP32[((value)>>2)]=EGL.contextAttributes.antialias ? 1 : 0;
-        return 1;
-      case 0x3033: // EGL_SURFACE_TYPE
-        HEAP32[((value)>>2)]=0x0004;
-        return 1;
-      case 0x3034: // EGL_TRANSPARENT_TYPE
-        // If this returns EGL_TRANSPARENT_RGB (0x3052), transparency is used through color-keying. No such thing applies to Emscripten canvas.
-        HEAP32[((value)>>2)]=0x3038;
-        return 1;
-      case 0x3035: // EGL_TRANSPARENT_BLUE_VALUE
-      case 0x3036: // EGL_TRANSPARENT_GREEN_VALUE
-      case 0x3037: // EGL_TRANSPARENT_RED_VALUE
-        // "If EGL_TRANSPARENT_TYPE is EGL_NONE, then the values for EGL_TRANSPARENT_RED_VALUE, EGL_TRANSPARENT_GREEN_VALUE, and EGL_TRANSPARENT_BLUE_VALUE are undefined."
-        HEAP32[((value)>>2)]=-1;
-        return 1;
-      case 0x3039: // EGL_BIND_TO_TEXTURE_RGB
-      case 0x303A: // EGL_BIND_TO_TEXTURE_RGBA
-        HEAP32[((value)>>2)]=0;
-        return 1;
-      case 0x303B: // EGL_MIN_SWAP_INTERVAL
-        HEAP32[((value)>>2)]=0;
-        return 1;
-      case 0x303C: // EGL_MAX_SWAP_INTERVAL
-        HEAP32[((value)>>2)]=1;
-        return 1;
-      case 0x303D: // EGL_LUMINANCE_SIZE
-      case 0x303E: // EGL_ALPHA_MASK_SIZE
-        HEAP32[((value)>>2)]=0;
-        return 1;
-      case 0x303F: // EGL_COLOR_BUFFER_TYPE
-        // EGL has two types of buffers: EGL_RGB_BUFFER and EGL_LUMINANCE_BUFFER.
-        HEAP32[((value)>>2)]=0x308E;
-        return 1;
-      case 0x3040: // EGL_RENDERABLE_TYPE
-        // A bit combination of EGL_OPENGL_ES_BIT,EGL_OPENVG_BIT,EGL_OPENGL_ES2_BIT and EGL_OPENGL_BIT.
-        HEAP32[((value)>>2)]=0x0004;
-        return 1;
-      case 0x3042: // EGL_CONFORMANT
-        // "EGL_CONFORMANT is a mask indicating if a client API context created with respect to the corresponding EGLConfig will pass the required conformance tests for that API."
-        HEAP32[((value)>>2)]=0;
-        return 1;
-      default:
-        EGL.setErrorCode(0x3004 /* EGL_BAD_ATTRIBUTE */);
-        return 0;
-      }
-    }
-
-  function _eglGetDisplay(nativeDisplayType) {
-      EGL.setErrorCode(0x3000 /* EGL_SUCCESS */);
-      // Note: As a 'conformant' implementation of EGL, we would prefer to init here only if the user
-      //       calls this function with EGL_DEFAULT_DISPLAY. Other display IDs would be preferred to be unsupported
-      //       and EGL_NO_DISPLAY returned. Uncomment the following code lines to do this.
-      // Instead, an alternative route has been preferred, namely that the Emscripten EGL implementation
-      // "emulates" X11, and eglGetDisplay is expected to accept/receive a pointer to an X11 Display object.
-      // Therefore, be lax and allow anything to be passed in, and return the magic handle to our default EGLDisplay object.
-  
-  //    if (nativeDisplayType == 0 /* EGL_DEFAULT_DISPLAY */) {
-          return 62000; // Magic ID for Emscripten 'default display'
-  //    }
-  //    else
-  //      return 0; // EGL_NO_DISPLAY
-    }
-
-  function _eglGetError() {
-      return EGL.errorCode;
-    }
-
-  function _eglGetProcAddress(name_) {
-      return _emscripten_GetProcAddress(name_);
-    }
-
-  function _eglInitialize(display, majorVersion, minorVersion) {
-      if (display == 62000 /* Magic ID for Emscripten 'default display' */) {
-        if (majorVersion) {
-          HEAP32[((majorVersion)>>2)]=1; // Advertise EGL Major version: '1'
-        }
-        if (minorVersion) {
-          HEAP32[((minorVersion)>>2)]=4; // Advertise EGL Minor version: '4'
-        }
-        EGL.defaultDisplayInitialized = true;
-        EGL.setErrorCode(0x3000 /* EGL_SUCCESS */);
-        return 1;
-      }
-      else {
-        EGL.setErrorCode(0x3008 /* EGL_BAD_DISPLAY */);
-        return 0;
-      }
-    }
-
-  function _eglMakeCurrent(display, draw, read, context) {
-      if (display != 62000 /* Magic ID for Emscripten 'default display' */) {
-        EGL.setErrorCode(0x3008 /* EGL_BAD_DISPLAY */);
-        return 0 /* EGL_FALSE */;
-      }
-      //\todo An EGL_NOT_INITIALIZED error is generated if EGL is not initialized for dpy.
-      if (context != 0 && context != 62004 /* Magic ID for Emscripten EGLContext */) {
-        EGL.setErrorCode(0x3006 /* EGL_BAD_CONTEXT */);
-        return 0;
-      }
-      if ((read != 0 && read != 62006) || (draw != 0 && draw != 62006 /* Magic ID for Emscripten 'default surface' */)) {
-        EGL.setErrorCode(0x300D /* EGL_BAD_SURFACE */);
-        return 0;
-      }
-  
-      GL.makeContextCurrent(context ? EGL.context : null);
-  
-      EGL.currentContext = context;
-      EGL.currentDrawSurface = draw;
-      EGL.currentReadSurface = read;
-      EGL.setErrorCode(0x3000 /* EGL_SUCCESS */);
-      return 1 /* EGL_TRUE */;
-    }
-
-  function _eglQueryString(display, name) {
-      if (display != 62000 /* Magic ID for Emscripten 'default display' */) {
-        EGL.setErrorCode(0x3008 /* EGL_BAD_DISPLAY */);
-        return 0;
-      }
-      //\todo An EGL_NOT_INITIALIZED error is generated if EGL is not initialized for dpy.
-      EGL.setErrorCode(0x3000 /* EGL_SUCCESS */);
-      if (EGL.stringCache[name]) return EGL.stringCache[name];
-      var ret;
-      switch(name) {
-        case 0x3053 /* EGL_VENDOR */: ret = allocate(intArrayFromString("Emscripten"), 'i8', ALLOC_NORMAL); break;
-        case 0x3054 /* EGL_VERSION */: ret = allocate(intArrayFromString("1.4 Emscripten EGL"), 'i8', ALLOC_NORMAL); break;
-        case 0x3055 /* EGL_EXTENSIONS */:  ret = allocate(intArrayFromString(""), 'i8', ALLOC_NORMAL); break; // Currently not supporting any EGL extensions.
-        case 0x308D /* EGL_CLIENT_APIS */: ret = allocate(intArrayFromString("OpenGL_ES"), 'i8', ALLOC_NORMAL); break;
-        default:
-          EGL.setErrorCode(0x300C /* EGL_BAD_PARAMETER */);
-          return 0;
-      }
-      EGL.stringCache[name] = ret;
-      return ret;
-    }
-
-  function _eglSwapBuffers() {
-  
-      if (!EGL.defaultDisplayInitialized) {
-        EGL.setErrorCode(0x3001 /* EGL_NOT_INITIALIZED */);
-      } else if (!Module.ctx) {
-        EGL.setErrorCode(0x3002 /* EGL_BAD_ACCESS */);
-      } else if (Module.ctx.isContextLost()) {
-        EGL.setErrorCode(0x300E /* EGL_CONTEXT_LOST */);
-      } else {
-        // According to documentation this does an implicit flush.
-        // Due to discussion at https://github.com/emscripten-core/emscripten/pull/1871
-        // the flush was removed since this _may_ result in slowing code down.
-        //_glFlush();
-        EGL.setErrorCode(0x3000 /* EGL_SUCCESS */);
-        return 1 /* EGL_TRUE */;
-      }
-      return 0 /* EGL_FALSE */;
-    }
-
-  function _eglSwapInterval(display, interval) {
-      if (display != 62000 /* Magic ID for Emscripten 'default display' */) {
-        EGL.setErrorCode(0x3008 /* EGL_BAD_DISPLAY */);
-        return 0;
-      }
-      if (interval == 0) _emscripten_set_main_loop_timing(0/*EM_TIMING_SETTIMEOUT*/, 0);
-      else _emscripten_set_main_loop_timing(1/*EM_TIMING_RAF*/, interval);
-  
-      EGL.setErrorCode(0x3000 /* EGL_SUCCESS */);
-      return 1;
-    }
-
-  function _eglTerminate(display) {
-      if (display != 62000 /* Magic ID for Emscripten 'default display' */) {
-        EGL.setErrorCode(0x3008 /* EGL_BAD_DISPLAY */);
-        return 0;
-      }
-      EGL.currentContext = 0;
-      EGL.currentReadSurface = 0;
-      EGL.currentDrawSurface = 0;
-      EGL.defaultDisplayInitialized = false;
-      EGL.setErrorCode(0x3000 /* EGL_SUCCESS */);
-      return 1;
-    }
-
-  
-  function _eglWaitClient() {
-      EGL.setErrorCode(0x3000 /* EGL_SUCCESS */);
-      return 1;
-    }function _eglWaitGL() {
-  return _eglWaitClient.apply(null, arguments)
-  }
-
-  function _eglWaitNative(nativeEngineId) {
-      EGL.setErrorCode(0x3000 /* EGL_SUCCESS */);
-      return 1;
-    }
-
-  var _emscripten_asm_const_int=true;
-
-  function _emscripten_cancel_main_loop() {
-      Browser.mainLoop.pause();
-      Browser.mainLoop.func = null;
-    }
-
-  
-  var JSEvents={keyEvent:0,mouseEvent:0,wheelEvent:0,uiEvent:0,focusEvent:0,deviceOrientationEvent:0,deviceMotionEvent:0,fullscreenChangeEvent:0,pointerlockChangeEvent:0,visibilityChangeEvent:0,touchEvent:0,previousFullscreenElement:null,previousScreenX:null,previousScreenY:null,removeEventListenersRegistered:false,removeAllEventListeners:function () {
-        for(var i = JSEvents.eventHandlers.length-1; i >= 0; --i) {
-          JSEvents._removeHandler(i);
-        }
-        JSEvents.eventHandlers = [];
-        JSEvents.deferredCalls = [];
-      },registerRemoveEventListeners:function () {
-        if (!JSEvents.removeEventListenersRegistered) {
-          __ATEXIT__.push(JSEvents.removeAllEventListeners);
-          JSEvents.removeEventListenersRegistered = true;
-        }
-      },deferredCalls:[],deferCall:function (targetFunction, precedence, argsList) {
-        function arraysHaveEqualContent(arrA, arrB) {
-          if (arrA.length != arrB.length) return false;
-  
-          for(var i in arrA) {
-            if (arrA[i] != arrB[i]) return false;
-          }
-          return true;
-        }
-        // Test if the given call was already queued, and if so, don't add it again.
-        for(var i in JSEvents.deferredCalls) {
-          var call = JSEvents.deferredCalls[i];
-          if (call.targetFunction == targetFunction && arraysHaveEqualContent(call.argsList, argsList)) {
-            return;
+          addEventListener("message", Browser_setImmediate_messageHandler, true);
+          setImmediate = function Browser_emulated_setImmediate(func) {
+            setImmediates.push(func);
+            if (ENVIRONMENT_IS_WORKER) {
+              if (Module['setImmediates'] === undefined) Module['setImmediates'] = [];
+              Module['setImmediates'].push(func);
+              postMessage({target: emscriptenMainLoopMessageId}); // In --proxy-to-worker, route the message via proxyClient.js
+            } else postMessage(emscriptenMainLoopMessageId, "*"); // On the main thread, can just send the message to itself.
           }
         }
-        JSEvents.deferredCalls.push({
-          targetFunction: targetFunction,
-          precedence: precedence,
-          argsList: argsList
-        });
-  
-        JSEvents.deferredCalls.sort(function(x,y) { return x.precedence < y.precedence; });
-      },removeDeferredCalls:function (targetFunction) {
-        for(var i = 0; i < JSEvents.deferredCalls.length; ++i) {
-          if (JSEvents.deferredCalls[i].targetFunction == targetFunction) {
-            JSEvents.deferredCalls.splice(i, 1);
-            --i;
-          }
-        }
-      },canPerformEventHandlerRequests:function () {
-        return JSEvents.inEventHandler && JSEvents.currentEventHandler.allowsDeferredCalls;
-      },runDeferredCalls:function () {
-        if (!JSEvents.canPerformEventHandlerRequests()) {
-          return;
-        }
-        for(var i = 0; i < JSEvents.deferredCalls.length; ++i) {
-          var call = JSEvents.deferredCalls[i];
-          JSEvents.deferredCalls.splice(i, 1);
-          --i;
-          call.targetFunction.apply(this, call.argsList);
-        }
-      },inEventHandler:0,currentEventHandler:null,eventHandlers:[],isInternetExplorer:function () { return navigator.userAgent.indexOf('MSIE') !== -1 || navigator.appVersion.indexOf('Trident/') > 0; },removeAllHandlersOnTarget:function (target, eventTypeString) {
-        for(var i = 0; i < JSEvents.eventHandlers.length; ++i) {
-          if (JSEvents.eventHandlers[i].target == target && 
-            (!eventTypeString || eventTypeString == JSEvents.eventHandlers[i].eventTypeString)) {
-             JSEvents._removeHandler(i--);
-           }
-        }
-      },_removeHandler:function (i) {
-        var h = JSEvents.eventHandlers[i];
-        h.target.removeEventListener(h.eventTypeString, h.eventListenerFunc, h.useCapture);
-        JSEvents.eventHandlers.splice(i, 1);
-      },registerOrRemoveHandler:function (eventHandler) {
-        var jsEventHandler = function jsEventHandler(event) {
-          // Increment nesting count for the event handler.
-          ++JSEvents.inEventHandler;
-          JSEvents.currentEventHandler = eventHandler;
-          // Process any old deferred calls the user has placed.
-          JSEvents.runDeferredCalls();
-          // Process the actual event, calls back to user C code handler.
-          eventHandler.handlerFunc(event);
-          // Process any new deferred calls that were placed right now from this event handler.
-          JSEvents.runDeferredCalls();
-          // Out of event handler - restore nesting count.
-          --JSEvents.inEventHandler;
+        Browser.mainLoop.scheduler = function Browser_mainLoop_scheduler_setImmediate() {
+          setImmediate(Browser.mainLoop.runner);
         };
-        
-        if (eventHandler.callbackfunc) {
-          eventHandler.eventListenerFunc = jsEventHandler;
-          eventHandler.target.addEventListener(eventHandler.eventTypeString, jsEventHandler, eventHandler.useCapture);
-          JSEvents.eventHandlers.push(eventHandler);
-          JSEvents.registerRemoveEventListeners();
-        } else {
-          for(var i = 0; i < JSEvents.eventHandlers.length; ++i) {
-            if (JSEvents.eventHandlers[i].target == eventHandler.target
-             && JSEvents.eventHandlers[i].eventTypeString == eventHandler.eventTypeString) {
-               JSEvents._removeHandler(i--);
-             }
-          }
-        }
-      },getBoundingClientRectOrZeros:function (target) {
-        return target.getBoundingClientRect ? target.getBoundingClientRect() : { left: 0, top: 0 };
-      },pageScrollPos:function () {
-        if (pageXOffset > 0 || pageYOffset > 0) {
-          return [pageXOffset, pageYOffset];
-        }
-        if (typeof document.documentElement.scrollLeft !== 'undefined' || typeof document.documentElement.scrollTop !== 'undefined') {
-          return [document.documentElement.scrollLeft, document.documentElement.scrollTop];
-        }
-        return [document.body.scrollLeft|0, document.body.scrollTop|0];
-      },getNodeNameForTarget:function (target) {
-        if (!target) return '';
-        if (target == window) return '#window';
-        if (target == screen) return '#screen';
-        return (target && target.nodeName) ? target.nodeName : '';
-      },tick:function () {
-        if (window['performance'] && window['performance']['now']) return window['performance']['now']();
-        else return Date.now();
-      },fullscreenEnabled:function () {
-        return document.fullscreenEnabled || document.mozFullScreenEnabled || document.webkitFullscreenEnabled || document.msFullscreenEnabled;
-      }};
-  
-  var __currentFullscreenStrategy={};
-  
-  
-  
-  
-  
-  
-  
-  
-  var __specialEventTargets=[0, document, window];function __findEventTarget(target) {
-      warnOnce('Rules for selecting event targets in HTML5 API are changing: instead of using document.getElementById() that only can refer to elements by their DOM ID, new event target selection mechanism uses the more flexible function document.querySelector() that can look up element names, classes, and complex CSS selectors. Build with -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=1 to change to the new lookup rules. See https://github.com/emscripten-core/emscripten/pull/7977 for more details.');
-      try {
-        // The sensible "default" target varies between events, but use window as the default
-        // since DOM events mostly can default to that. Specific callback registrations
-        // override their own defaults.
-        if (!target) return window;
-        if (typeof target === "number") target = __specialEventTargets[target] || UTF8ToString(target);
-        if (target === '#window') return window;
-        else if (target === '#document') return document;
-        else if (target === '#screen') return screen;
-        else if (target === '#canvas') return Module['canvas'];
-        return (typeof target === 'string') ? document.getElementById(target) : target;
-      } catch(e) {
-        // In Web Workers, some objects above, such as '#document' do not exist. Gracefully
-        // return null for them.
-        return null;
+        Browser.mainLoop.method = 'immediate';
       }
-    }function __findCanvasEventTarget(target) {
-      if (typeof target === 'number') target = UTF8ToString(target);
-      if (!target || target === '#canvas') {
-        if (typeof GL !== 'undefined' && GL.offscreenCanvases['canvas']) return GL.offscreenCanvases['canvas']; // TODO: Remove this line, target '#canvas' should refer only to Module['canvas'], not to GL.offscreenCanvases['canvas'] - but need stricter tests to be able to remove this line.
-        return Module['canvas'];
-      }
-      if (typeof GL !== 'undefined' && GL.offscreenCanvases[target]) return GL.offscreenCanvases[target];
-      return __findEventTarget(target);
-    }function _emscripten_get_canvas_element_size(target, width, height) {
-      var canvas = __findCanvasEventTarget(target);
-      if (!canvas) return -4;
-      HEAP32[((width)>>2)]=canvas.width;
-      HEAP32[((height)>>2)]=canvas.height;
-    }function __get_canvas_element_size(target) {
-      var stackTop = stackSave();
-      var w = stackAlloc(8);
-      var h = w + 4;
-  
-      var targetInt = stackAlloc(target.id.length+1);
-      stringToUTF8(target.id, targetInt, target.id.length+1);
-      var ret = _emscripten_get_canvas_element_size(targetInt, w, h);
-      var size = [HEAP32[((w)>>2)], HEAP32[((h)>>2)]];
-      stackRestore(stackTop);
-      return size;
+      return 0;
     }
   
+  function _emscripten_get_now() { abort() }function _emscripten_set_main_loop(func, fps, simulateInfiniteLoop, arg, noSetTiming) {
+      Module['noExitRuntime'] = true;
   
-  function _emscripten_set_canvas_element_size(target, width, height) {
-      var canvas = __findCanvasEventTarget(target);
-      if (!canvas) return -4;
-      canvas.width = width;
-      canvas.height = height;
-      return 0;
-    }function __set_canvas_element_size(target, width, height) {
-      if (!target.controlTransferredOffscreen) {
-        target.width = width;
-        target.height = height;
+      assert(!Browser.mainLoop.func, 'emscripten_set_main_loop: there can only be one main loop function at once: call emscripten_cancel_main_loop to cancel the previous one before setting a new one with different parameters.');
+  
+      Browser.mainLoop.func = func;
+      Browser.mainLoop.arg = arg;
+  
+      var browserIterationFunc;
+      if (typeof arg !== 'undefined') {
+        browserIterationFunc = function() {
+          Module['dynCall_vi'](func, arg);
+        };
       } else {
-        // This function is being called from high-level JavaScript code instead of asm.js/Wasm,
-        // and it needs to synchronously proxy over to another thread, so marshal the string onto the heap to do the call.
-        var stackTop = stackSave();
-        var targetInt = stackAlloc(target.id.length+1);
-        stringToUTF8(target.id, targetInt, target.id.length+1);
-        _emscripten_set_canvas_element_size(targetInt, width, height);
-        stackRestore(stackTop);
-      }
-    }function __registerRestoreOldStyle(canvas) {
-      var canvasSize = __get_canvas_element_size(canvas);
-      var oldWidth = canvasSize[0];
-      var oldHeight = canvasSize[1];
-      var oldCssWidth = canvas.style.width;
-      var oldCssHeight = canvas.style.height;
-      var oldBackgroundColor = canvas.style.backgroundColor; // Chrome reads color from here.
-      var oldDocumentBackgroundColor = document.body.style.backgroundColor; // IE11 reads color from here.
-      // Firefox always has black background color.
-      var oldPaddingLeft = canvas.style.paddingLeft; // Chrome, FF, Safari
-      var oldPaddingRight = canvas.style.paddingRight;
-      var oldPaddingTop = canvas.style.paddingTop;
-      var oldPaddingBottom = canvas.style.paddingBottom;
-      var oldMarginLeft = canvas.style.marginLeft; // IE11
-      var oldMarginRight = canvas.style.marginRight;
-      var oldMarginTop = canvas.style.marginTop;
-      var oldMarginBottom = canvas.style.marginBottom;
-      var oldDocumentBodyMargin = document.body.style.margin;
-      var oldDocumentOverflow = document.documentElement.style.overflow; // Chrome, Firefox
-      var oldDocumentScroll = document.body.scroll; // IE
-      var oldImageRendering = canvas.style.imageRendering;
-  
-      function restoreOldStyle() {
-        var fullscreenElement = document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement;
-        if (!fullscreenElement) {
-          document.removeEventListener('fullscreenchange', restoreOldStyle);
-          document.removeEventListener('mozfullscreenchange', restoreOldStyle);
-          document.removeEventListener('webkitfullscreenchange', restoreOldStyle);
-          document.removeEventListener('MSFullscreenChange', restoreOldStyle);
-  
-          __set_canvas_element_size(canvas, oldWidth, oldHeight);
-  
-          canvas.style.width = oldCssWidth;
-          canvas.style.height = oldCssHeight;
-          canvas.style.backgroundColor = oldBackgroundColor; // Chrome
-          // IE11 hack: assigning 'undefined' or an empty string to document.body.style.backgroundColor has no effect, so first assign back the default color
-          // before setting the undefined value. Setting undefined value is also important, or otherwise we would later treat that as something that the user
-          // had explicitly set so subsequent fullscreen transitions would not set background color properly.
-          if (!oldDocumentBackgroundColor) document.body.style.backgroundColor = 'white';
-          document.body.style.backgroundColor = oldDocumentBackgroundColor; // IE11
-          canvas.style.paddingLeft = oldPaddingLeft; // Chrome, FF, Safari
-          canvas.style.paddingRight = oldPaddingRight;
-          canvas.style.paddingTop = oldPaddingTop;
-          canvas.style.paddingBottom = oldPaddingBottom;
-          canvas.style.marginLeft = oldMarginLeft; // IE11
-          canvas.style.marginRight = oldMarginRight;
-          canvas.style.marginTop = oldMarginTop;
-          canvas.style.marginBottom = oldMarginBottom;
-          document.body.style.margin = oldDocumentBodyMargin;
-          document.documentElement.style.overflow = oldDocumentOverflow; // Chrome, Firefox
-          document.body.scroll = oldDocumentScroll; // IE
-          canvas.style.imageRendering = oldImageRendering;
-          if (canvas.GLctxObject) canvas.GLctxObject.GLctx.viewport(0, 0, oldWidth, oldHeight);
-  
-          if (__currentFullscreenStrategy.canvasResizedCallback) {
-            dynCall_iiii(__currentFullscreenStrategy.canvasResizedCallback, 37, 0, __currentFullscreenStrategy.canvasResizedCallbackUserData);
-          }
-        }
-      }
-      document.addEventListener('fullscreenchange', restoreOldStyle);
-      document.addEventListener('mozfullscreenchange', restoreOldStyle);
-      document.addEventListener('webkitfullscreenchange', restoreOldStyle);
-      document.addEventListener('MSFullscreenChange', restoreOldStyle);
-      return restoreOldStyle;
-    }
-  
-  function __setLetterbox(element, topBottom, leftRight) {
-      if (JSEvents.isInternetExplorer()) {
-        // Cannot use padding on IE11, because IE11 computes padding in addition to the size, unlike
-        // other browsers, which treat padding to be part of the size.
-        // e.g.
-        // FF, Chrome: If CSS size = 1920x1080, padding-leftright = 460, padding-topbottomx40, then content size = (1920 - 2*460) x (1080-2*40) = 1000x1000px, and total element size = 1920x1080px.
-        //       IE11: If CSS size = 1920x1080, padding-leftright = 460, padding-topbottomx40, then content size = 1920x1080px and total element size = (1920+2*460) x (1080+2*40)px.
-        // IE11  treats margin like Chrome and FF treat padding.
-        element.style.marginLeft = element.style.marginRight = leftRight + 'px';
-        element.style.marginTop = element.style.marginBottom = topBottom + 'px';
-      } else {
-        // Cannot use margin to specify letterboxes in FF or Chrome, since those ignore margins in fullscreen mode.
-        element.style.paddingLeft = element.style.paddingRight = leftRight + 'px';
-        element.style.paddingTop = element.style.paddingBottom = topBottom + 'px';
-      }
-    }function _JSEvents_resizeCanvasForFullscreen(target, strategy) {
-      var restoreOldStyle = __registerRestoreOldStyle(target);
-      var cssWidth = strategy.softFullscreen ? innerWidth : screen.width;
-      var cssHeight = strategy.softFullscreen ? innerHeight : screen.height;
-      var rect = target.getBoundingClientRect();
-      var windowedCssWidth = rect.right - rect.left;
-      var windowedCssHeight = rect.bottom - rect.top;
-      var canvasSize = __get_canvas_element_size(target);
-      var windowedRttWidth = canvasSize[0];
-      var windowedRttHeight = canvasSize[1];
-  
-      if (strategy.scaleMode == 3) {
-        __setLetterbox(target, (cssHeight - windowedCssHeight) / 2, (cssWidth - windowedCssWidth) / 2);
-        cssWidth = windowedCssWidth;
-        cssHeight = windowedCssHeight;
-      } else if (strategy.scaleMode == 2) {
-        if (cssWidth*windowedRttHeight < windowedRttWidth*cssHeight) {
-          var desiredCssHeight = windowedRttHeight * cssWidth / windowedRttWidth;
-          __setLetterbox(target, (cssHeight - desiredCssHeight) / 2, 0);
-          cssHeight = desiredCssHeight;
-        } else {
-          var desiredCssWidth = windowedRttWidth * cssHeight / windowedRttHeight;
-          __setLetterbox(target, 0, (cssWidth - desiredCssWidth) / 2);
-          cssWidth = desiredCssWidth;
-        }
+        browserIterationFunc = function() {
+          Module['dynCall_v'](func);
+        };
       }
   
-      // If we are adding padding, must choose a background color or otherwise Chrome will give the
-      // padding a default white color. Do it only if user has not customized their own background color.
-      if (!target.style.backgroundColor) target.style.backgroundColor = 'black';
-      // IE11 does the same, but requires the color to be set in the document body.
-      if (!document.body.style.backgroundColor) document.body.style.backgroundColor = 'black'; // IE11
-      // Firefox always shows black letterboxes independent of style color.
+      var thisMainLoopId = Browser.mainLoop.currentlyRunningMainloop;
   
-      target.style.width = cssWidth + 'px';
-      target.style.height = cssHeight + 'px';
-  
-      if (strategy.filteringMode == 1) {
-        target.style.imageRendering = 'optimizeSpeed';
-        target.style.imageRendering = '-moz-crisp-edges';
-        target.style.imageRendering = '-o-crisp-edges';
-        target.style.imageRendering = '-webkit-optimize-contrast';
-        target.style.imageRendering = 'optimize-contrast';
-        target.style.imageRendering = 'crisp-edges';
-        target.style.imageRendering = 'pixelated';
-      }
-  
-      var dpiScale = (strategy.canvasResolutionScaleMode == 2) ? devicePixelRatio : 1;
-      if (strategy.canvasResolutionScaleMode != 0) {
-        var newWidth = (cssWidth * dpiScale)|0;
-        var newHeight = (cssHeight * dpiScale)|0;
-        __set_canvas_element_size(target, newWidth, newHeight);
-        if (target.GLctxObject) target.GLctxObject.GLctx.viewport(0, 0, newWidth, newHeight);
-      }
-      return restoreOldStyle;
-    }function _JSEvents_requestFullscreen(target, strategy) {
-      // EMSCRIPTEN_FULLSCREEN_SCALE_DEFAULT + EMSCRIPTEN_FULLSCREEN_CANVAS_SCALE_NONE is a mode where no extra logic is performed to the DOM elements.
-      if (strategy.scaleMode != 0 || strategy.canvasResolutionScaleMode != 0) {
-        _JSEvents_resizeCanvasForFullscreen(target, strategy);
-      }
-  
-      if (target.requestFullscreen) {
-        target.requestFullscreen();
-      } else if (target.msRequestFullscreen) {
-        target.msRequestFullscreen();
-      } else if (target.mozRequestFullScreen) {
-        target.mozRequestFullScreen();
-      } else if (target.mozRequestFullscreen) {
-        target.mozRequestFullscreen();
-      } else if (target.webkitRequestFullscreen) {
-        target.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-      } else {
-        return JSEvents.fullscreenEnabled() ? -3 : -1;
-      }
-  
-      if (strategy.canvasResizedCallback) {
-        dynCall_iiii(strategy.canvasResizedCallback, 37, 0, strategy.canvasResizedCallbackUserData);
-      }
-  
-      return 0;
-    }function _emscripten_exit_fullscreen() {
-      if (!JSEvents.fullscreenEnabled()) return -1;
-      // Make sure no queued up calls will fire after this.
-      JSEvents.removeDeferredCalls(_JSEvents_requestFullscreen);
-  
-      var d = __specialEventTargets[1];
-      if (d.exitFullscreen) {
-        d.fullscreenElement && d.exitFullscreen();
-      } else if (d.msExitFullscreen) {
-        d.msFullscreenElement && d.msExitFullscreen();
-      } else if (d.mozCancelFullScreen) {
-        d.mozFullScreenElement && d.mozCancelFullScreen();
-      } else if (d.webkitExitFullscreen) {
-        d.webkitFullscreenElement && d.webkitExitFullscreen();
-      } else {
-        return -1;
-      }
-  
-      if (__currentFullscreenStrategy.canvasResizedCallback) {
-        dynCall_iiii(__currentFullscreenStrategy.canvasResizedCallback, 37, 0, __currentFullscreenStrategy.canvasResizedCallbackUserData);
-        __currentFullscreenStrategy = 0;
-      }
-  
-      return 0;
-    }
-
-  
-  function __requestPointerLock(target) {
-      if (target.requestPointerLock) {
-        target.requestPointerLock();
-      } else if (target.mozRequestPointerLock) {
-        target.mozRequestPointerLock();
-      } else if (target.webkitRequestPointerLock) {
-        target.webkitRequestPointerLock();
-      } else if (target.msRequestPointerLock) {
-        target.msRequestPointerLock();
-      } else {
-        // document.body is known to accept pointer lock, so use that to differentiate if the user passed a bad element,
-        // or if the whole browser just doesn't support the feature.
-        if (document.body.requestPointerLock || document.body.mozRequestPointerLock || document.body.webkitRequestPointerLock || document.body.msRequestPointerLock) {
-          return -3;
-        } else {
-          return -1;
-        }
-      }
-      return 0;
-    }function _emscripten_exit_pointerlock() {
-      // Make sure no queued up calls will fire after this.
-      JSEvents.removeDeferredCalls(__requestPointerLock);
-  
-      if (document.exitPointerLock) {
-        document.exitPointerLock();
-      } else if (document.msExitPointerLock) {
-        document.msExitPointerLock();
-      } else if (document.mozExitPointerLock) {
-        document.mozExitPointerLock();
-      } else if (document.webkitExitPointerLock) {
-        document.webkitExitPointerLock();
-      } else {
-        return -1;
-      }
-      return 0;
-    }
-
-  function _emscripten_get_device_pixel_ratio() {
-      // Save a little bit of code space: all Wasm-capable browsers support devicePixelRatio.
-      return devicePixelRatio;
-    }
-
-  function _emscripten_get_element_css_size(target, width, height) {
-      target = target ? __findEventTarget(target) : Module['canvas'];
-      if (!target) return -4;
-  
-      if (target.getBoundingClientRect) {
-        var rect = target.getBoundingClientRect();
-        HEAPF64[((width)>>3)]=rect.right - rect.left;
-        HEAPF64[((height)>>3)]=rect.bottom - rect.top;
-      } else {
-        HEAPF64[((width)>>3)]=target.clientWidth;
-        HEAPF64[((height)>>3)]=target.clientHeight;
-      }
-  
-      return 0;
-    }
-
-  
-  function __fillGamepadEventData(eventStruct, e) {
-      HEAPF64[((eventStruct)>>3)]=e.timestamp;
-      for(var i = 0; i < e.axes.length; ++i) {
-        HEAPF64[(((eventStruct+i*8)+(16))>>3)]=e.axes[i];
-      }
-      for(var i = 0; i < e.buttons.length; ++i) {
-        if (typeof(e.buttons[i]) === 'object') {
-          HEAPF64[(((eventStruct+i*8)+(528))>>3)]=e.buttons[i].value;
-        } else {
-          HEAPF64[(((eventStruct+i*8)+(528))>>3)]=e.buttons[i];
-        }
-      }
-      for(var i = 0; i < e.buttons.length; ++i) {
-        if (typeof(e.buttons[i]) === 'object') {
-          HEAP32[(((eventStruct+i*4)+(1040))>>2)]=e.buttons[i].pressed;
-        } else {
-          HEAP32[(((eventStruct+i*4)+(1040))>>2)]=e.buttons[i] == 1.0;
-        }
-      }
-      HEAP32[(((eventStruct)+(1296))>>2)]=e.connected;
-      HEAP32[(((eventStruct)+(1300))>>2)]=e.index;
-      HEAP32[(((eventStruct)+(8))>>2)]=e.axes.length;
-      HEAP32[(((eventStruct)+(12))>>2)]=e.buttons.length;
-      stringToUTF8(e.id, eventStruct + 1304, 64);
-      stringToUTF8(e.mapping, eventStruct + 1368, 64);
-    }function _emscripten_get_gamepad_status(index, gamepadState) {
-      if (!JSEvents.lastGamepadState) throw 'emscripten_get_gamepad_status() can only be called after having first called emscripten_sample_gamepad_data() and that function has returned EMSCRIPTEN_RESULT_SUCCESS!';
-  
-      // INVALID_PARAM is returned on a Gamepad index that never was there.
-      if (index < 0 || index >= JSEvents.lastGamepadState.length) return -5;
-  
-      // NO_DATA is returned on a Gamepad index that was removed.
-      // For previously disconnected gamepads there should be an empty slot (null/undefined/false) at the index.
-      // This is because gamepads must keep their original position in the array.
-      // For example, removing the first of two gamepads produces [null/undefined/false, gamepad].
-      if (!JSEvents.lastGamepadState[index]) return -7;
-  
-      __fillGamepadEventData(gamepadState, JSEvents.lastGamepadState[index]);
-      return 0;
-    }
-
-  function _emscripten_get_heap_size() {
-      return HEAP8.length;
-    }
-
-  function _emscripten_get_num_gamepads() {
-      if (!JSEvents.lastGamepadState) throw 'emscripten_get_num_gamepads() can only be called after having first called emscripten_sample_gamepad_data() and that function has returned EMSCRIPTEN_RESULT_SUCCESS!';
-      // N.B. Do not call emscripten_get_num_gamepads() unless having first called emscripten_sample_gamepad_data(), and that has returned EMSCRIPTEN_RESULT_SUCCESS.
-      // Otherwise the following line will throw an exception.
-      return JSEvents.lastGamepadState.length;
-    }
-
-  function _emscripten_get_preloaded_image_data(path, w, h) {
-      if ((path | 0) === path) path = UTF8ToString(path);
-  
-      path = PATH_FS.resolve(path);
-  
-      var canvas = Module["preloadedImages"][path];
-      if (canvas) {
-        var ctx = canvas.getContext("2d");
-        var image = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        var buf = _malloc(canvas.width * canvas.height * 4);
-  
-        HEAPU8.set(image.data, buf);
-  
-        HEAP32[((w)>>2)]=canvas.width;
-        HEAP32[((h)>>2)]=canvas.height;
-        return buf;
-      }
-  
-      return 0;
-    }
-
-  function _emscripten_get_preloaded_image_data_from_FILE(file, w, h) {
-      var fd = Module['_fileno'](file);
-      var stream = FS.getStream(fd);
-      if (stream) {
-        return _emscripten_get_preloaded_image_data(stream.path, w, h);
-      }
-  
-      return 0;
-    }
-
-  function _emscripten_glActiveTexture(x0) { GLctx['activeTexture'](x0) }
-
-  function _emscripten_glAttachShader(program, shader) {
-      GLctx.attachShader(GL.programs[program],
-                              GL.shaders[shader]);
-    }
-
-  function _emscripten_glBeginQueryEXT(target, id) {
-      GLctx.disjointTimerQueryExt['beginQueryEXT'](target, GL.timerQueriesEXT[id]);
-    }
-
-  function _emscripten_glBindAttribLocation(program, index, name) {
-      GLctx.bindAttribLocation(GL.programs[program], index, UTF8ToString(name));
-    }
-
-  function _emscripten_glBindBuffer(target, buffer) {
-  
-      GLctx.bindBuffer(target, GL.buffers[buffer]);
-    }
-
-  function _emscripten_glBindFramebuffer(target, framebuffer) {
-  
-      GLctx.bindFramebuffer(target, GL.framebuffers[framebuffer]);
-  
-    }
-
-  function _emscripten_glBindRenderbuffer(target, renderbuffer) {
-      GLctx.bindRenderbuffer(target, GL.renderbuffers[renderbuffer]);
-    }
-
-  function _emscripten_glBindTexture(target, texture) {
-      GLctx.bindTexture(target, GL.textures[texture]);
-    }
-
-  function _emscripten_glBindVertexArrayOES(vao) {
-      GLctx['bindVertexArray'](GL.vaos[vao]);
-    }
-
-  function _emscripten_glBlendColor(x0, x1, x2, x3) { GLctx['blendColor'](x0, x1, x2, x3) }
-
-  function _emscripten_glBlendEquation(x0) { GLctx['blendEquation'](x0) }
-
-  function _emscripten_glBlendEquationSeparate(x0, x1) { GLctx['blendEquationSeparate'](x0, x1) }
-
-  function _emscripten_glBlendFunc(x0, x1) { GLctx['blendFunc'](x0, x1) }
-
-  function _emscripten_glBlendFuncSeparate(x0, x1, x2, x3) { GLctx['blendFuncSeparate'](x0, x1, x2, x3) }
-
-  function _emscripten_glBufferData(target, size, data, usage) {
-        // N.b. here first form specifies a heap subarray, second form an integer size, so the ?: code here is polymorphic. It is advised to avoid
-        // randomly mixing both uses in calling code, to avoid any potential JS engine JIT issues.
-        GLctx.bufferData(target, data ? HEAPU8.subarray(data, data+size) : size, usage);
-    }
-
-  function _emscripten_glBufferSubData(target, offset, size, data) {
-      GLctx.bufferSubData(target, offset, HEAPU8.subarray(data, data+size));
-    }
-
-  function _emscripten_glCheckFramebufferStatus(x0) { return GLctx['checkFramebufferStatus'](x0) }
-
-  function _emscripten_glClear(x0) { GLctx['clear'](x0) }
-
-  function _emscripten_glClearColor(x0, x1, x2, x3) { GLctx['clearColor'](x0, x1, x2, x3) }
-
-  function _emscripten_glClearDepthf(x0) { GLctx['clearDepth'](x0) }
-
-  function _emscripten_glClearStencil(x0) { GLctx['clearStencil'](x0) }
-
-  function _emscripten_glColorMask(red, green, blue, alpha) {
-      GLctx.colorMask(!!red, !!green, !!blue, !!alpha);
-    }
-
-  function _emscripten_glCompileShader(shader) {
-      GLctx.compileShader(GL.shaders[shader]);
-    }
-
-  function _emscripten_glCompressedTexImage2D(target, level, internalFormat, width, height, border, imageSize, data) {
-      GLctx['compressedTexImage2D'](target, level, internalFormat, width, height, border, data ? HEAPU8.subarray((data),(data+imageSize)) : null);
-    }
-
-  function _emscripten_glCompressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, data) {
-      GLctx['compressedTexSubImage2D'](target, level, xoffset, yoffset, width, height, format, data ? HEAPU8.subarray((data),(data+imageSize)) : null);
-    }
-
-  function _emscripten_glCopyTexImage2D(x0, x1, x2, x3, x4, x5, x6, x7) { GLctx['copyTexImage2D'](x0, x1, x2, x3, x4, x5, x6, x7) }
-
-  function _emscripten_glCopyTexSubImage2D(x0, x1, x2, x3, x4, x5, x6, x7) { GLctx['copyTexSubImage2D'](x0, x1, x2, x3, x4, x5, x6, x7) }
-
-  function _emscripten_glCreateProgram() {
-      var id = GL.getNewId(GL.programs);
-      var program = GLctx.createProgram();
-      program.name = id;
-      GL.programs[id] = program;
-      return id;
-    }
-
-  function _emscripten_glCreateShader(shaderType) {
-      var id = GL.getNewId(GL.shaders);
-      GL.shaders[id] = GLctx.createShader(shaderType);
-      return id;
-    }
-
-  function _emscripten_glCullFace(x0) { GLctx['cullFace'](x0) }
-
-  function _emscripten_glDeleteBuffers(n, buffers) {
-      for (var i = 0; i < n; i++) {
-        var id = HEAP32[(((buffers)+(i*4))>>2)];
-        var buffer = GL.buffers[id];
-  
-        // From spec: "glDeleteBuffers silently ignores 0's and names that do not
-        // correspond to existing buffer objects."
-        if (!buffer) continue;
-  
-        GLctx.deleteBuffer(buffer);
-        buffer.name = 0;
-        GL.buffers[id] = null;
-  
-        if (id == GL.currArrayBuffer) GL.currArrayBuffer = 0;
-        if (id == GL.currElementArrayBuffer) GL.currElementArrayBuffer = 0;
-      }
-    }
-
-  function _emscripten_glDeleteFramebuffers(n, framebuffers) {
-      for (var i = 0; i < n; ++i) {
-        var id = HEAP32[(((framebuffers)+(i*4))>>2)];
-        var framebuffer = GL.framebuffers[id];
-        if (!framebuffer) continue; // GL spec: "glDeleteFramebuffers silently ignores 0s and names that do not correspond to existing framebuffer objects".
-        GLctx.deleteFramebuffer(framebuffer);
-        framebuffer.name = 0;
-        GL.framebuffers[id] = null;
-      }
-    }
-
-  function _emscripten_glDeleteProgram(id) {
-      if (!id) return;
-      var program = GL.programs[id];
-      if (!program) { // glDeleteProgram actually signals an error when deleting a nonexisting object, unlike some other GL delete functions.
-        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
-        return;
-      }
-      GLctx.deleteProgram(program);
-      program.name = 0;
-      GL.programs[id] = null;
-      GL.programInfos[id] = null;
-    }
-
-  function _emscripten_glDeleteQueriesEXT(n, ids) {
-      for (var i = 0; i < n; i++) {
-        var id = HEAP32[(((ids)+(i*4))>>2)];
-        var query = GL.timerQueriesEXT[id];
-        if (!query) continue; // GL spec: "unused names in ids are ignored, as is the name zero."
-        GLctx.disjointTimerQueryExt['deleteQueryEXT'](query);
-        GL.timerQueriesEXT[id] = null;
-      }
-    }
-
-  function _emscripten_glDeleteRenderbuffers(n, renderbuffers) {
-      for (var i = 0; i < n; i++) {
-        var id = HEAP32[(((renderbuffers)+(i*4))>>2)];
-        var renderbuffer = GL.renderbuffers[id];
-        if (!renderbuffer) continue; // GL spec: "glDeleteRenderbuffers silently ignores 0s and names that do not correspond to existing renderbuffer objects".
-        GLctx.deleteRenderbuffer(renderbuffer);
-        renderbuffer.name = 0;
-        GL.renderbuffers[id] = null;
-      }
-    }
-
-  function _emscripten_glDeleteShader(id) {
-      if (!id) return;
-      var shader = GL.shaders[id];
-      if (!shader) { // glDeleteShader actually signals an error when deleting a nonexisting object, unlike some other GL delete functions.
-        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
-        return;
-      }
-      GLctx.deleteShader(shader);
-      GL.shaders[id] = null;
-    }
-
-  function _emscripten_glDeleteTextures(n, textures) {
-      for (var i = 0; i < n; i++) {
-        var id = HEAP32[(((textures)+(i*4))>>2)];
-        var texture = GL.textures[id];
-        if (!texture) continue; // GL spec: "glDeleteTextures silently ignores 0s and names that do not correspond to existing textures".
-        GLctx.deleteTexture(texture);
-        texture.name = 0;
-        GL.textures[id] = null;
-      }
-    }
-
-  function _emscripten_glDeleteVertexArraysOES(n, vaos) {
-      for (var i = 0; i < n; i++) {
-        var id = HEAP32[(((vaos)+(i*4))>>2)];
-        GLctx['deleteVertexArray'](GL.vaos[id]);
-        GL.vaos[id] = null;
-      }
-    }
-
-  function _emscripten_glDepthFunc(x0) { GLctx['depthFunc'](x0) }
-
-  function _emscripten_glDepthMask(flag) {
-      GLctx.depthMask(!!flag);
-    }
-
-  function _emscripten_glDepthRangef(x0, x1) { GLctx['depthRange'](x0, x1) }
-
-  function _emscripten_glDetachShader(program, shader) {
-      GLctx.detachShader(GL.programs[program],
-                              GL.shaders[shader]);
-    }
-
-  function _emscripten_glDisable(x0) { GLctx['disable'](x0) }
-
-  function _emscripten_glDisableVertexAttribArray(index) {
-      GLctx.disableVertexAttribArray(index);
-    }
-
-  function _emscripten_glDrawArrays(mode, first, count) {
-  
-      GLctx.drawArrays(mode, first, count);
-  
-    }
-
-  function _emscripten_glDrawArraysInstancedANGLE(mode, first, count, primcount) {
-      GLctx['drawArraysInstanced'](mode, first, count, primcount);
-    }
-
-  
-  var __tempFixedLengthArray=[];function _emscripten_glDrawBuffersWEBGL(n, bufs) {
-  
-      var bufArray = __tempFixedLengthArray[n];
-      for (var i = 0; i < n; i++) {
-        bufArray[i] = HEAP32[(((bufs)+(i*4))>>2)];
-      }
-  
-      GLctx['drawBuffers'](bufArray);
-    }
-
-  function _emscripten_glDrawElements(mode, count, type, indices) {
-  
-      GLctx.drawElements(mode, count, type, indices);
-  
-    }
-
-  function _emscripten_glDrawElementsInstancedANGLE(mode, count, type, indices, primcount) {
-      GLctx['drawElementsInstanced'](mode, count, type, indices, primcount);
-    }
-
-  function _emscripten_glEnable(x0) { GLctx['enable'](x0) }
-
-  function _emscripten_glEnableVertexAttribArray(index) {
-      GLctx.enableVertexAttribArray(index);
-    }
-
-  function _emscripten_glEndQueryEXT(target) {
-      GLctx.disjointTimerQueryExt['endQueryEXT'](target);
-    }
-
-  function _emscripten_glFinish() { GLctx['finish']() }
-
-  function _emscripten_glFlush() { GLctx['flush']() }
-
-  function _emscripten_glFramebufferRenderbuffer(target, attachment, renderbuffertarget, renderbuffer) {
-      GLctx.framebufferRenderbuffer(target, attachment, renderbuffertarget,
-                                         GL.renderbuffers[renderbuffer]);
-    }
-
-  function _emscripten_glFramebufferTexture2D(target, attachment, textarget, texture, level) {
-      GLctx.framebufferTexture2D(target, attachment, textarget,
-                                      GL.textures[texture], level);
-    }
-
-  function _emscripten_glFrontFace(x0) { GLctx['frontFace'](x0) }
-
-  
-  function __glGenObject(n, buffers, createFunction, objectTable
-      ) {
-      for (var i = 0; i < n; i++) {
-        var buffer = GLctx[createFunction]();
-        var id = buffer && GL.getNewId(objectTable);
-        if (buffer) {
-          buffer.name = id;
-          objectTable[id] = buffer;
-        } else {
-          GL.recordError(0x0502 /* GL_INVALID_OPERATION */);
-        }
-        HEAP32[(((buffers)+(i*4))>>2)]=id;
-      }
-    }function _emscripten_glGenBuffers(n, buffers) {
-      __glGenObject(n, buffers, 'createBuffer', GL.buffers
-        );
-    }
-
-  function _emscripten_glGenFramebuffers(n, ids) {
-      __glGenObject(n, ids, 'createFramebuffer', GL.framebuffers
-        );
-    }
-
-  function _emscripten_glGenQueriesEXT(n, ids) {
-      for (var i = 0; i < n; i++) {
-        var query = GLctx.disjointTimerQueryExt['createQueryEXT']();
-        if (!query) {
-          GL.recordError(0x0502 /* GL_INVALID_OPERATION */);
-          while(i < n) HEAP32[(((ids)+(i++*4))>>2)]=0;
-          return;
-        }
-        var id = GL.getNewId(GL.timerQueriesEXT);
-        query.name = id;
-        GL.timerQueriesEXT[id] = query;
-        HEAP32[(((ids)+(i*4))>>2)]=id;
-      }
-    }
-
-  function _emscripten_glGenRenderbuffers(n, renderbuffers) {
-      __glGenObject(n, renderbuffers, 'createRenderbuffer', GL.renderbuffers
-        );
-    }
-
-  function _emscripten_glGenTextures(n, textures) {
-      __glGenObject(n, textures, 'createTexture', GL.textures
-        );
-    }
-
-  function _emscripten_glGenVertexArraysOES(n, arrays) {
-      __glGenObject(n, arrays, 'createVertexArray', GL.vaos
-        );
-    }
-
-  function _emscripten_glGenerateMipmap(x0) { GLctx['generateMipmap'](x0) }
-
-  function _emscripten_glGetActiveAttrib(program, index, bufSize, length, size, type, name) {
-      program = GL.programs[program];
-      var info = GLctx.getActiveAttrib(program, index);
-      if (!info) return; // If an error occurs, nothing will be written to length, size and type and name.
-  
-      var numBytesWrittenExclNull = (bufSize > 0 && name) ? stringToUTF8(info.name, name, bufSize) : 0;
-      if (length) HEAP32[((length)>>2)]=numBytesWrittenExclNull;
-      if (size) HEAP32[((size)>>2)]=info.size;
-      if (type) HEAP32[((type)>>2)]=info.type;
-    }
-
-  function _emscripten_glGetActiveUniform(program, index, bufSize, length, size, type, name) {
-      program = GL.programs[program];
-      var info = GLctx.getActiveUniform(program, index);
-      if (!info) return; // If an error occurs, nothing will be written to length, size, type and name.
-  
-      var numBytesWrittenExclNull = (bufSize > 0 && name) ? stringToUTF8(info.name, name, bufSize) : 0;
-      if (length) HEAP32[((length)>>2)]=numBytesWrittenExclNull;
-      if (size) HEAP32[((size)>>2)]=info.size;
-      if (type) HEAP32[((type)>>2)]=info.type;
-    }
-
-  function _emscripten_glGetAttachedShaders(program, maxCount, count, shaders) {
-      var result = GLctx.getAttachedShaders(GL.programs[program]);
-      var len = result.length;
-      if (len > maxCount) {
-        len = maxCount;
-      }
-      HEAP32[((count)>>2)]=len;
-      for (var i = 0; i < len; ++i) {
-        var id = GL.shaders.indexOf(result[i]);
-        HEAP32[(((shaders)+(i*4))>>2)]=id;
-      }
-    }
-
-  function _emscripten_glGetAttribLocation(program, name) {
-      return GLctx.getAttribLocation(GL.programs[program], UTF8ToString(name));
-    }
-
-  
-  function emscriptenWebGLGet(name_, p, type) {
-      // Guard against user passing a null pointer.
-      // Note that GLES2 spec does not say anything about how passing a null pointer should be treated.
-      // Testing on desktop core GL 3, the application crashes on glGetIntegerv to a null pointer, but
-      // better to report an error instead of doing anything random.
-      if (!p) {
-        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
-        return;
-      }
-      var ret = undefined;
-      switch(name_) { // Handle a few trivial GLES values
-        case 0x8DFA: // GL_SHADER_COMPILER
-          ret = 1;
-          break;
-        case 0x8DF8: // GL_SHADER_BINARY_FORMATS
-          if (type != 0 && type != 1) {
-            GL.recordError(0x0500); // GL_INVALID_ENUM
-          }
-          return; // Do not write anything to the out pointer, since no binary formats are supported.
-        case 0x8DF9: // GL_NUM_SHADER_BINARY_FORMATS
-          ret = 0;
-          break;
-        case 0x86A2: // GL_NUM_COMPRESSED_TEXTURE_FORMATS
-          // WebGL doesn't have GL_NUM_COMPRESSED_TEXTURE_FORMATS (it's obsolete since GL_COMPRESSED_TEXTURE_FORMATS returns a JS array that can be queried for length),
-          // so implement it ourselves to allow C++ GLES2 code get the length.
-          var formats = GLctx.getParameter(0x86A3 /*GL_COMPRESSED_TEXTURE_FORMATS*/);
-          ret = formats ? formats.length : 0;
-          break;
-      }
-  
-      if (ret === undefined) {
-        var result = GLctx.getParameter(name_);
-        switch (typeof(result)) {
-          case "number":
-            ret = result;
-            break;
-          case "boolean":
-            ret = result ? 1 : 0;
-            break;
-          case "string":
-            GL.recordError(0x0500); // GL_INVALID_ENUM
-            return;
-          case "object":
-            if (result === null) {
-              // null is a valid result for some (e.g., which buffer is bound - perhaps nothing is bound), but otherwise
-              // can mean an invalid name_, which we need to report as an error
-              switch(name_) {
-                case 0x8894: // ARRAY_BUFFER_BINDING
-                case 0x8B8D: // CURRENT_PROGRAM
-                case 0x8895: // ELEMENT_ARRAY_BUFFER_BINDING
-                case 0x8CA6: // FRAMEBUFFER_BINDING
-                case 0x8CA7: // RENDERBUFFER_BINDING
-                case 0x8069: // TEXTURE_BINDING_2D
-                case 0x85B5: // WebGL 2 GL_VERTEX_ARRAY_BINDING, or WebGL 1 extension OES_vertex_array_object GL_VERTEX_ARRAY_BINDING_OES
-                case 0x8514: { // TEXTURE_BINDING_CUBE_MAP
-                  ret = 0;
-                  break;
-                }
-                default: {
-                  GL.recordError(0x0500); // GL_INVALID_ENUM
-                  return;
-                }
-              }
-            } else if (result instanceof Float32Array ||
-                       result instanceof Uint32Array ||
-                       result instanceof Int32Array ||
-                       result instanceof Array) {
-              for (var i = 0; i < result.length; ++i) {
-                switch (type) {
-                  case 0: HEAP32[(((p)+(i*4))>>2)]=result[i]; break;
-                  case 2: HEAPF32[(((p)+(i*4))>>2)]=result[i]; break;
-                  case 4: HEAP8[(((p)+(i))>>0)]=result[i] ? 1 : 0; break;
-                }
-              }
-              return;
+      Browser.mainLoop.runner = function Browser_mainLoop_runner() {
+        if (ABORT) return;
+        if (Browser.mainLoop.queue.length > 0) {
+          var start = Date.now();
+          var blocker = Browser.mainLoop.queue.shift();
+          blocker.func(blocker.arg);
+          if (Browser.mainLoop.remainingBlockers) {
+            var remaining = Browser.mainLoop.remainingBlockers;
+            var next = remaining%1 == 0 ? remaining-1 : Math.floor(remaining);
+            if (blocker.counted) {
+              Browser.mainLoop.remainingBlockers = next;
             } else {
-              try {
-                ret = result.name | 0;
-              } catch(e) {
-                GL.recordError(0x0500); // GL_INVALID_ENUM
-                err('GL_INVALID_ENUM in glGet' + type + 'v: Unknown object returned from WebGL getParameter(' + name_ + ')! (error: ' + e + ')');
-                return;
-              }
+              // not counted, but move the progress along a tiny bit
+              next = next + 0.5; // do not steal all the next one's progress
+              Browser.mainLoop.remainingBlockers = (8*remaining + next)/9;
             }
-            break;
-          default:
-            GL.recordError(0x0500); // GL_INVALID_ENUM
-            err('GL_INVALID_ENUM in glGet' + type + 'v: Native code calling glGet' + type + 'v(' + name_ + ') and it returns ' + result + ' of type ' + typeof(result) + '!');
-            return;
-        }
-      }
-  
-      switch (type) {
-        case 1: (tempI64 = [ret>>>0,(tempDouble=ret,(+(Math_abs(tempDouble))) >= 1.0 ? (tempDouble > 0.0 ? ((Math_min((+(Math_floor((tempDouble)/4294967296.0))), 4294967295.0))|0)>>>0 : (~~((+(Math_ceil((tempDouble - +(((~~(tempDouble)))>>>0))/4294967296.0)))))>>>0) : 0)],HEAP32[((p)>>2)]=tempI64[0],HEAP32[(((p)+(4))>>2)]=tempI64[1]);    break;
-        case 0: HEAP32[((p)>>2)]=ret;    break;
-        case 2:   HEAPF32[((p)>>2)]=ret;  break;
-        case 4: HEAP8[((p)>>0)]=ret ? 1 : 0; break;
-      }
-    }function _emscripten_glGetBooleanv(name_, p) {
-      emscriptenWebGLGet(name_, p, 4);
-    }
-
-  function _emscripten_glGetBufferParameteriv(target, value, data) {
-      if (!data) {
-        // GLES2 specification does not specify how to behave if data is a null pointer. Since calling this function does not make sense
-        // if data == null, issue a GL error to notify user about it.
-        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
-        return;
-      }
-      HEAP32[((data)>>2)]=GLctx.getBufferParameter(target, value);
-    }
-
-  function _emscripten_glGetError() {
-      var error = GLctx.getError() || GL.lastError;
-      GL.lastError = 0/*GL_NO_ERROR*/;
-      return error;
-    }
-
-  function _emscripten_glGetFloatv(name_, p) {
-      emscriptenWebGLGet(name_, p, 2);
-    }
-
-  function _emscripten_glGetFramebufferAttachmentParameteriv(target, attachment, pname, params) {
-      var result = GLctx.getFramebufferAttachmentParameter(target, attachment, pname);
-      if (result instanceof WebGLRenderbuffer ||
-          result instanceof WebGLTexture) {
-        result = result.name | 0;
-      }
-      HEAP32[((params)>>2)]=result;
-    }
-
-  function _emscripten_glGetIntegerv(name_, p) {
-      emscriptenWebGLGet(name_, p, 0);
-    }
-
-  function _emscripten_glGetProgramInfoLog(program, maxLength, length, infoLog) {
-      var log = GLctx.getProgramInfoLog(GL.programs[program]);
-      if (log === null) log = '(unknown error)';
-      var numBytesWrittenExclNull = (maxLength > 0 && infoLog) ? stringToUTF8(log, infoLog, maxLength) : 0;
-      if (length) HEAP32[((length)>>2)]=numBytesWrittenExclNull;
-    }
-
-  function _emscripten_glGetProgramiv(program, pname, p) {
-      if (!p) {
-        // GLES2 specification does not specify how to behave if p is a null pointer. Since calling this function does not make sense
-        // if p == null, issue a GL error to notify user about it.
-        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
-        return;
-      }
-  
-      if (program >= GL.counter) {
-        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
-        return;
-      }
-  
-      var ptable = GL.programInfos[program];
-      if (!ptable) {
-        GL.recordError(0x0502 /* GL_INVALID_OPERATION */);
-        return;
-      }
-  
-      if (pname == 0x8B84) { // GL_INFO_LOG_LENGTH
-        var log = GLctx.getProgramInfoLog(GL.programs[program]);
-        if (log === null) log = '(unknown error)';
-        HEAP32[((p)>>2)]=log.length + 1;
-      } else if (pname == 0x8B87 /* GL_ACTIVE_UNIFORM_MAX_LENGTH */) {
-        HEAP32[((p)>>2)]=ptable.maxUniformLength;
-      } else if (pname == 0x8B8A /* GL_ACTIVE_ATTRIBUTE_MAX_LENGTH */) {
-        if (ptable.maxAttributeLength == -1) {
-          program = GL.programs[program];
-          var numAttribs = GLctx.getProgramParameter(program, 0x8B89/*GL_ACTIVE_ATTRIBUTES*/);
-          ptable.maxAttributeLength = 0; // Spec says if there are no active attribs, 0 must be returned.
-          for (var i = 0; i < numAttribs; ++i) {
-            var activeAttrib = GLctx.getActiveAttrib(program, i);
-            ptable.maxAttributeLength = Math.max(ptable.maxAttributeLength, activeAttrib.name.length+1);
           }
+          console.log('main loop blocker "' + blocker.name + '" took ' + (Date.now() - start) + ' ms'); //, left: ' + Browser.mainLoop.remainingBlockers);
+          Browser.mainLoop.updateStatus();
+  
+          // catches pause/resume main loop from blocker execution
+          if (thisMainLoopId < Browser.mainLoop.currentlyRunningMainloop) return;
+  
+          setTimeout(Browser.mainLoop.runner, 0);
+          return;
         }
-        HEAP32[((p)>>2)]=ptable.maxAttributeLength;
-      } else if (pname == 0x8A35 /* GL_ACTIVE_UNIFORM_BLOCK_MAX_NAME_LENGTH */) {
-        if (ptable.maxUniformBlockNameLength == -1) {
-          program = GL.programs[program];
-          var numBlocks = GLctx.getProgramParameter(program, 0x8A36/*GL_ACTIVE_UNIFORM_BLOCKS*/);
-          ptable.maxUniformBlockNameLength = 0;
-          for (var i = 0; i < numBlocks; ++i) {
-            var activeBlockName = GLctx.getActiveUniformBlockName(program, i);
-            ptable.maxUniformBlockNameLength = Math.max(ptable.maxUniformBlockNameLength, activeBlockName.length+1);
-          }
+  
+        // catch pauses from non-main loop sources
+        if (thisMainLoopId < Browser.mainLoop.currentlyRunningMainloop) return;
+  
+        // Implement very basic swap interval control
+        Browser.mainLoop.currentFrameNumber = Browser.mainLoop.currentFrameNumber + 1 | 0;
+        if (Browser.mainLoop.timingMode == 1/*EM_TIMING_RAF*/ && Browser.mainLoop.timingValue > 1 && Browser.mainLoop.currentFrameNumber % Browser.mainLoop.timingValue != 0) {
+          // Not the scheduled time to render this frame - skip.
+          Browser.mainLoop.scheduler();
+          return;
+        } else if (Browser.mainLoop.timingMode == 0/*EM_TIMING_SETTIMEOUT*/) {
+          Browser.mainLoop.tickStartTime = _emscripten_get_now();
         }
-        HEAP32[((p)>>2)]=ptable.maxUniformBlockNameLength;
-      } else {
-        HEAP32[((p)>>2)]=GLctx.getProgramParameter(GL.programs[program], pname);
-      }
-    }
-
-  function _emscripten_glGetQueryObjecti64vEXT(id, pname, params) {
-      if (!params) {
-        // GLES2 specification does not specify how to behave if params is a null pointer. Since calling this function does not make sense
-        // if p == null, issue a GL error to notify user about it.
-        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
-        return;
-      }
-      var query = GL.timerQueriesEXT[id];
-      var param = GLctx.disjointTimerQueryExt['getQueryObjectEXT'](query, pname);
-      var ret;
-      if (typeof param == 'boolean') {
-        ret = param ? 1 : 0;
-      } else {
-        ret = param;
-      }
-      (tempI64 = [ret>>>0,(tempDouble=ret,(+(Math_abs(tempDouble))) >= 1.0 ? (tempDouble > 0.0 ? ((Math_min((+(Math_floor((tempDouble)/4294967296.0))), 4294967295.0))|0)>>>0 : (~~((+(Math_ceil((tempDouble - +(((~~(tempDouble)))>>>0))/4294967296.0)))))>>>0) : 0)],HEAP32[((params)>>2)]=tempI64[0],HEAP32[(((params)+(4))>>2)]=tempI64[1]);
-    }
-
-  function _emscripten_glGetQueryObjectivEXT(id, pname, params) {
-      if (!params) {
-        // GLES2 specification does not specify how to behave if params is a null pointer. Since calling this function does not make sense
-        // if p == null, issue a GL error to notify user about it.
-        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
-        return;
-      }
-      var query = GL.timerQueriesEXT[id];
-      var param = GLctx.disjointTimerQueryExt['getQueryObjectEXT'](query, pname);
-      var ret;
-      if (typeof param == 'boolean') {
-        ret = param ? 1 : 0;
-      } else {
-        ret = param;
-      }
-      HEAP32[((params)>>2)]=ret;
-    }
-
-  function _emscripten_glGetQueryObjectui64vEXT(id, pname, params) {
-      if (!params) {
-        // GLES2 specification does not specify how to behave if params is a null pointer. Since calling this function does not make sense
-        // if p == null, issue a GL error to notify user about it.
-        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
-        return;
-      }
-      var query = GL.timerQueriesEXT[id];
-      var param = GLctx.disjointTimerQueryExt['getQueryObjectEXT'](query, pname);
-      var ret;
-      if (typeof param == 'boolean') {
-        ret = param ? 1 : 0;
-      } else {
-        ret = param;
-      }
-      (tempI64 = [ret>>>0,(tempDouble=ret,(+(Math_abs(tempDouble))) >= 1.0 ? (tempDouble > 0.0 ? ((Math_min((+(Math_floor((tempDouble)/4294967296.0))), 4294967295.0))|0)>>>0 : (~~((+(Math_ceil((tempDouble - +(((~~(tempDouble)))>>>0))/4294967296.0)))))>>>0) : 0)],HEAP32[((params)>>2)]=tempI64[0],HEAP32[(((params)+(4))>>2)]=tempI64[1]);
-    }
-
-  function _emscripten_glGetQueryObjectuivEXT(id, pname, params) {
-      if (!params) {
-        // GLES2 specification does not specify how to behave if params is a null pointer. Since calling this function does not make sense
-        // if p == null, issue a GL error to notify user about it.
-        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
-        return;
-      }
-      var query = GL.timerQueriesEXT[id];
-      var param = GLctx.disjointTimerQueryExt['getQueryObjectEXT'](query, pname);
-      var ret;
-      if (typeof param == 'boolean') {
-        ret = param ? 1 : 0;
-      } else {
-        ret = param;
-      }
-      HEAP32[((params)>>2)]=ret;
-    }
-
-  function _emscripten_glGetQueryivEXT(target, pname, params) {
-      if (!params) {
-        // GLES2 specification does not specify how to behave if params is a null pointer. Since calling this function does not make sense
-        // if p == null, issue a GL error to notify user about it.
-        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
-        return;
-      }
-      HEAP32[((params)>>2)]=GLctx.disjointTimerQueryExt['getQueryEXT'](target, pname);
-    }
-
-  function _emscripten_glGetRenderbufferParameteriv(target, pname, params) {
-      if (!params) {
-        // GLES2 specification does not specify how to behave if params is a null pointer. Since calling this function does not make sense
-        // if params == null, issue a GL error to notify user about it.
-        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
-        return;
-      }
-      HEAP32[((params)>>2)]=GLctx.getRenderbufferParameter(target, pname);
-    }
-
-  function _emscripten_glGetShaderInfoLog(shader, maxLength, length, infoLog) {
-      var log = GLctx.getShaderInfoLog(GL.shaders[shader]);
-      if (log === null) log = '(unknown error)';
-      var numBytesWrittenExclNull = (maxLength > 0 && infoLog) ? stringToUTF8(log, infoLog, maxLength) : 0;
-      if (length) HEAP32[((length)>>2)]=numBytesWrittenExclNull;
-    }
-
-  function _emscripten_glGetShaderPrecisionFormat(shaderType, precisionType, range, precision) {
-      var result = GLctx.getShaderPrecisionFormat(shaderType, precisionType);
-      HEAP32[((range)>>2)]=result.rangeMin;
-      HEAP32[(((range)+(4))>>2)]=result.rangeMax;
-      HEAP32[((precision)>>2)]=result.precision;
-    }
-
-  function _emscripten_glGetShaderSource(shader, bufSize, length, source) {
-      var result = GLctx.getShaderSource(GL.shaders[shader]);
-      if (!result) return; // If an error occurs, nothing will be written to length or source.
-      var numBytesWrittenExclNull = (bufSize > 0 && source) ? stringToUTF8(result, source, bufSize) : 0;
-      if (length) HEAP32[((length)>>2)]=numBytesWrittenExclNull;
-    }
-
-  function _emscripten_glGetShaderiv(shader, pname, p) {
-      if (!p) {
-        // GLES2 specification does not specify how to behave if p is a null pointer. Since calling this function does not make sense
-        // if p == null, issue a GL error to notify user about it.
-        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
-        return;
-      }
-      if (pname == 0x8B84) { // GL_INFO_LOG_LENGTH
-        var log = GLctx.getShaderInfoLog(GL.shaders[shader]);
-        if (log === null) log = '(unknown error)';
-        HEAP32[((p)>>2)]=log.length + 1;
-      } else if (pname == 0x8B88) { // GL_SHADER_SOURCE_LENGTH
-        var source = GLctx.getShaderSource(GL.shaders[shader]);
-        var sourceLength = (source === null || source.length == 0) ? 0 : source.length + 1;
-        HEAP32[((p)>>2)]=sourceLength;
-      } else {
-        HEAP32[((p)>>2)]=GLctx.getShaderParameter(GL.shaders[shader], pname);
-      }
-    }
-
   
-  function stringToNewUTF8(jsString) {
-      var length = lengthBytesUTF8(jsString)+1;
-      var cString = _malloc(length);
-      stringToUTF8(jsString, cString, length);
-      return cString;
-    }function _emscripten_glGetString(name_) {
-      if (GL.stringCache[name_]) return GL.stringCache[name_];
-      var ret;
-      switch(name_) {
-        case 0x1F03 /* GL_EXTENSIONS */:
-          var exts = GLctx.getSupportedExtensions();
-          var gl_exts = [];
-          for (var i = 0; i < exts.length; ++i) {
-            gl_exts.push(exts[i]);
-            gl_exts.push("GL_" + exts[i]);
-          }
-          ret = stringToNewUTF8(gl_exts.join(' '));
-          break;
-        case 0x1F00 /* GL_VENDOR */:
-        case 0x1F01 /* GL_RENDERER */:
-        case 0x9245 /* UNMASKED_VENDOR_WEBGL */:
-        case 0x9246 /* UNMASKED_RENDERER_WEBGL */:
-          var s = GLctx.getParameter(name_);
-          if (!s) {
-            GL.recordError(0x0500/*GL_INVALID_ENUM*/);
-          }
-          ret = stringToNewUTF8(s);
-          break;
+        // Signal GL rendering layer that processing of a new frame is about to start. This helps it optimize
+        // VBO double-buffering and reduce GPU stalls.
   
-        case 0x1F02 /* GL_VERSION */:
-          var glVersion = GLctx.getParameter(GLctx.VERSION);
-          // return GLES version string corresponding to the version of the WebGL context
-          {
-            glVersion = 'OpenGL ES 2.0 (' + glVersion + ')';
-          }
-          ret = stringToNewUTF8(glVersion);
-          break;
-        case 0x8B8C /* GL_SHADING_LANGUAGE_VERSION */:
-          var glslVersion = GLctx.getParameter(GLctx.SHADING_LANGUAGE_VERSION);
-          // extract the version number 'N.M' from the string 'WebGL GLSL ES N.M ...'
-          var ver_re = /^WebGL GLSL ES ([0-9]\.[0-9][0-9]?)(?:$| .*)/;
-          var ver_num = glslVersion.match(ver_re);
-          if (ver_num !== null) {
-            if (ver_num[1].length == 3) ver_num[1] = ver_num[1] + '0'; // ensure minor version has 2 digits
-            glslVersion = 'OpenGL ES GLSL ES ' + ver_num[1] + ' (' + glslVersion + ')';
-          }
-          ret = stringToNewUTF8(glslVersion);
-          break;
-        default:
-          GL.recordError(0x0500/*GL_INVALID_ENUM*/);
-          return 0;
-      }
-      GL.stringCache[name_] = ret;
-      return ret;
-    }
-
-  function _emscripten_glGetTexParameterfv(target, pname, params) {
-      if (!params) {
-        // GLES2 specification does not specify how to behave if params is a null pointer. Since calling this function does not make sense
-        // if p == null, issue a GL error to notify user about it.
-        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
-        return;
-      }
-      HEAPF32[((params)>>2)]=GLctx.getTexParameter(target, pname);
-    }
-
-  function _emscripten_glGetTexParameteriv(target, pname, params) {
-      if (!params) {
-        // GLES2 specification does not specify how to behave if params is a null pointer. Since calling this function does not make sense
-        // if p == null, issue a GL error to notify user about it.
-        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
-        return;
-      }
-      HEAP32[((params)>>2)]=GLctx.getTexParameter(target, pname);
-    }
-
-  function _emscripten_glGetUniformLocation(program, name) {
-      name = UTF8ToString(name);
   
-      var arrayIndex = 0;
-      // If user passed an array accessor "[index]", parse the array index off the accessor.
-      if (name[name.length - 1] == ']') {
-        var leftBrace = name.lastIndexOf('[');
-        arrayIndex = name[leftBrace+1] != ']' ? parseInt(name.slice(leftBrace + 1)) : 0; // "index]", parseInt will ignore the ']' at the end; but treat "foo[]" as "foo[0]"
-        name = name.slice(0, leftBrace);
-      }
   
-      var uniformInfo = GL.programInfos[program] && GL.programInfos[program].uniforms[name]; // returns pair [ dimension_of_uniform_array, uniform_location ]
-      if (uniformInfo && arrayIndex >= 0 && arrayIndex < uniformInfo[0]) { // Check if user asked for an out-of-bounds element, i.e. for 'vec4 colors[3];' user could ask for 'colors[10]' which should return -1.
-        return uniformInfo[1] + arrayIndex;
-      } else {
-        return -1;
-      }
-    }
-
-  
-  function emscriptenWebGLGetUniform(program, location, params, type) {
-      if (!params) {
-        // GLES2 specification does not specify how to behave if params is a null pointer. Since calling this function does not make sense
-        // if params == null, issue a GL error to notify user about it.
-        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
-        return;
-      }
-      var data = GLctx.getUniform(GL.programs[program], GL.uniforms[location]);
-      if (typeof data == 'number' || typeof data == 'boolean') {
-        switch (type) {
-          case 0: HEAP32[((params)>>2)]=data; break;
-          case 2: HEAPF32[((params)>>2)]=data; break;
-          default: throw 'internal emscriptenWebGLGetUniform() error, bad type: ' + type;
+        if (Browser.mainLoop.method === 'timeout' && Module.ctx) {
+          err('Looks like you are rendering without using requestAnimationFrame for the main loop. You should use 0 for the frame rate in emscripten_set_main_loop in order to use requestAnimationFrame, as that can greatly improve your frame rates!');
+          Browser.mainLoop.method = ''; // just warn once per call to set main loop
         }
-      } else {
-        for (var i = 0; i < data.length; i++) {
-          switch (type) {
-            case 0: HEAP32[(((params)+(i*4))>>2)]=data[i]; break;
-            case 2: HEAPF32[(((params)+(i*4))>>2)]=data[i]; break;
-            default: throw 'internal emscriptenWebGLGetUniform() error, bad type: ' + type;
-          }
-        }
-      }
-    }function _emscripten_glGetUniformfv(program, location, params) {
-      emscriptenWebGLGetUniform(program, location, params, 2);
-    }
-
-  function _emscripten_glGetUniformiv(program, location, params) {
-      emscriptenWebGLGetUniform(program, location, params, 0);
-    }
-
-  function _emscripten_glGetVertexAttribPointerv(index, pname, pointer) {
-      if (!pointer) {
-        // GLES2 specification does not specify how to behave if pointer is a null pointer. Since calling this function does not make sense
-        // if pointer == null, issue a GL error to notify user about it.
-        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
-        return;
-      }
-      HEAP32[((pointer)>>2)]=GLctx.getVertexAttribOffset(index, pname);
-    }
-
   
-  function emscriptenWebGLGetVertexAttrib(index, pname, params, type) {
-      if (!params) {
-        // GLES2 specification does not specify how to behave if params is a null pointer. Since calling this function does not make sense
-        // if params == null, issue a GL error to notify user about it.
-        GL.recordError(0x0501 /* GL_INVALID_VALUE */);
-        return;
-      }
-      var data = GLctx.getVertexAttrib(index, pname);
-      if (pname == 0x889F/*VERTEX_ATTRIB_ARRAY_BUFFER_BINDING*/) {
-        HEAP32[((params)>>2)]=data["name"];
-      } else if (typeof data == 'number' || typeof data == 'boolean') {
-        switch (type) {
-          case 0: HEAP32[((params)>>2)]=data; break;
-          case 2: HEAPF32[((params)>>2)]=data; break;
-          case 5: HEAP32[((params)>>2)]=Math.fround(data); break;
-          default: throw 'internal emscriptenWebGLGetVertexAttrib() error, bad type: ' + type;
-        }
-      } else {
-        for (var i = 0; i < data.length; i++) {
-          switch (type) {
-            case 0: HEAP32[(((params)+(i*4))>>2)]=data[i]; break;
-            case 2: HEAPF32[(((params)+(i*4))>>2)]=data[i]; break;
-            case 5: HEAP32[(((params)+(i*4))>>2)]=Math.fround(data[i]); break;
-            default: throw 'internal emscriptenWebGLGetVertexAttrib() error, bad type: ' + type;
-          }
-        }
-      }
-    }function _emscripten_glGetVertexAttribfv(index, pname, params) {
-      // N.B. This function may only be called if the vertex attribute was specified using the function glVertexAttrib*f(),
-      // otherwise the results are undefined. (GLES3 spec 6.1.12)
-      emscriptenWebGLGetVertexAttrib(index, pname, params, 2);
-    }
-
-  function _emscripten_glGetVertexAttribiv(index, pname, params) {
-      // N.B. This function may only be called if the vertex attribute was specified using the function glVertexAttrib*f(),
-      // otherwise the results are undefined. (GLES3 spec 6.1.12)
-      emscriptenWebGLGetVertexAttrib(index, pname, params, 5);
-    }
-
-  function _emscripten_glHint(x0, x1) { GLctx['hint'](x0, x1) }
-
-  function _emscripten_glIsBuffer(buffer) {
-      var b = GL.buffers[buffer];
-      if (!b) return 0;
-      return GLctx.isBuffer(b);
-    }
-
-  function _emscripten_glIsEnabled(x0) { return GLctx['isEnabled'](x0) }
-
-  function _emscripten_glIsFramebuffer(framebuffer) {
-      var fb = GL.framebuffers[framebuffer];
-      if (!fb) return 0;
-      return GLctx.isFramebuffer(fb);
-    }
-
-  function _emscripten_glIsProgram(program) {
-      program = GL.programs[program];
-      if (!program) return 0;
-      return GLctx.isProgram(program);
-    }
-
-  function _emscripten_glIsQueryEXT(id) {
-      var query = GL.timerQueriesEXT[id];
-      if (!query) return 0;
-      return GLctx.disjointTimerQueryExt['isQueryEXT'](query);
-    }
-
-  function _emscripten_glIsRenderbuffer(renderbuffer) {
-      var rb = GL.renderbuffers[renderbuffer];
-      if (!rb) return 0;
-      return GLctx.isRenderbuffer(rb);
-    }
-
-  function _emscripten_glIsShader(shader) {
-      var s = GL.shaders[shader];
-      if (!s) return 0;
-      return GLctx.isShader(s);
-    }
-
-  function _emscripten_glIsTexture(id) {
-      var texture = GL.textures[id];
-      if (!texture) return 0;
-      return GLctx.isTexture(texture);
-    }
-
-  function _emscripten_glIsVertexArrayOES(array) {
+        Browser.mainLoop.runIter(browserIterationFunc);
   
-      var vao = GL.vaos[array];
-      if (!vao) return 0;
-      return GLctx['isVertexArray'](vao);
-    }
-
-  function _emscripten_glLineWidth(x0) { GLctx['lineWidth'](x0) }
-
-  function _emscripten_glLinkProgram(program) {
-      GLctx.linkProgram(GL.programs[program]);
-      GL.populateUniformTable(program);
-    }
-
-  function _emscripten_glPixelStorei(pname, param) {
-      if (pname == 0x0cf5 /* GL_UNPACK_ALIGNMENT */) {
-        GL.unpackAlignment = param;
-      }
-      GLctx.pixelStorei(pname, param);
-    }
-
-  function _emscripten_glPolygonOffset(x0, x1) { GLctx['polygonOffset'](x0, x1) }
-
-  function _emscripten_glQueryCounterEXT(id, target) {
-      GLctx.disjointTimerQueryExt['queryCounterEXT'](GL.timerQueriesEXT[id], target);
-    }
-
+        checkStackCookie();
   
+        // catch pauses from the main loop itself
+        if (thisMainLoopId < Browser.mainLoop.currentlyRunningMainloop) return;
   
-  function __computeUnpackAlignedImageSize(width, height, sizePerPixel, alignment) {
-      function roundedToNextMultipleOf(x, y) {
-        return (x + y - 1) & -y;
-      }
-      var plainRowSize = width * sizePerPixel;
-      var alignedRowSize = roundedToNextMultipleOf(plainRowSize, alignment);
-      return height * alignedRowSize;
-    }
+        // Queue new audio data. This is important to be right after the main loop invocation, so that we will immediately be able
+        // to queue the newest produced audio samples.
+        // TODO: Consider adding pre- and post- rAF callbacks so that GL.newRenderingFrameStarted() and SDL.audio.queueNewAudioData()
+        //       do not need to be hardcoded into this function, but can be more generic.
+        if (typeof SDL === 'object' && SDL.audio && SDL.audio.queueNewAudioData) SDL.audio.queueNewAudioData();
   
-  var __colorChannelsInGlTextureFormat={6402:1,6406:1,6407:3,6408:4,6409:1,6410:2,35904:3,35906:4};
-  
-  var __sizeOfGlTextureElementType={5121:1,5123:2,5125:4,5126:4,32819:2,32820:2,33635:2,34042:4,36193:2};function emscriptenWebGLGetTexPixelData(type, format, width, height, pixels, internalFormat) {
-      var sizePerPixel = __colorChannelsInGlTextureFormat[format] * __sizeOfGlTextureElementType[type];
-      if (!sizePerPixel) {
-        GL.recordError(0x0500); // GL_INVALID_ENUM
-        return;
-      }
-      var bytes = __computeUnpackAlignedImageSize(width, height, sizePerPixel, GL.unpackAlignment);
-      var end = pixels + bytes;
-      switch(type) {
-        case 0x1401 /* GL_UNSIGNED_BYTE */:
-          return HEAPU8.subarray(pixels, end);
-        case 0x1406 /* GL_FLOAT */:
-          return HEAPF32.subarray(pixels>>2, end>>2);
-        case 0x1405 /* GL_UNSIGNED_INT */:
-        case 0x84FA /* GL_UNSIGNED_INT_24_8_WEBGL/GL_UNSIGNED_INT_24_8 */:
-          return HEAPU32.subarray(pixels>>2, end>>2);
-        case 0x1403 /* GL_UNSIGNED_SHORT */:
-        case 0x8363 /* GL_UNSIGNED_SHORT_5_6_5 */:
-        case 0x8033 /* GL_UNSIGNED_SHORT_4_4_4_4 */:
-        case 0x8034 /* GL_UNSIGNED_SHORT_5_5_5_1 */:
-        case 0x8D61 /* GL_HALF_FLOAT_OES */:
-          return HEAPU16.subarray(pixels>>1, end>>1);
-        default:
-          GL.recordError(0x0500); // GL_INVALID_ENUM
-      }
-    }function _emscripten_glReadPixels(x, y, width, height, format, type, pixels) {
-      var pixelData = emscriptenWebGLGetTexPixelData(type, format, width, height, pixels, format);
-      if (!pixelData) {
-        GL.recordError(0x0500/*GL_INVALID_ENUM*/);
-        return;
-      }
-      GLctx.readPixels(x, y, width, height, format, type, pixelData);
-    }
-
-  function _emscripten_glReleaseShaderCompiler() {
-      // NOP (as allowed by GLES 2.0 spec)
-    }
-
-  function _emscripten_glRenderbufferStorage(x0, x1, x2, x3) { GLctx['renderbufferStorage'](x0, x1, x2, x3) }
-
-  function _emscripten_glSampleCoverage(value, invert) {
-      GLctx.sampleCoverage(value, !!invert);
-    }
-
-  function _emscripten_glScissor(x0, x1, x2, x3) { GLctx['scissor'](x0, x1, x2, x3) }
-
-  function _emscripten_glShaderBinary() {
-      GL.recordError(0x0500/*GL_INVALID_ENUM*/);
-    }
-
-  function _emscripten_glShaderSource(shader, count, string, length) {
-      var source = GL.getSource(shader, count, string, length);
-  
-  
-      GLctx.shaderSource(GL.shaders[shader], source);
-    }
-
-  function _emscripten_glStencilFunc(x0, x1, x2) { GLctx['stencilFunc'](x0, x1, x2) }
-
-  function _emscripten_glStencilFuncSeparate(x0, x1, x2, x3) { GLctx['stencilFuncSeparate'](x0, x1, x2, x3) }
-
-  function _emscripten_glStencilMask(x0) { GLctx['stencilMask'](x0) }
-
-  function _emscripten_glStencilMaskSeparate(x0, x1) { GLctx['stencilMaskSeparate'](x0, x1) }
-
-  function _emscripten_glStencilOp(x0, x1, x2) { GLctx['stencilOp'](x0, x1, x2) }
-
-  function _emscripten_glStencilOpSeparate(x0, x1, x2, x3) { GLctx['stencilOpSeparate'](x0, x1, x2, x3) }
-
-  function _emscripten_glTexImage2D(target, level, internalFormat, width, height, border, format, type, pixels) {
-      GLctx.texImage2D(target, level, internalFormat, width, height, border, format, type, pixels ? emscriptenWebGLGetTexPixelData(type, format, width, height, pixels, internalFormat) : null);
-    }
-
-  function _emscripten_glTexParameterf(x0, x1, x2) { GLctx['texParameterf'](x0, x1, x2) }
-
-  function _emscripten_glTexParameterfv(target, pname, params) {
-      var param = HEAPF32[((params)>>2)];
-      GLctx.texParameterf(target, pname, param);
-    }
-
-  function _emscripten_glTexParameteri(x0, x1, x2) { GLctx['texParameteri'](x0, x1, x2) }
-
-  function _emscripten_glTexParameteriv(target, pname, params) {
-      var param = HEAP32[((params)>>2)];
-      GLctx.texParameteri(target, pname, param);
-    }
-
-  function _emscripten_glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels) {
-      var pixelData = null;
-      if (pixels) pixelData = emscriptenWebGLGetTexPixelData(type, format, width, height, pixels, 0);
-      GLctx.texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixelData);
-    }
-
-  function _emscripten_glUniform1f(location, v0) {
-      GLctx.uniform1f(GL.uniforms[location], v0);
-    }
-
-  function _emscripten_glUniform1fv(location, count, value) {
-  
-  
-      if (count <= GL.MINI_TEMP_BUFFER_SIZE) {
-        // avoid allocation when uploading few enough uniforms
-        var view = GL.miniTempBufferViews[count-1];
-        for (var i = 0; i < count; ++i) {
-          view[i] = HEAPF32[(((value)+(4*i))>>2)];
-        }
-      } else
-      {
-        var view = HEAPF32.subarray((value)>>2,(value+count*4)>>2);
-      }
-      GLctx.uniform1fv(GL.uniforms[location], view);
-    }
-
-  function _emscripten_glUniform1i(location, v0) {
-      GLctx.uniform1i(GL.uniforms[location], v0);
-    }
-
-  function _emscripten_glUniform1iv(location, count, value) {
-  
-  
-      GLctx.uniform1iv(GL.uniforms[location], HEAP32.subarray((value)>>2,(value+count*4)>>2));
-    }
-
-  function _emscripten_glUniform2f(location, v0, v1) {
-      GLctx.uniform2f(GL.uniforms[location], v0, v1);
-    }
-
-  function _emscripten_glUniform2fv(location, count, value) {
-  
-  
-      if (2*count <= GL.MINI_TEMP_BUFFER_SIZE) {
-        // avoid allocation when uploading few enough uniforms
-        var view = GL.miniTempBufferViews[2*count-1];
-        for (var i = 0; i < 2*count; i += 2) {
-          view[i] = HEAPF32[(((value)+(4*i))>>2)];
-          view[i+1] = HEAPF32[(((value)+(4*i+4))>>2)];
-        }
-      } else
-      {
-        var view = HEAPF32.subarray((value)>>2,(value+count*8)>>2);
-      }
-      GLctx.uniform2fv(GL.uniforms[location], view);
-    }
-
-  function _emscripten_glUniform2i(location, v0, v1) {
-      GLctx.uniform2i(GL.uniforms[location], v0, v1);
-    }
-
-  function _emscripten_glUniform2iv(location, count, value) {
-  
-  
-      GLctx.uniform2iv(GL.uniforms[location], HEAP32.subarray((value)>>2,(value+count*8)>>2));
-    }
-
-  function _emscripten_glUniform3f(location, v0, v1, v2) {
-      GLctx.uniform3f(GL.uniforms[location], v0, v1, v2);
-    }
-
-  function _emscripten_glUniform3fv(location, count, value) {
-  
-  
-      if (3*count <= GL.MINI_TEMP_BUFFER_SIZE) {
-        // avoid allocation when uploading few enough uniforms
-        var view = GL.miniTempBufferViews[3*count-1];
-        for (var i = 0; i < 3*count; i += 3) {
-          view[i] = HEAPF32[(((value)+(4*i))>>2)];
-          view[i+1] = HEAPF32[(((value)+(4*i+4))>>2)];
-          view[i+2] = HEAPF32[(((value)+(4*i+8))>>2)];
-        }
-      } else
-      {
-        var view = HEAPF32.subarray((value)>>2,(value+count*12)>>2);
-      }
-      GLctx.uniform3fv(GL.uniforms[location], view);
-    }
-
-  function _emscripten_glUniform3i(location, v0, v1, v2) {
-      GLctx.uniform3i(GL.uniforms[location], v0, v1, v2);
-    }
-
-  function _emscripten_glUniform3iv(location, count, value) {
-  
-  
-      GLctx.uniform3iv(GL.uniforms[location], HEAP32.subarray((value)>>2,(value+count*12)>>2));
-    }
-
-  function _emscripten_glUniform4f(location, v0, v1, v2, v3) {
-      GLctx.uniform4f(GL.uniforms[location], v0, v1, v2, v3);
-    }
-
-  function _emscripten_glUniform4fv(location, count, value) {
-  
-  
-      if (4*count <= GL.MINI_TEMP_BUFFER_SIZE) {
-        // avoid allocation when uploading few enough uniforms
-        var view = GL.miniTempBufferViews[4*count-1];
-        for (var i = 0; i < 4*count; i += 4) {
-          view[i] = HEAPF32[(((value)+(4*i))>>2)];
-          view[i+1] = HEAPF32[(((value)+(4*i+4))>>2)];
-          view[i+2] = HEAPF32[(((value)+(4*i+8))>>2)];
-          view[i+3] = HEAPF32[(((value)+(4*i+12))>>2)];
-        }
-      } else
-      {
-        var view = HEAPF32.subarray((value)>>2,(value+count*16)>>2);
-      }
-      GLctx.uniform4fv(GL.uniforms[location], view);
-    }
-
-  function _emscripten_glUniform4i(location, v0, v1, v2, v3) {
-      GLctx.uniform4i(GL.uniforms[location], v0, v1, v2, v3);
-    }
-
-  function _emscripten_glUniform4iv(location, count, value) {
-  
-  
-      GLctx.uniform4iv(GL.uniforms[location], HEAP32.subarray((value)>>2,(value+count*16)>>2));
-    }
-
-  function _emscripten_glUniformMatrix2fv(location, count, transpose, value) {
-  
-  
-      if (4*count <= GL.MINI_TEMP_BUFFER_SIZE) {
-        // avoid allocation when uploading few enough uniforms
-        var view = GL.miniTempBufferViews[4*count-1];
-        for (var i = 0; i < 4*count; i += 4) {
-          view[i] = HEAPF32[(((value)+(4*i))>>2)];
-          view[i+1] = HEAPF32[(((value)+(4*i+4))>>2)];
-          view[i+2] = HEAPF32[(((value)+(4*i+8))>>2)];
-          view[i+3] = HEAPF32[(((value)+(4*i+12))>>2)];
-        }
-      } else
-      {
-        var view = HEAPF32.subarray((value)>>2,(value+count*16)>>2);
-      }
-      GLctx.uniformMatrix2fv(GL.uniforms[location], !!transpose, view);
-    }
-
-  function _emscripten_glUniformMatrix3fv(location, count, transpose, value) {
-  
-  
-      if (9*count <= GL.MINI_TEMP_BUFFER_SIZE) {
-        // avoid allocation when uploading few enough uniforms
-        var view = GL.miniTempBufferViews[9*count-1];
-        for (var i = 0; i < 9*count; i += 9) {
-          view[i] = HEAPF32[(((value)+(4*i))>>2)];
-          view[i+1] = HEAPF32[(((value)+(4*i+4))>>2)];
-          view[i+2] = HEAPF32[(((value)+(4*i+8))>>2)];
-          view[i+3] = HEAPF32[(((value)+(4*i+12))>>2)];
-          view[i+4] = HEAPF32[(((value)+(4*i+16))>>2)];
-          view[i+5] = HEAPF32[(((value)+(4*i+20))>>2)];
-          view[i+6] = HEAPF32[(((value)+(4*i+24))>>2)];
-          view[i+7] = HEAPF32[(((value)+(4*i+28))>>2)];
-          view[i+8] = HEAPF32[(((value)+(4*i+32))>>2)];
-        }
-      } else
-      {
-        var view = HEAPF32.subarray((value)>>2,(value+count*36)>>2);
-      }
-      GLctx.uniformMatrix3fv(GL.uniforms[location], !!transpose, view);
-    }
-
-  function _emscripten_glUniformMatrix4fv(location, count, transpose, value) {
-  
-  
-      if (16*count <= GL.MINI_TEMP_BUFFER_SIZE) {
-        // avoid allocation when uploading few enough uniforms
-        var view = GL.miniTempBufferViews[16*count-1];
-        for (var i = 0; i < 16*count; i += 16) {
-          view[i] = HEAPF32[(((value)+(4*i))>>2)];
-          view[i+1] = HEAPF32[(((value)+(4*i+4))>>2)];
-          view[i+2] = HEAPF32[(((value)+(4*i+8))>>2)];
-          view[i+3] = HEAPF32[(((value)+(4*i+12))>>2)];
-          view[i+4] = HEAPF32[(((value)+(4*i+16))>>2)];
-          view[i+5] = HEAPF32[(((value)+(4*i+20))>>2)];
-          view[i+6] = HEAPF32[(((value)+(4*i+24))>>2)];
-          view[i+7] = HEAPF32[(((value)+(4*i+28))>>2)];
-          view[i+8] = HEAPF32[(((value)+(4*i+32))>>2)];
-          view[i+9] = HEAPF32[(((value)+(4*i+36))>>2)];
-          view[i+10] = HEAPF32[(((value)+(4*i+40))>>2)];
-          view[i+11] = HEAPF32[(((value)+(4*i+44))>>2)];
-          view[i+12] = HEAPF32[(((value)+(4*i+48))>>2)];
-          view[i+13] = HEAPF32[(((value)+(4*i+52))>>2)];
-          view[i+14] = HEAPF32[(((value)+(4*i+56))>>2)];
-          view[i+15] = HEAPF32[(((value)+(4*i+60))>>2)];
-        }
-      } else
-      {
-        var view = HEAPF32.subarray((value)>>2,(value+count*64)>>2);
-      }
-      GLctx.uniformMatrix4fv(GL.uniforms[location], !!transpose, view);
-    }
-
-  function _emscripten_glUseProgram(program) {
-      GLctx.useProgram(GL.programs[program]);
-    }
-
-  function _emscripten_glValidateProgram(program) {
-      GLctx.validateProgram(GL.programs[program]);
-    }
-
-  function _emscripten_glVertexAttrib1f(x0, x1) { GLctx['vertexAttrib1f'](x0, x1) }
-
-  function _emscripten_glVertexAttrib1fv(index, v) {
-  
-      GLctx.vertexAttrib1f(index, HEAPF32[v>>2]);
-    }
-
-  function _emscripten_glVertexAttrib2f(x0, x1, x2) { GLctx['vertexAttrib2f'](x0, x1, x2) }
-
-  function _emscripten_glVertexAttrib2fv(index, v) {
-  
-      GLctx.vertexAttrib2f(index, HEAPF32[v>>2], HEAPF32[v+4>>2]);
-    }
-
-  function _emscripten_glVertexAttrib3f(x0, x1, x2, x3) { GLctx['vertexAttrib3f'](x0, x1, x2, x3) }
-
-  function _emscripten_glVertexAttrib3fv(index, v) {
-  
-      GLctx.vertexAttrib3f(index, HEAPF32[v>>2], HEAPF32[v+4>>2], HEAPF32[v+8>>2]);
-    }
-
-  function _emscripten_glVertexAttrib4f(x0, x1, x2, x3, x4) { GLctx['vertexAttrib4f'](x0, x1, x2, x3, x4) }
-
-  function _emscripten_glVertexAttrib4fv(index, v) {
-  
-      GLctx.vertexAttrib4f(index, HEAPF32[v>>2], HEAPF32[v+4>>2], HEAPF32[v+8>>2], HEAPF32[v+12>>2]);
-    }
-
-  function _emscripten_glVertexAttribDivisorANGLE(index, divisor) {
-      GLctx['vertexAttribDivisor'](index, divisor);
-    }
-
-  function _emscripten_glVertexAttribPointer(index, size, type, normalized, stride, ptr) {
-      GLctx.vertexAttribPointer(index, size, type, !!normalized, stride, ptr);
-    }
-
-  function _emscripten_glViewport(x0, x1, x2, x3) { GLctx['viewport'](x0, x1, x2, x3) }
-
-  
-  
-   
-  
-   
-  
-   function _longjmp(env, value) {
-      _setThrew(env, value || 1);
-      throw 'longjmp';
-    }function _emscripten_longjmp(env, value) {
-      _longjmp(env, value);
-    }
-
-  
-  function __emscripten_do_request_fullscreen(target, strategy) {
-      if (!JSEvents.fullscreenEnabled()) return -1;
-      if (!target) target = '#canvas';
-      target = __findEventTarget(target);
-      if (!target) return -4;
-  
-      if (!target.requestFullscreen && !target.msRequestFullscreen && !target.mozRequestFullScreen && !target.mozRequestFullscreen && !target.webkitRequestFullscreen) {
-        return -3;
+        Browser.mainLoop.scheduler();
       }
   
-      var canPerformRequests = JSEvents.canPerformEventHandlerRequests();
+      if (!noSetTiming) {
+        if (fps && fps > 0) _emscripten_set_main_loop_timing(0/*EM_TIMING_SETTIMEOUT*/, 1000.0 / fps);
+        else _emscripten_set_main_loop_timing(1/*EM_TIMING_RAF*/, 1); // Do rAF by rendering each frame (no decimating)
   
-      // Queue this function call if we're not currently in an event handler and the user saw it appropriate to do so.
-      if (!canPerformRequests) {
-        if (strategy.deferUntilInEventHandler) {
-          JSEvents.deferCall(_JSEvents_requestFullscreen, 1 /* priority over pointer lock */, [target, strategy]);
-          return 1;
-        } else {
-          return -2;
-        }
+        Browser.mainLoop.scheduler();
       }
   
-      return _JSEvents_requestFullscreen(target, strategy);
-    }function _emscripten_request_fullscreen_strategy(target, deferUntilInEventHandler, fullscreenStrategy) {
-      var strategy = {};
-      strategy.scaleMode = HEAP32[((fullscreenStrategy)>>2)];
-      strategy.canvasResolutionScaleMode = HEAP32[(((fullscreenStrategy)+(4))>>2)];
-      strategy.filteringMode = HEAP32[(((fullscreenStrategy)+(8))>>2)];
-      strategy.deferUntilInEventHandler = deferUntilInEventHandler;
-      strategy.canvasResizedCallback = HEAP32[(((fullscreenStrategy)+(12))>>2)];
-      strategy.canvasResizedCallbackUserData = HEAP32[(((fullscreenStrategy)+(16))>>2)];
-      __currentFullscreenStrategy = strategy;
-  
-      return __emscripten_do_request_fullscreen(target, strategy);
-    }
-
-  function _emscripten_request_pointerlock(target, deferUntilInEventHandler) {
-      if (!target) target = '#canvas';
-      target = __findEventTarget(target);
-      if (!target) return -4;
-      if (!target.requestPointerLock && !target.mozRequestPointerLock && !target.webkitRequestPointerLock && !target.msRequestPointerLock) {
-        return -1;
+      if (simulateInfiniteLoop) {
+        throw 'SimulateInfiniteLoop';
       }
-  
-      var canPerformRequests = JSEvents.canPerformEventHandlerRequests();
-  
-      // Queue this function call if we're not currently in an event handler and the user saw it appropriate to do so.
-      if (!canPerformRequests) {
-        if (deferUntilInEventHandler) {
-          JSEvents.deferCall(__requestPointerLock, 2 /* priority below fullscreen */, [target]);
-          return 1;
-        } else {
-          return -2;
-        }
-      }
-  
-      return __requestPointerLock(target);
-    }
-
-  function _emscripten_sample_gamepad_data() {
-      return (JSEvents.lastGamepadState = (navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : null)))
-        ? 0 : -1;
-    }
-
-  
-  function __registerFocusEventCallback(target, userData, useCapture, callbackfunc, eventTypeId, eventTypeString, targetThread) {
-      if (!JSEvents.focusEvent) JSEvents.focusEvent = _malloc( 256 );
-  
-      var focusEventHandlerFunc = function(ev) {
-        var e = ev || event;
-  
-        var nodeName = JSEvents.getNodeNameForTarget(e.target);
-        var id = e.target.id ? e.target.id : '';
-  
-        var focusEvent = JSEvents.focusEvent;
-        stringToUTF8(nodeName, focusEvent + 0, 128);
-        stringToUTF8(id, focusEvent + 128, 128);
-  
-        if (dynCall_iiii(callbackfunc, eventTypeId, focusEvent, userData)) e.preventDefault();
-      };
-  
-      var eventHandler = {
-        target: __findEventTarget(target),
-        allowsDeferredCalls: false,
-        eventTypeString: eventTypeString,
-        callbackfunc: callbackfunc,
-        handlerFunc: focusEventHandlerFunc,
-        useCapture: useCapture
-      };
-      JSEvents.registerOrRemoveHandler(eventHandler);
-    }function _emscripten_set_blur_callback_on_thread(target, userData, useCapture, callbackfunc, targetThread) {
-      __registerFocusEventCallback(target, userData, useCapture, callbackfunc, 12, "blur", targetThread);
-      return 0;
-    }
-
-
-  function _emscripten_set_element_css_size(target, width, height) {
-      target = target ? __findEventTarget(target) : Module['canvas'];
-      if (!target) return -4;
-  
-      target.style.width = width + "px";
-      target.style.height = height + "px";
-  
-      return 0;
-    }
-
-  function _emscripten_set_focus_callback_on_thread(target, userData, useCapture, callbackfunc, targetThread) {
-      __registerFocusEventCallback(target, userData, useCapture, callbackfunc, 13, "focus", targetThread);
-      return 0;
-    }
-
-  
-  
-  function __fillFullscreenChangeEventData(eventStruct, e) {
-      var fullscreenElement = document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement;
-      var isFullscreen = !!fullscreenElement;
-      HEAP32[((eventStruct)>>2)]=isFullscreen;
-      HEAP32[(((eventStruct)+(4))>>2)]=JSEvents.fullscreenEnabled();
-      // If transitioning to fullscreen, report info about the element that is now fullscreen.
-      // If transitioning to windowed mode, report info about the element that just was fullscreen.
-      var reportedElement = isFullscreen ? fullscreenElement : JSEvents.previousFullscreenElement;
-      var nodeName = JSEvents.getNodeNameForTarget(reportedElement);
-      var id = (reportedElement && reportedElement.id) ? reportedElement.id : '';
-      stringToUTF8(nodeName, eventStruct + 8, 128);
-      stringToUTF8(id, eventStruct + 136, 128);
-      HEAP32[(((eventStruct)+(264))>>2)]=reportedElement ? reportedElement.clientWidth : 0;
-      HEAP32[(((eventStruct)+(268))>>2)]=reportedElement ? reportedElement.clientHeight : 0;
-      HEAP32[(((eventStruct)+(272))>>2)]=screen.width;
-      HEAP32[(((eventStruct)+(276))>>2)]=screen.height;
-      if (isFullscreen) {
-        JSEvents.previousFullscreenElement = fullscreenElement;
-      }
-    }function __registerFullscreenChangeEventCallback(target, userData, useCapture, callbackfunc, eventTypeId, eventTypeString, targetThread) {
-      if (!JSEvents.fullscreenChangeEvent) JSEvents.fullscreenChangeEvent = _malloc( 280 );
-  
-      var fullscreenChangeEventhandlerFunc = function(ev) {
-        var e = ev || event;
-  
-        var fullscreenChangeEvent = JSEvents.fullscreenChangeEvent;
-  
-        __fillFullscreenChangeEventData(fullscreenChangeEvent, e);
-  
-        if (dynCall_iiii(callbackfunc, eventTypeId, fullscreenChangeEvent, userData)) e.preventDefault();
-      };
-  
-      var eventHandler = {
-        target: target,
-        allowsDeferredCalls: false,
-        eventTypeString: eventTypeString,
-        callbackfunc: callbackfunc,
-        handlerFunc: fullscreenChangeEventhandlerFunc,
-        useCapture: useCapture
-      };
-      JSEvents.registerOrRemoveHandler(eventHandler);
-    }function _emscripten_set_fullscreenchange_callback_on_thread(target, userData, useCapture, callbackfunc, targetThread) {
-      if (!JSEvents.fullscreenEnabled()) return -1;
-      target = target ? __findEventTarget(target) : __specialEventTargets[1];
-      if (!target) return -4;
-      __registerFullscreenChangeEventCallback(target, userData, useCapture, callbackfunc, 19, "fullscreenchange", targetThread);
-      __registerFullscreenChangeEventCallback(target, userData, useCapture, callbackfunc, 19, "mozfullscreenchange", targetThread);
-      __registerFullscreenChangeEventCallback(target, userData, useCapture, callbackfunc, 19, "webkitfullscreenchange", targetThread);
-      __registerFullscreenChangeEventCallback(target, userData, useCapture, callbackfunc, 19, "msfullscreenchange", targetThread);
-      return 0;
-    }
-
-  
-  function __registerGamepadEventCallback(target, userData, useCapture, callbackfunc, eventTypeId, eventTypeString, targetThread) {
-      if (!JSEvents.gamepadEvent) JSEvents.gamepadEvent = _malloc( 1432 );
-  
-      var gamepadEventHandlerFunc = function(ev) {
-        var e = ev || event;
-  
-        var gamepadEvent = JSEvents.gamepadEvent;
-        __fillGamepadEventData(gamepadEvent, e.gamepad);
-  
-        if (dynCall_iiii(callbackfunc, eventTypeId, gamepadEvent, userData)) e.preventDefault();
-      };
-  
-      var eventHandler = {
-        target: __findEventTarget(target),
-        allowsDeferredCalls: true,
-        eventTypeString: eventTypeString,
-        callbackfunc: callbackfunc,
-        handlerFunc: gamepadEventHandlerFunc,
-        useCapture: useCapture
-      };
-      JSEvents.registerOrRemoveHandler(eventHandler);
-    }function _emscripten_set_gamepadconnected_callback_on_thread(userData, useCapture, callbackfunc, targetThread) {
-      if (!navigator.getGamepads && !navigator.webkitGetGamepads) return -1;
-      __registerGamepadEventCallback(2, userData, useCapture, callbackfunc, 26, "gamepadconnected", targetThread);
-      return 0;
-    }
-
-  function _emscripten_set_gamepaddisconnected_callback_on_thread(userData, useCapture, callbackfunc, targetThread) {
-      if (!navigator.getGamepads && !navigator.webkitGetGamepads) return -1;
-      __registerGamepadEventCallback(2, userData, useCapture, callbackfunc, 27, "gamepaddisconnected", targetThread);
-      return 0;
-    }
-
-  
-  function __registerKeyEventCallback(target, userData, useCapture, callbackfunc, eventTypeId, eventTypeString, targetThread) {
-      if (!JSEvents.keyEvent) JSEvents.keyEvent = _malloc( 164 );
-  
-      var keyEventHandlerFunc = function(ev) {
-        var e = ev || event;
-  
-        var keyEventData = JSEvents.keyEvent;
-        stringToUTF8(e.key ? e.key : "", keyEventData + 0, 32);
-        stringToUTF8(e.code ? e.code : "", keyEventData + 32, 32);
-        HEAP32[(((keyEventData)+(64))>>2)]=e.location;
-        HEAP32[(((keyEventData)+(68))>>2)]=e.ctrlKey;
-        HEAP32[(((keyEventData)+(72))>>2)]=e.shiftKey;
-        HEAP32[(((keyEventData)+(76))>>2)]=e.altKey;
-        HEAP32[(((keyEventData)+(80))>>2)]=e.metaKey;
-        HEAP32[(((keyEventData)+(84))>>2)]=e.repeat;
-        stringToUTF8(e.locale ? e.locale : "", keyEventData + 88, 32);
-        stringToUTF8(e.char ? e.char : "", keyEventData + 120, 32);
-        HEAP32[(((keyEventData)+(152))>>2)]=e.charCode;
-        HEAP32[(((keyEventData)+(156))>>2)]=e.keyCode;
-        HEAP32[(((keyEventData)+(160))>>2)]=e.which;
-  
-        if (dynCall_iiii(callbackfunc, eventTypeId, keyEventData, userData)) e.preventDefault();
-      };
-  
-      var eventHandler = {
-        target: __findEventTarget(target),
-        allowsDeferredCalls: JSEvents.isInternetExplorer() ? false : true, // MSIE doesn't allow fullscreen and pointerlock requests from key handlers, others do.
-        eventTypeString: eventTypeString,
-        callbackfunc: callbackfunc,
-        handlerFunc: keyEventHandlerFunc,
-        useCapture: useCapture
-      };
-      JSEvents.registerOrRemoveHandler(eventHandler);
-    }function _emscripten_set_keydown_callback_on_thread(target, userData, useCapture, callbackfunc, targetThread) {
-      __registerKeyEventCallback(target, userData, useCapture, callbackfunc, 2, "keydown", targetThread);
-      return 0;
-    }
-
-  function _emscripten_set_keypress_callback_on_thread(target, userData, useCapture, callbackfunc, targetThread) {
-      __registerKeyEventCallback(target, userData, useCapture, callbackfunc, 1, "keypress", targetThread);
-      return 0;
-    }
-
-  function _emscripten_set_keyup_callback_on_thread(target, userData, useCapture, callbackfunc, targetThread) {
-      __registerKeyEventCallback(target, userData, useCapture, callbackfunc, 3, "keyup", targetThread);
-      return 0;
-    }
-
-  function _emscripten_set_main_loop_arg(func, arg, fps, simulateInfiniteLoop) {
+    }function _emscripten_set_main_loop_arg(func, arg, fps, simulateInfiniteLoop) {
       _emscripten_set_main_loop(func, fps, simulateInfiniteLoop, arg);
     }
 
   
+  var GLFW={Window:function (id, width, height, title, monitor, share) {
+        this.id = id;
+        this.x = 0;
+        this.y = 0;
+        this.fullscreen = false; // Used to determine if app in fullscreen mode
+        this.storedX = 0; // Used to store X before fullscreen
+        this.storedY = 0; // Used to store Y before fullscreen
+        this.width = width;
+        this.height = height;
+        this.storedWidth = width; // Used to store width before fullscreen
+        this.storedHeight = height; // Used to store height before fullscreen
+        this.title = title;
+        this.monitor = monitor;
+        this.share = share;
+        this.attributes = GLFW.hints;
+        this.inputModes = {
+          0x00033001:0x00034001, // GLFW_CURSOR (GLFW_CURSOR_NORMAL)
+          0x00033002:0, // GLFW_STICKY_KEYS
+          0x00033003:0, // GLFW_STICKY_MOUSE_BUTTONS
+        };
+        this.buttons = 0;
+        this.keys = new Array();
+        this.domKeys = new Array();
+        this.shouldClose = 0;
+        this.title = null;
+        this.windowPosFunc = null; // GLFWwindowposfun
+        this.windowSizeFunc = null; // GLFWwindowsizefun
+        this.windowCloseFunc = null; // GLFWwindowclosefun
+        this.windowRefreshFunc = null; // GLFWwindowrefreshfun
+        this.windowFocusFunc = null; // GLFWwindowfocusfun
+        this.windowIconifyFunc = null; // GLFWwindowiconifyfun
+        this.framebufferSizeFunc = null; // GLFWframebuffersizefun
+        this.mouseButtonFunc = null; // GLFWmousebuttonfun
+        this.cursorPosFunc = null; // GLFWcursorposfun
+        this.cursorEnterFunc = null; // GLFWcursorenterfun
+        this.scrollFunc = null; // GLFWscrollfun
+        this.dropFunc = null; // GLFWdropfun
+        this.keyFunc = null; // GLFWkeyfun
+        this.charFunc = null; // GLFWcharfun
+        this.userptr = null;
+      },WindowFromId:function (id) {
+        if (id <= 0 || !GLFW.windows) return null;
+        return GLFW.windows[id - 1];
+      },joystickFunc:null,errorFunc:null,monitorFunc:null,active:null,windows:null,monitors:null,monitorString:null,versionString:null,initialTime:null,extensions:null,hints:null,defaultHints:{131073:0,131074:0,131075:1,131076:1,131077:1,135169:8,135170:8,135171:8,135172:8,135173:24,135174:8,135175:0,135176:0,135177:0,135178:0,135179:0,135180:0,135181:0,135182:0,135183:0,139265:196609,139266:1,139267:0,139268:0,139269:0,139270:0,139271:0,139272:0},DOMToGLFWKeyCode:function (keycode) {
+        switch (keycode) {
+          // these keycodes are only defined for GLFW3, assume they are the same for GLFW2
+          case 0x20:return 32; // DOM_VK_SPACE -> GLFW_KEY_SPACE
+          case 0xDE:return 39; // DOM_VK_QUOTE -> GLFW_KEY_APOSTROPHE
+          case 0xBC:return 44; // DOM_VK_COMMA -> GLFW_KEY_COMMA
+          case 0xAD:return 45; // DOM_VK_HYPHEN_MINUS -> GLFW_KEY_MINUS
+          case 0xBD:return 45; // DOM_VK_MINUS -> GLFW_KEY_MINUS
+          case 0xBE:return 46; // DOM_VK_PERIOD -> GLFW_KEY_PERIOD
+          case 0xBF:return 47; // DOM_VK_SLASH -> GLFW_KEY_SLASH
+          case 0x30:return 48; // DOM_VK_0 -> GLFW_KEY_0
+          case 0x31:return 49; // DOM_VK_1 -> GLFW_KEY_1
+          case 0x32:return 50; // DOM_VK_2 -> GLFW_KEY_2
+          case 0x33:return 51; // DOM_VK_3 -> GLFW_KEY_3
+          case 0x34:return 52; // DOM_VK_4 -> GLFW_KEY_4
+          case 0x35:return 53; // DOM_VK_5 -> GLFW_KEY_5
+          case 0x36:return 54; // DOM_VK_6 -> GLFW_KEY_6
+          case 0x37:return 55; // DOM_VK_7 -> GLFW_KEY_7
+          case 0x38:return 56; // DOM_VK_8 -> GLFW_KEY_8
+          case 0x39:return 57; // DOM_VK_9 -> GLFW_KEY_9
+          case 0x3B:return 59; // DOM_VK_SEMICOLON -> GLFW_KEY_SEMICOLON
+          case 0x3D:return 61; // DOM_VK_EQUALS -> GLFW_KEY_EQUAL
+          case 0xBB:return 61; // DOM_VK_EQUALS -> GLFW_KEY_EQUAL
+          case 0x41:return 65; // DOM_VK_A -> GLFW_KEY_A
+          case 0x42:return 66; // DOM_VK_B -> GLFW_KEY_B
+          case 0x43:return 67; // DOM_VK_C -> GLFW_KEY_C
+          case 0x44:return 68; // DOM_VK_D -> GLFW_KEY_D
+          case 0x45:return 69; // DOM_VK_E -> GLFW_KEY_E
+          case 0x46:return 70; // DOM_VK_F -> GLFW_KEY_F
+          case 0x47:return 71; // DOM_VK_G -> GLFW_KEY_G
+          case 0x48:return 72; // DOM_VK_H -> GLFW_KEY_H
+          case 0x49:return 73; // DOM_VK_I -> GLFW_KEY_I
+          case 0x4A:return 74; // DOM_VK_J -> GLFW_KEY_J
+          case 0x4B:return 75; // DOM_VK_K -> GLFW_KEY_K
+          case 0x4C:return 76; // DOM_VK_L -> GLFW_KEY_L
+          case 0x4D:return 77; // DOM_VK_M -> GLFW_KEY_M
+          case 0x4E:return 78; // DOM_VK_N -> GLFW_KEY_N
+          case 0x4F:return 79; // DOM_VK_O -> GLFW_KEY_O
+          case 0x50:return 80; // DOM_VK_P -> GLFW_KEY_P
+          case 0x51:return 81; // DOM_VK_Q -> GLFW_KEY_Q
+          case 0x52:return 82; // DOM_VK_R -> GLFW_KEY_R
+          case 0x53:return 83; // DOM_VK_S -> GLFW_KEY_S
+          case 0x54:return 84; // DOM_VK_T -> GLFW_KEY_T
+          case 0x55:return 85; // DOM_VK_U -> GLFW_KEY_U
+          case 0x56:return 86; // DOM_VK_V -> GLFW_KEY_V
+          case 0x57:return 87; // DOM_VK_W -> GLFW_KEY_W
+          case 0x58:return 88; // DOM_VK_X -> GLFW_KEY_X
+          case 0x59:return 89; // DOM_VK_Y -> GLFW_KEY_Y
+          case 0x5a:return 90; // DOM_VK_Z -> GLFW_KEY_Z
+          case 0xDB:return 91; // DOM_VK_OPEN_BRACKET -> GLFW_KEY_LEFT_BRACKET
+          case 0xDC:return 92; // DOM_VK_BACKSLASH -> GLFW_KEY_BACKSLASH
+          case 0xDD:return 93; // DOM_VK_CLOSE_BRACKET -> GLFW_KEY_RIGHT_BRACKET
+          case 0xC0:return 94; // DOM_VK_BACK_QUOTE -> GLFW_KEY_GRAVE_ACCENT
+          
   
-  function __fillMouseEventData(eventStruct, e, target) {
-      HEAPF64[((eventStruct)>>3)]=JSEvents.tick();
-      HEAP32[(((eventStruct)+(8))>>2)]=e.screenX;
-      HEAP32[(((eventStruct)+(12))>>2)]=e.screenY;
-      HEAP32[(((eventStruct)+(16))>>2)]=e.clientX;
-      HEAP32[(((eventStruct)+(20))>>2)]=e.clientY;
-      HEAP32[(((eventStruct)+(24))>>2)]=e.ctrlKey;
-      HEAP32[(((eventStruct)+(28))>>2)]=e.shiftKey;
-      HEAP32[(((eventStruct)+(32))>>2)]=e.altKey;
-      HEAP32[(((eventStruct)+(36))>>2)]=e.metaKey;
-      HEAP16[(((eventStruct)+(40))>>1)]=e.button;
-      HEAP16[(((eventStruct)+(42))>>1)]=e.buttons;
-      HEAP32[(((eventStruct)+(44))>>2)]=e["movementX"] || e["mozMovementX"] || e["webkitMovementX"] || (e.screenX-JSEvents.previousScreenX);
-      HEAP32[(((eventStruct)+(48))>>2)]=e["movementY"] || e["mozMovementY"] || e["webkitMovementY"] || (e.screenY-JSEvents.previousScreenY);
+          case 0x1B:return 256; // DOM_VK_ESCAPE -> GLFW_KEY_ESCAPE
+          case 0x0D:return 257; // DOM_VK_RETURN -> GLFW_KEY_ENTER
+          case 0x09:return 258; // DOM_VK_TAB -> GLFW_KEY_TAB
+          case 0x08:return 259; // DOM_VK_BACK -> GLFW_KEY_BACKSPACE
+          case 0x2D:return 260; // DOM_VK_INSERT -> GLFW_KEY_INSERT
+          case 0x2E:return 261; // DOM_VK_DELETE -> GLFW_KEY_DELETE
+          case 0x27:return 262; // DOM_VK_RIGHT -> GLFW_KEY_RIGHT
+          case 0x25:return 263; // DOM_VK_LEFT -> GLFW_KEY_LEFT
+          case 0x28:return 264; // DOM_VK_DOWN -> GLFW_KEY_DOWN
+          case 0x26:return 265; // DOM_VK_UP -> GLFW_KEY_UP
+          case 0x21:return 266; // DOM_VK_PAGE_UP -> GLFW_KEY_PAGE_UP
+          case 0x22:return 267; // DOM_VK_PAGE_DOWN -> GLFW_KEY_PAGE_DOWN
+          case 0x24:return 268; // DOM_VK_HOME -> GLFW_KEY_HOME
+          case 0x23:return 269; // DOM_VK_END -> GLFW_KEY_END
+          case 0x14:return 280; // DOM_VK_CAPS_LOCK -> GLFW_KEY_CAPS_LOCK
+          case 0x91:return 281; // DOM_VK_SCROLL_LOCK -> GLFW_KEY_SCROLL_LOCK
+          case 0x90:return 282; // DOM_VK_NUM_LOCK -> GLFW_KEY_NUM_LOCK
+          case 0x2C:return 283; // DOM_VK_SNAPSHOT -> GLFW_KEY_PRINT_SCREEN
+          case 0x13:return 284; // DOM_VK_PAUSE -> GLFW_KEY_PAUSE
+          case 0x70:return 290; // DOM_VK_F1 -> GLFW_KEY_F1
+          case 0x71:return 291; // DOM_VK_F2 -> GLFW_KEY_F2
+          case 0x72:return 292; // DOM_VK_F3 -> GLFW_KEY_F3
+          case 0x73:return 293; // DOM_VK_F4 -> GLFW_KEY_F4
+          case 0x74:return 294; // DOM_VK_F5 -> GLFW_KEY_F5
+          case 0x75:return 295; // DOM_VK_F6 -> GLFW_KEY_F6
+          case 0x76:return 296; // DOM_VK_F7 -> GLFW_KEY_F7
+          case 0x77:return 297; // DOM_VK_F8 -> GLFW_KEY_F8
+          case 0x78:return 298; // DOM_VK_F9 -> GLFW_KEY_F9
+          case 0x79:return 299; // DOM_VK_F10 -> GLFW_KEY_F10
+          case 0x7A:return 300; // DOM_VK_F11 -> GLFW_KEY_F11
+          case 0x7B:return 301; // DOM_VK_F12 -> GLFW_KEY_F12
+          case 0x7C:return 302; // DOM_VK_F13 -> GLFW_KEY_F13
+          case 0x7D:return 303; // DOM_VK_F14 -> GLFW_KEY_F14
+          case 0x7E:return 304; // DOM_VK_F15 -> GLFW_KEY_F15
+          case 0x7F:return 305; // DOM_VK_F16 -> GLFW_KEY_F16
+          case 0x80:return 306; // DOM_VK_F17 -> GLFW_KEY_F17
+          case 0x81:return 307; // DOM_VK_F18 -> GLFW_KEY_F18
+          case 0x82:return 308; // DOM_VK_F19 -> GLFW_KEY_F19
+          case 0x83:return 309; // DOM_VK_F20 -> GLFW_KEY_F20
+          case 0x84:return 310; // DOM_VK_F21 -> GLFW_KEY_F21
+          case 0x85:return 311; // DOM_VK_F22 -> GLFW_KEY_F22
+          case 0x86:return 312; // DOM_VK_F23 -> GLFW_KEY_F23
+          case 0x87:return 313; // DOM_VK_F24 -> GLFW_KEY_F24
+          case 0x88:return 314; // 0x88 (not used?) -> GLFW_KEY_F25
+          case 0x60:return 320; // DOM_VK_NUMPAD0 -> GLFW_KEY_KP_0
+          case 0x61:return 321; // DOM_VK_NUMPAD1 -> GLFW_KEY_KP_1
+          case 0x62:return 322; // DOM_VK_NUMPAD2 -> GLFW_KEY_KP_2
+          case 0x63:return 323; // DOM_VK_NUMPAD3 -> GLFW_KEY_KP_3
+          case 0x64:return 324; // DOM_VK_NUMPAD4 -> GLFW_KEY_KP_4
+          case 0x65:return 325; // DOM_VK_NUMPAD5 -> GLFW_KEY_KP_5
+          case 0x66:return 326; // DOM_VK_NUMPAD6 -> GLFW_KEY_KP_6
+          case 0x67:return 327; // DOM_VK_NUMPAD7 -> GLFW_KEY_KP_7
+          case 0x68:return 328; // DOM_VK_NUMPAD8 -> GLFW_KEY_KP_8
+          case 0x69:return 329; // DOM_VK_NUMPAD9 -> GLFW_KEY_KP_9
+          case 0x6E:return 330; // DOM_VK_DECIMAL -> GLFW_KEY_KP_DECIMAL
+          case 0x6F:return 331; // DOM_VK_DIVIDE -> GLFW_KEY_KP_DIVIDE
+          case 0x6A:return 332; // DOM_VK_MULTIPLY -> GLFW_KEY_KP_MULTIPLY
+          case 0x6D:return 333; // DOM_VK_SUBTRACT -> GLFW_KEY_KP_SUBTRACT
+          case 0x6B:return 334; // DOM_VK_ADD -> GLFW_KEY_KP_ADD
+          // case 0x0D:return 335; // DOM_VK_RETURN -> GLFW_KEY_KP_ENTER (DOM_KEY_LOCATION_RIGHT)
+          // case 0x61:return 336; // DOM_VK_EQUALS -> GLFW_KEY_KP_EQUAL (DOM_KEY_LOCATION_RIGHT)
+          case 0x10:return 340; // DOM_VK_SHIFT -> GLFW_KEY_LEFT_SHIFT
+          case 0x11:return 341; // DOM_VK_CONTROL -> GLFW_KEY_LEFT_CONTROL
+          case 0x12:return 342; // DOM_VK_ALT -> GLFW_KEY_LEFT_ALT
+          case 0x5B:return 343; // DOM_VK_WIN -> GLFW_KEY_LEFT_SUPER
+          // case 0x10:return 344; // DOM_VK_SHIFT -> GLFW_KEY_RIGHT_SHIFT (DOM_KEY_LOCATION_RIGHT)
+          // case 0x11:return 345; // DOM_VK_CONTROL -> GLFW_KEY_RIGHT_CONTROL (DOM_KEY_LOCATION_RIGHT)
+          // case 0x12:return 346; // DOM_VK_ALT -> GLFW_KEY_RIGHT_ALT (DOM_KEY_LOCATION_RIGHT)
+          // case 0x5B:return 347; // DOM_VK_WIN -> GLFW_KEY_RIGHT_SUPER (DOM_KEY_LOCATION_RIGHT)
+          case 0x5D:return 348; // DOM_VK_CONTEXT_MENU -> GLFW_KEY_MENU
+          // XXX: GLFW_KEY_WORLD_1, GLFW_KEY_WORLD_2 what are these?
+          default:return -1; // GLFW_KEY_UNKNOWN
+        };
+      },getModBits:function (win) {
+        var mod = 0;
+        if (win.keys[340]) mod |= 0x0001; // GLFW_MOD_SHIFT
+        if (win.keys[341]) mod |= 0x0002; // GLFW_MOD_CONTROL
+        if (win.keys[342]) mod |= 0x0004; // GLFW_MOD_ALT
+        if (win.keys[343]) mod |= 0x0008; // GLFW_MOD_SUPER
+        return mod;
+      },onKeyPress:function (event) {
+        if (!GLFW.active || !GLFW.active.charFunc) return;
+        if (event.ctrlKey || event.metaKey) return;
   
-      if (Module['canvas']) {
-        var rect = Module['canvas'].getBoundingClientRect();
-        HEAP32[(((eventStruct)+(60))>>2)]=e.clientX - rect.left;
-        HEAP32[(((eventStruct)+(64))>>2)]=e.clientY - rect.top;
-      } else { // Canvas is not initialized, return 0.
-        HEAP32[(((eventStruct)+(60))>>2)]=0;
-        HEAP32[(((eventStruct)+(64))>>2)]=0;
-      }
-      if (target) {
-        var rect = JSEvents.getBoundingClientRectOrZeros(target);
-        HEAP32[(((eventStruct)+(52))>>2)]=e.clientX - rect.left;
-        HEAP32[(((eventStruct)+(56))>>2)]=e.clientY - rect.top;
-      } else { // No specific target passed, return 0.
-        HEAP32[(((eventStruct)+(52))>>2)]=0;
-        HEAP32[(((eventStruct)+(56))>>2)]=0;
-      }
-      // wheel and mousewheel events contain wrong screenX/screenY on chrome/opera
-        // https://github.com/emscripten-core/emscripten/pull/4997
-      // https://bugs.chromium.org/p/chromium/issues/detail?id=699956
-      if (e.type !== 'wheel' && e.type !== 'mousewheel') {
-        JSEvents.previousScreenX = e.screenX;
-        JSEvents.previousScreenY = e.screenY;
-      }
-    }function __registerMouseEventCallback(target, userData, useCapture, callbackfunc, eventTypeId, eventTypeString, targetThread) {
-      if (!JSEvents.mouseEvent) JSEvents.mouseEvent = _malloc( 72 );
-      target = __findEventTarget(target);
-  
-      var mouseEventHandlerFunc = function(ev) {
-        var e = ev || event;
-  
-        // TODO: Make this access thread safe, or this could update live while app is reading it.
-        __fillMouseEventData(JSEvents.mouseEvent, e, target);
-  
-        if (dynCall_iiii(callbackfunc, eventTypeId, JSEvents.mouseEvent, userData)) e.preventDefault();
-      };
-  
-      var eventHandler = {
-        target: target,
-        allowsDeferredCalls: eventTypeString != 'mousemove' && eventTypeString != 'mouseenter' && eventTypeString != 'mouseleave', // Mouse move events do not allow fullscreen/pointer lock requests to be handled in them!
-        eventTypeString: eventTypeString,
-        callbackfunc: callbackfunc,
-        handlerFunc: mouseEventHandlerFunc,
-        useCapture: useCapture
-      };
-      // In IE, mousedown events don't either allow deferred calls to be run!
-      if (JSEvents.isInternetExplorer() && eventTypeString == 'mousedown') eventHandler.allowsDeferredCalls = false;
-      JSEvents.registerOrRemoveHandler(eventHandler);
-    }function _emscripten_set_mousedown_callback_on_thread(target, userData, useCapture, callbackfunc, targetThread) {
-      __registerMouseEventCallback(target, userData, useCapture, callbackfunc, 5, "mousedown", targetThread);
-      return 0;
-    }
-
-  function _emscripten_set_mouseenter_callback_on_thread(target, userData, useCapture, callbackfunc, targetThread) {
-      __registerMouseEventCallback(target, userData, useCapture, callbackfunc, 33, "mouseenter", targetThread);
-      return 0;
-    }
-
-  function _emscripten_set_mouseleave_callback_on_thread(target, userData, useCapture, callbackfunc, targetThread) {
-      __registerMouseEventCallback(target, userData, useCapture, callbackfunc, 34, "mouseleave", targetThread);
-      return 0;
-    }
-
-  function _emscripten_set_mousemove_callback_on_thread(target, userData, useCapture, callbackfunc, targetThread) {
-      __registerMouseEventCallback(target, userData, useCapture, callbackfunc, 8, "mousemove", targetThread);
-      return 0;
-    }
-
-  function _emscripten_set_mouseup_callback_on_thread(target, userData, useCapture, callbackfunc, targetThread) {
-      __registerMouseEventCallback(target, userData, useCapture, callbackfunc, 6, "mouseup", targetThread);
-      return 0;
-    }
-
+        // correct unicode charCode is only available with onKeyPress event
+        var charCode = event.charCode;
+        if (charCode == 0 || (charCode >= 0x00 && charCode <= 0x1F)) return;
   
   
-  function __fillPointerlockChangeEventData(eventStruct, e) {
-      var pointerLockElement = document.pointerLockElement || document.mozPointerLockElement || document.webkitPointerLockElement || document.msPointerLockElement;
-      var isPointerlocked = !!pointerLockElement;
-      HEAP32[((eventStruct)>>2)]=isPointerlocked;
-      var nodeName = JSEvents.getNodeNameForTarget(pointerLockElement);
-      var id = (pointerLockElement && pointerLockElement.id) ? pointerLockElement.id : '';
-      stringToUTF8(nodeName, eventStruct + 4, 128);
-      stringToUTF8(id, eventStruct + 132, 128);
-    }function __registerPointerlockChangeEventCallback(target, userData, useCapture, callbackfunc, eventTypeId, eventTypeString, targetThread) {
-      if (!JSEvents.pointerlockChangeEvent) JSEvents.pointerlockChangeEvent = _malloc( 260 );
+        dynCall_vii(GLFW.active.charFunc, GLFW.active.id, charCode);
+      },onKeyChanged:function (keyCode, status) {
+        if (!GLFW.active) return;
   
-      var pointerlockChangeEventHandlerFunc = function(ev) {
-        var e = ev || event;
+        var key = GLFW.DOMToGLFWKeyCode(keyCode);
+        if (key == -1) return;
   
-        var pointerlockChangeEvent = JSEvents.pointerlockChangeEvent;
-        __fillPointerlockChangeEventData(pointerlockChangeEvent, e);
+        var repeat = status && GLFW.active.keys[key];
+        GLFW.active.keys[key] = status;
+        GLFW.active.domKeys[keyCode] = status;
+        if (!GLFW.active.keyFunc) return;
   
-        if (dynCall_iiii(callbackfunc, eventTypeId, pointerlockChangeEvent, userData)) e.preventDefault();
-      };
   
-      var eventHandler = {
-        target: target,
-        allowsDeferredCalls: false,
-        eventTypeString: eventTypeString,
-        callbackfunc: callbackfunc,
-        handlerFunc: pointerlockChangeEventHandlerFunc,
-        useCapture: useCapture
-      };
-      JSEvents.registerOrRemoveHandler(eventHandler);
-    }function _emscripten_set_pointerlockchange_callback_on_thread(target, userData, useCapture, callbackfunc, targetThread) {
-      // TODO: Currently not supported in pthreads or in --proxy-to-worker mode. (In pthreads mode, document object is not defined)
-      if (!document || !document.body || (!document.body.requestPointerLock && !document.body.mozRequestPointerLock && !document.body.webkitRequestPointerLock && !document.body.msRequestPointerLock)) {
-        return -1;
-      }
+        if (repeat) status = 2; // GLFW_REPEAT
+        dynCall_viiiii(GLFW.active.keyFunc, GLFW.active.id, key, keyCode, status, GLFW.getModBits(GLFW.active));
+      },onGamepadConnected:function (event) {
+        GLFW.refreshJoysticks();
+      },onGamepadDisconnected:function (event) {
+        GLFW.refreshJoysticks();
+      },onKeydown:function (event) {
+        GLFW.onKeyChanged(event.keyCode, 1); // GLFW_PRESS or GLFW_REPEAT
   
-      target = target ? __findEventTarget(target) : __specialEventTargets[1]; // Pointer lock change events need to be captured from 'document' by default instead of 'window'
-      if (!target) return -4;
-      __registerPointerlockChangeEventCallback(target, userData, useCapture, callbackfunc, 20, "pointerlockchange", targetThread);
-      __registerPointerlockChangeEventCallback(target, userData, useCapture, callbackfunc, 20, "mozpointerlockchange", targetThread);
-      __registerPointerlockChangeEventCallback(target, userData, useCapture, callbackfunc, 20, "webkitpointerlockchange", targetThread);
-      __registerPointerlockChangeEventCallback(target, userData, useCapture, callbackfunc, 20, "mspointerlockchange", targetThread);
-      return 0;
-    }
-
-  
-  function __registerUiEventCallback(target, userData, useCapture, callbackfunc, eventTypeId, eventTypeString, targetThread) {
-      if (!JSEvents.uiEvent) JSEvents.uiEvent = _malloc( 36 );
-  
-      if (eventTypeString == "scroll" && !target) {
-        target = document; // By default read scroll events on document rather than window.
-      } else {
-        target = __findEventTarget(target);
-      }
-  
-      var uiEventHandlerFunc = function(ev) {
-        var e = ev || event;
-        if (e.target != target) {
-          // Never take ui events such as scroll via a 'bubbled' route, but always from the direct element that
-          // was targeted. Otherwise e.g. if app logs a message in response to a page scroll, the Emscripten log
-          // message box could cause to scroll, generating a new (bubbled) scroll message, causing a new log print,
-          // causing a new scroll, etc..
-          return;
+        // This logic comes directly from the sdl implementation. We cannot
+        // call preventDefault on all keydown events otherwise onKeyPress will
+        // not get called
+        if (event.keyCode === 8 /* backspace */ || event.keyCode === 9 /* tab */) {
+          event.preventDefault();
         }
-        var scrollPos = JSEvents.pageScrollPos();
+      },onKeyup:function (event) {
+        GLFW.onKeyChanged(event.keyCode, 0); // GLFW_RELEASE
+      },onBlur:function (event) {
+        if (!GLFW.active) return;
   
-        var uiEvent = JSEvents.uiEvent;
-        HEAP32[((uiEvent)>>2)]=e.detail;
-        HEAP32[(((uiEvent)+(4))>>2)]=document.body.clientWidth;
-        HEAP32[(((uiEvent)+(8))>>2)]=document.body.clientHeight;
-        HEAP32[(((uiEvent)+(12))>>2)]=innerWidth;
-        HEAP32[(((uiEvent)+(16))>>2)]=innerHeight;
-        HEAP32[(((uiEvent)+(20))>>2)]=outerWidth;
-        HEAP32[(((uiEvent)+(24))>>2)]=outerHeight;
-        HEAP32[(((uiEvent)+(28))>>2)]=scrollPos[0];
-        HEAP32[(((uiEvent)+(32))>>2)]=scrollPos[1];
-        if (dynCall_iiii(callbackfunc, eventTypeId, uiEvent, userData)) e.preventDefault();
-      };
-  
-      var eventHandler = {
-        target: target,
-        allowsDeferredCalls: false, // Neither scroll or resize events allow running requests inside them.
-        eventTypeString: eventTypeString,
-        callbackfunc: callbackfunc,
-        handlerFunc: uiEventHandlerFunc,
-        useCapture: useCapture
-      };
-      JSEvents.registerOrRemoveHandler(eventHandler);
-    }function _emscripten_set_resize_callback_on_thread(target, userData, useCapture, callbackfunc, targetThread) {
-      __registerUiEventCallback(target, userData, useCapture, callbackfunc, 10, "resize", targetThread);
-      return 0;
-    }
-
-  
-  function __registerTouchEventCallback(target, userData, useCapture, callbackfunc, eventTypeId, eventTypeString, targetThread) {
-      if (!JSEvents.touchEvent) JSEvents.touchEvent = _malloc( 1684 );
-  
-      target = __findEventTarget(target);
-  
-      var touchEventHandlerFunc = function(ev) {
-        var e = ev || event;
-  
-        var touches = {};
-        for(var i = 0; i < e.touches.length; ++i) {
-          var touch = e.touches[i];
-          touch.changed = false;
-          touches[touch.identifier] = touch;
-        }
-        for(var i = 0; i < e.changedTouches.length; ++i) {
-          var touch = e.changedTouches[i];
-          touches[touch.identifier] = touch;
-          touch.changed = true;
-        }
-        for(var i = 0; i < e.targetTouches.length; ++i) {
-          var touch = e.targetTouches[i];
-          touches[touch.identifier].onTarget = true;
-        }
-  
-        var touchEvent = JSEvents.touchEvent;
-        var ptr = touchEvent;
-        HEAP32[(((ptr)+(4))>>2)]=e.ctrlKey;
-        HEAP32[(((ptr)+(8))>>2)]=e.shiftKey;
-        HEAP32[(((ptr)+(12))>>2)]=e.altKey;
-        HEAP32[(((ptr)+(16))>>2)]=e.metaKey;
-        ptr += 20; // Advance to the start of the touch array.
-        var canvasRect = Module['canvas'] ? Module['canvas'].getBoundingClientRect() : undefined;
-        var targetRect = JSEvents.getBoundingClientRectOrZeros(target);
-        var numTouches = 0;
-        for(var i in touches) {
-          var t = touches[i];
-          HEAP32[((ptr)>>2)]=t.identifier;
-          HEAP32[(((ptr)+(4))>>2)]=t.screenX;
-          HEAP32[(((ptr)+(8))>>2)]=t.screenY;
-          HEAP32[(((ptr)+(12))>>2)]=t.clientX;
-          HEAP32[(((ptr)+(16))>>2)]=t.clientY;
-          HEAP32[(((ptr)+(20))>>2)]=t.pageX;
-          HEAP32[(((ptr)+(24))>>2)]=t.pageY;
-          HEAP32[(((ptr)+(28))>>2)]=t.changed;
-          HEAP32[(((ptr)+(32))>>2)]=t.onTarget;
-          if (canvasRect) {
-            HEAP32[(((ptr)+(44))>>2)]=t.clientX - canvasRect.left;
-            HEAP32[(((ptr)+(48))>>2)]=t.clientY - canvasRect.top;
-          } else {
-            HEAP32[(((ptr)+(44))>>2)]=0;
-            HEAP32[(((ptr)+(48))>>2)]=0;            
+        for (var i = 0; i < GLFW.active.domKeys.length; ++i) {
+          if (GLFW.active.domKeys[i]) {
+            GLFW.onKeyChanged(i, 0); // GLFW_RELEASE
           }
-          HEAP32[(((ptr)+(36))>>2)]=t.clientX - targetRect.left;
-          HEAP32[(((ptr)+(40))>>2)]=t.clientY - targetRect.top;
+        }
+      },onMousemove:function (event) {
+        if (!GLFW.active) return;
   
-          ptr += 52;
+        Browser.calculateMouseEvent(event);
   
-          if (++numTouches >= 32) {
+        if (event.target != Module["canvas"] || !GLFW.active.cursorPosFunc) return;
+  
+  
+        dynCall_vidd(GLFW.active.cursorPosFunc, GLFW.active.id, Browser.mouseX, Browser.mouseY);
+      },DOMToGLFWMouseButton:function (event) {
+        // DOM and glfw have different button codes.
+        // See http://www.w3schools.com/jsref/event_button.asp.
+        var eventButton = event['button'];
+        if (eventButton > 0) {
+          if (eventButton == 1) {
+            eventButton = 2;
+          } else {
+            eventButton = 1;
+          }
+        }
+        return eventButton;
+      },onMouseenter:function (event) {
+        if (!GLFW.active) return;
+  
+        if (event.target != Module["canvas"] || !GLFW.active.cursorEnterFunc) return;
+  
+        dynCall_vii(GLFW.active.cursorEnterFunc, GLFW.active.id, 1);
+      },onMouseleave:function (event) {
+        if (!GLFW.active) return;
+  
+        if (event.target != Module["canvas"] || !GLFW.active.cursorEnterFunc) return;
+  
+        dynCall_vii(GLFW.active.cursorEnterFunc, GLFW.active.id, 0);
+      },onMouseButtonChanged:function (event, status) {
+        if (!GLFW.active) return;
+  
+        Browser.calculateMouseEvent(event);
+  
+        if (event.target != Module["canvas"]) return;
+  
+        var eventButton = GLFW.DOMToGLFWMouseButton(event);
+  
+        if (status == 1) { // GLFW_PRESS
+          GLFW.active.buttons |= (1 << eventButton);
+          try {
+            event.target.setCapture();
+          } catch (e) {}
+        } else {  // GLFW_RELEASE
+          GLFW.active.buttons &= ~(1 << eventButton);
+        }
+  
+        if (!GLFW.active.mouseButtonFunc) return;
+  
+  
+        dynCall_viiii(GLFW.active.mouseButtonFunc, GLFW.active.id, eventButton, status, GLFW.getModBits(GLFW.active));
+      },onMouseButtonDown:function (event) {
+        if (!GLFW.active) return;
+        GLFW.onMouseButtonChanged(event, 1); // GLFW_PRESS
+      },onMouseButtonUp:function (event) {
+        if (!GLFW.active) return;
+        GLFW.onMouseButtonChanged(event, 0); // GLFW_RELEASE
+      },onMouseWheel:function (event) {
+        // Note the minus sign that flips browser wheel direction (positive direction scrolls page down) to native wheel direction (positive direction is mouse wheel up)
+        var delta = -Browser.getMouseWheelDelta(event);
+        delta = (delta == 0) ? 0 : (delta > 0 ? Math.max(delta, 1) : Math.min(delta, -1)); // Quantize to integer so that minimum scroll is at least +/- 1.
+        GLFW.wheelPos += delta;
+  
+        if (!GLFW.active || !GLFW.active.scrollFunc || event.target != Module['canvas']) return;
+  
+  
+        var sx = 0;
+        var sy = 0;
+        if (event.type == 'mousewheel') {
+          sx = event.wheelDeltaX;
+          sy = event.wheelDeltaY;
+        } else {
+          sx = event.deltaX;
+          sy = event.deltaY;
+        }
+  
+        dynCall_vidd(GLFW.active.scrollFunc, GLFW.active.id, sx, sy);
+  
+        event.preventDefault();
+      },onCanvasResize:function (width, height) {
+        if (!GLFW.active) return;
+  
+        var resizeNeeded = true;
+  
+        // If the client is requesting fullscreen mode
+        if (document["fullscreen"] || document["fullScreen"] || document["mozFullScreen"] || document["webkitIsFullScreen"]) {
+          GLFW.active.storedX = GLFW.active.x;
+          GLFW.active.storedY = GLFW.active.y;
+          GLFW.active.storedWidth = GLFW.active.width;
+          GLFW.active.storedHeight = GLFW.active.height;
+          GLFW.active.x = GLFW.active.y = 0;
+          GLFW.active.width = screen.width;
+          GLFW.active.height = screen.height;
+          GLFW.active.fullscreen = true;
+  
+        // If the client is reverting from fullscreen mode
+        } else if (GLFW.active.fullscreen == true) {
+          GLFW.active.x = GLFW.active.storedX;
+          GLFW.active.y = GLFW.active.storedY;
+          GLFW.active.width = GLFW.active.storedWidth;
+          GLFW.active.height = GLFW.active.storedHeight;
+          GLFW.active.fullscreen = false;
+  
+        // If the width/height values do not match current active window sizes
+        } else if (GLFW.active.width != width || GLFW.active.height != height) {
+            GLFW.active.width = width;
+            GLFW.active.height = height;
+        } else {
+          resizeNeeded = false;
+        }
+  
+        // If any of the above conditions were true, we need to resize the canvas
+        if (resizeNeeded) {
+          // resets the canvas size to counter the aspect preservation of Browser.updateCanvasDimensions
+          Browser.setCanvasSize(GLFW.active.width, GLFW.active.height, true);
+          // TODO: Client dimensions (clientWidth/clientHeight) vs pixel dimensions (width/height) of
+          // the canvas should drive window and framebuffer size respectfully.
+          GLFW.onWindowSizeChanged();
+          GLFW.onFramebufferSizeChanged();
+        }
+      },onWindowSizeChanged:function () {
+        if (!GLFW.active) return;
+  
+        if (!GLFW.active.windowSizeFunc) return;
+  
+  
+        dynCall_viii(GLFW.active.windowSizeFunc, GLFW.active.id, GLFW.active.width, GLFW.active.height);
+      },onFramebufferSizeChanged:function () {
+        if (!GLFW.active) return;
+  
+        if (!GLFW.active.framebufferSizeFunc) return;
+  
+        dynCall_viii(GLFW.active.framebufferSizeFunc, GLFW.active.id, GLFW.active.width, GLFW.active.height);
+      },requestFullscreen:function () {
+        var RFS = Module["canvas"]['requestFullscreen'] ||
+                  Module["canvas"]['mozRequestFullScreen'] ||
+                  Module["canvas"]['webkitRequestFullScreen'] ||
+                  (function() {});
+        RFS.apply(Module["canvas"], []);
+      },requestFullScreen:function () {
+        err('GLFW.requestFullScreen() is deprecated. Please call GLFW.requestFullscreen instead.');
+        GLFW.requestFullScreen = function() {
+          return GLFW.requestFullscreen();
+        }
+        return GLFW.requestFullscreen();
+      },exitFullscreen:function () {
+        Browser.exitFullscreen();
+      },cancelFullScreen:function () {
+        err('GLFW.cancelFullScreen() is deprecated. Please call GLFW.exitFullscreen instead.');
+        GLFW.cancelFullScreen = function() {
+          return GLFW.exitFullscreen();
+        }
+        return GLFW.exitFullscreen();
+      },getTime:function () {
+        return _emscripten_get_now() / 1000;
+      },setWindowTitle:function (winid, title) {
+        var win = GLFW.WindowFromId(winid);
+        if (!win) return;
+  
+        win.title = UTF8ToString(title);
+        if (GLFW.active.id == win.id) {
+          document.title = win.title;
+        }
+      },setJoystickCallback:function (cbfun) {
+        GLFW.joystickFunc = cbfun;
+        GLFW.refreshJoysticks();
+      },joys:{},lastGamepadState:null,lastGamepadStateFrame:null,refreshJoysticks:function () {
+        // Produce a new Gamepad API sample if we are ticking a new game frame, or if not using emscripten_set_main_loop() at all to drive animation.
+        if (Browser.mainLoop.currentFrameNumber !== GLFW.lastGamepadStateFrame || !Browser.mainLoop.currentFrameNumber) {
+          GLFW.lastGamepadState = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads : null);
+          GLFW.lastGamepadStateFrame = Browser.mainLoop.currentFrameNumber;
+  
+          for (var joy = 0; joy < GLFW.lastGamepadState.length; ++joy) {
+            var gamepad = GLFW.lastGamepadState[joy];
+  
+            if (gamepad) {
+              if (!GLFW.joys[joy]) {
+                console.log('glfw joystick connected:',joy);
+                GLFW.joys[joy] = {
+                  id: allocate(intArrayFromString(gamepad.id), 'i8', ALLOC_NORMAL),
+                  buttonsCount: gamepad.buttons.length,
+                  axesCount: gamepad.axes.length,
+                  buttons: allocate(new Array(gamepad.buttons.length), 'i8', ALLOC_NORMAL),
+                  axes: allocate(new Array(gamepad.axes.length*4), 'float', ALLOC_NORMAL)
+                };
+  
+                if (GLFW.joystickFunc) {
+                  dynCall_vii(GLFW.joystickFunc, joy, 0x00040001); // GLFW_CONNECTED
+                }
+              }
+  
+              var data = GLFW.joys[joy];
+  
+              for (var i = 0; i < gamepad.buttons.length;  ++i) {
+                setValue(data.buttons + i, gamepad.buttons[i].pressed, 'i8');
+              }
+  
+              for (var i = 0; i < gamepad.axes.length; ++i) {
+                setValue(data.axes + i*4, gamepad.axes[i], 'float');
+              }
+            } else {
+              if (GLFW.joys[joy]) {
+                console.log('glfw joystick disconnected',joy);
+  
+                if (GLFW.joystickFunc) {
+                  dynCall_vii(GLFW.joystickFunc, joy, 0x00040002); // GLFW_DISCONNECTED
+                }
+  
+                _free(GLFW.joys[joy].id);
+                _free(GLFW.joys[joy].buttons);
+                _free(GLFW.joys[joy].axes);
+  
+                delete GLFW.joys[joy];
+              }
+            }
+          }
+        }
+      },setKeyCallback:function (winid, cbfun) {
+        var win = GLFW.WindowFromId(winid);
+        if (!win) return null;
+        var prevcbfun = win.keyFunc;
+        win.keyFunc = cbfun;
+        return prevcbfun;
+      },setCharCallback:function (winid, cbfun) {
+        var win = GLFW.WindowFromId(winid);
+        if (!win) return null;
+        var prevcbfun = win.charFunc;
+        win.charFunc = cbfun;
+        return prevcbfun;
+      },setMouseButtonCallback:function (winid, cbfun) {
+        var win = GLFW.WindowFromId(winid);
+        if (!win) return null;
+        var prevcbfun = win.mouseButtonFunc;
+        win.mouseButtonFunc = cbfun;
+        return prevcbfun;
+      },setCursorPosCallback:function (winid, cbfun) {
+        var win = GLFW.WindowFromId(winid);
+        if (!win) return null;
+        var prevcbfun = win.cursorPosFunc;
+        win.cursorPosFunc = cbfun;
+        return prevcbfun;
+      },setScrollCallback:function (winid, cbfun) {
+        var win = GLFW.WindowFromId(winid);
+        if (!win) return null;
+        var prevcbfun = win.scrollFunc;
+        win.scrollFunc = cbfun;
+        return prevcbfun;
+      },setDropCallback:function (winid, cbfun) {
+        var win = GLFW.WindowFromId(winid);
+        if (!win) return null;
+        var prevcbfun = win.dropFunc;
+        win.dropFunc = cbfun;
+        return prevcbfun;
+      },onDrop:function (event) {
+        if (!GLFW.active || !GLFW.active.dropFunc) return;
+        if (!event.dataTransfer || !event.dataTransfer.files || event.dataTransfer.files.length == 0) return;
+  
+        event.preventDefault();
+  
+  
+        return false;
+      },onDragover:function (event) {
+        if (!GLFW.active || !GLFW.active.dropFunc) return;
+  
+        event.preventDefault();
+        return false;
+      },setWindowSizeCallback:function (winid, cbfun) {
+        var win = GLFW.WindowFromId(winid);
+        if (!win) return null;
+        var prevcbfun = win.windowSizeFunc;
+        win.windowSizeFunc = cbfun;
+       
+  
+        return prevcbfun;
+      },setWindowCloseCallback:function (winid, cbfun) {
+        var win = GLFW.WindowFromId(winid);
+        if (!win) return null;
+        var prevcbfun = win.windowCloseFunc;
+        win.windowCloseFunc = cbfun;
+        return prevcbfun;
+      },setWindowRefreshCallback:function (winid, cbfun) {
+        var win = GLFW.WindowFromId(winid);
+        if (!win) return null;
+        var prevcbfun = win.windowRefreshFunc;
+        win.windowRefreshFunc = cbfun;
+        return prevcbfun;
+      },onClickRequestPointerLock:function (e) {
+        if (!Browser.pointerLock && Module['canvas'].requestPointerLock) {
+          Module['canvas'].requestPointerLock();
+          e.preventDefault();
+        }
+      },setInputMode:function (winid, mode, value) {
+        var win = GLFW.WindowFromId(winid);
+        if (!win) return;
+  
+        switch(mode) {
+          case 0x00033001: { // GLFW_CURSOR
+            switch(value) {
+              case 0x00034001: { // GLFW_CURSOR_NORMAL
+                win.inputModes[mode] = value;
+                Module['canvas'].removeEventListener('click', GLFW.onClickRequestPointerLock, true);
+                Module['canvas'].exitPointerLock();
+                break;
+              }
+              case 0x00034002: { // GLFW_CURSOR_HIDDEN
+                console.log("glfwSetInputMode called with GLFW_CURSOR_HIDDEN value not implemented.");
+                break;
+              }
+              case 0x00034003: { // GLFW_CURSOR_DISABLED
+                win.inputModes[mode] = value;
+                Module['canvas'].addEventListener('click', GLFW.onClickRequestPointerLock, true);
+                Module['canvas'].requestPointerLock();
+                break;
+              }
+              default: {
+                console.log("glfwSetInputMode called with unknown value parameter value: " + value + ".");
+                break;
+              }
+            }
+            break;
+          }
+          case 0x00033002: { // GLFW_STICKY_KEYS
+            console.log("glfwSetInputMode called with GLFW_STICKY_KEYS mode not implemented.");
+            break;
+          }
+          case 0x00033003: { // GLFW_STICKY_MOUSE_BUTTONS
+            console.log("glfwSetInputMode called with GLFW_STICKY_MOUSE_BUTTONS mode not implemented.");
+            break;
+          }
+          default: {
+            console.log("glfwSetInputMode called with unknown mode parameter value: " + mode + ".");
             break;
           }
         }
-        HEAP32[((touchEvent)>>2)]=numTouches;
+      },getKey:function (winid, key) {
+        var win = GLFW.WindowFromId(winid);
+        if (!win) return 0;
+        return win.keys[key];
+      },getMouseButton:function (winid, button) {
+        var win = GLFW.WindowFromId(winid);
+        if (!win) return 0;
+        return (win.buttons & (1 << button)) > 0;
+      },getCursorPos:function (winid, x, y) {
+        setValue(x, Browser.mouseX, 'double');
+        setValue(y, Browser.mouseY, 'double');
+      },getMousePos:function (winid, x, y) {
+        setValue(x, Browser.mouseX, 'i32');
+        setValue(y, Browser.mouseY, 'i32');
+      },setCursorPos:function (winid, x, y) {
+      },getWindowPos:function (winid, x, y) {
+        var wx = 0;
+        var wy = 0;
   
-        if (dynCall_iiii(callbackfunc, eventTypeId, touchEvent, userData)) e.preventDefault();
-      };
-  
-      var eventHandler = {
-        target: target,
-        allowsDeferredCalls: eventTypeString == 'touchstart' || eventTypeString == 'touchend',
-        eventTypeString: eventTypeString,
-        callbackfunc: callbackfunc,
-        handlerFunc: touchEventHandlerFunc,
-        useCapture: useCapture
-      };
-      JSEvents.registerOrRemoveHandler(eventHandler);
-    }function _emscripten_set_touchcancel_callback_on_thread(target, userData, useCapture, callbackfunc, targetThread) {
-      __registerTouchEventCallback(target, userData, useCapture, callbackfunc, 25, "touchcancel", targetThread);
-      return 0;
-    }
-
-  function _emscripten_set_touchend_callback_on_thread(target, userData, useCapture, callbackfunc, targetThread) {
-      __registerTouchEventCallback(target, userData, useCapture, callbackfunc, 23, "touchend", targetThread);
-      return 0;
-    }
-
-  function _emscripten_set_touchmove_callback_on_thread(target, userData, useCapture, callbackfunc, targetThread) {
-      __registerTouchEventCallback(target, userData, useCapture, callbackfunc, 24, "touchmove", targetThread);
-      return 0;
-    }
-
-  function _emscripten_set_touchstart_callback_on_thread(target, userData, useCapture, callbackfunc, targetThread) {
-      __registerTouchEventCallback(target, userData, useCapture, callbackfunc, 22, "touchstart", targetThread);
-      return 0;
-    }
-
-  
-  
-  function __fillVisibilityChangeEventData(eventStruct, e) {
-      var visibilityStates = [ "hidden", "visible", "prerender", "unloaded" ];
-      var visibilityState = visibilityStates.indexOf(document.visibilityState);
-  
-      HEAP32[((eventStruct)>>2)]=document.hidden;
-      HEAP32[(((eventStruct)+(4))>>2)]=visibilityState;
-    }function __registerVisibilityChangeEventCallback(target, userData, useCapture, callbackfunc, eventTypeId, eventTypeString, targetThread) {
-      if (!JSEvents.visibilityChangeEvent) JSEvents.visibilityChangeEvent = _malloc( 8 );
-  
-      var visibilityChangeEventHandlerFunc = function(ev) {
-        var e = ev || event;
-  
-        var visibilityChangeEvent = JSEvents.visibilityChangeEvent;
-  
-        __fillVisibilityChangeEventData(visibilityChangeEvent, e);
-  
-        if (dynCall_iiii(callbackfunc, eventTypeId, visibilityChangeEvent, userData)) e.preventDefault();
-      };
-  
-      var eventHandler = {
-        target: target,
-        allowsDeferredCalls: false,
-        eventTypeString: eventTypeString,
-        callbackfunc: callbackfunc,
-        handlerFunc: visibilityChangeEventHandlerFunc,
-        useCapture: useCapture
-      };
-      JSEvents.registerOrRemoveHandler(eventHandler);
-    }function _emscripten_set_visibilitychange_callback_on_thread(userData, useCapture, callbackfunc, targetThread) {
-      __registerVisibilityChangeEventCallback(__specialEventTargets[1], userData, useCapture, callbackfunc, 21, "visibilitychange", targetThread);
-      return 0;
-    }
-
-  
-  function __registerWheelEventCallback(target, userData, useCapture, callbackfunc, eventTypeId, eventTypeString, targetThread) {
-      if (!JSEvents.wheelEvent) JSEvents.wheelEvent = _malloc( 104 );
-  
-      // The DOM Level 3 events spec event 'wheel'
-      var wheelHandlerFunc = function(ev) {
-        var e = ev || event;
-        var wheelEvent = JSEvents.wheelEvent;
-        __fillMouseEventData(wheelEvent, e, target);
-        HEAPF64[(((wheelEvent)+(72))>>3)]=e["deltaX"];
-        HEAPF64[(((wheelEvent)+(80))>>3)]=e["deltaY"];
-        HEAPF64[(((wheelEvent)+(88))>>3)]=e["deltaZ"];
-        HEAP32[(((wheelEvent)+(96))>>2)]=e["deltaMode"];
-        if (dynCall_iiii(callbackfunc, eventTypeId, wheelEvent, userData)) e.preventDefault();
-      };
-      // The 'mousewheel' event as implemented in Safari 6.0.5
-      var mouseWheelHandlerFunc = function(ev) {
-        var e = ev || event;
-        __fillMouseEventData(JSEvents.wheelEvent, e, target);
-        HEAPF64[(((JSEvents.wheelEvent)+(72))>>3)]=e["wheelDeltaX"] || 0;
-        HEAPF64[(((JSEvents.wheelEvent)+(80))>>3)]=-(e["wheelDeltaY"] || e["wheelDelta"]) /* 1. Invert to unify direction with the DOM Level 3 wheel event. 2. MSIE does not provide wheelDeltaY, so wheelDelta is used as a fallback. */;
-        HEAPF64[(((JSEvents.wheelEvent)+(88))>>3)]=0 /* Not available */;
-        HEAP32[(((JSEvents.wheelEvent)+(96))>>2)]=0 /* DOM_DELTA_PIXEL */;
-        var shouldCancel = dynCall_iiii(callbackfunc, eventTypeId, JSEvents.wheelEvent, userData);
-        if (shouldCancel) {
-          e.preventDefault();
+        var win = GLFW.WindowFromId(winid);
+        if (win) {
+          wx = win.x;
+          wy = win.y;
         }
-      };
   
-      var eventHandler = {
-        target: target,
-        allowsDeferredCalls: true,
-        eventTypeString: eventTypeString,
-        callbackfunc: callbackfunc,
-        handlerFunc: (eventTypeString == 'wheel') ? wheelHandlerFunc : mouseWheelHandlerFunc,
-        useCapture: useCapture
-      };
-      JSEvents.registerOrRemoveHandler(eventHandler);
-    }function _emscripten_set_wheel_callback_on_thread(target, userData, useCapture, callbackfunc, targetThread) {
-      target = __findEventTarget(target);
-      if (typeof target.onwheel !== 'undefined') {
-        __registerWheelEventCallback(target, userData, useCapture, callbackfunc, 9, "wheel", targetThread);
-        return 0;
-      } else if (typeof target.onmousewheel !== 'undefined') {
-        __registerWheelEventCallback(target, userData, useCapture, callbackfunc, 9, "mousewheel", targetThread);
-        return 0;
-      } else {
-        return -1;
-      }
-    }
-
-  function _exit(status) {
-      // void _exit(int status);
-      // http://pubs.opengroup.org/onlinepubs/000095399/functions/exit.html
-      exit(status);
-    }
-
-  function _getenv(name) {
-      // char *getenv(const char *name);
-      // http://pubs.opengroup.org/onlinepubs/009695399/functions/getenv.html
-      if (name === 0) return 0;
-      name = UTF8ToString(name);
-      if (!ENV.hasOwnProperty(name)) return 0;
+        setValue(x, wx, 'i32');
+        setValue(y, wy, 'i32');
+      },setWindowPos:function (winid, x, y) {
+        var win = GLFW.WindowFromId(winid);
+        if (!win) return;
+        win.x = x;
+        win.y = y;
+      },getWindowSize:function (winid, width, height) {
+        var ww = 0;
+        var wh = 0;
   
-      if (_getenv.ret) _free(_getenv.ret);
-      _getenv.ret = allocateUTF8(ENV[name]);
-      return _getenv.ret;
+        var win = GLFW.WindowFromId(winid);
+        if (win) {
+          ww = win.width;
+          wh = win.height;
+        }
+  
+        setValue(width, ww, 'i32');
+        setValue(height, wh, 'i32');
+      },setWindowSize:function (winid, width, height) {
+        var win = GLFW.WindowFromId(winid);
+        if (!win) return;
+  
+        if (GLFW.active.id == win.id) {
+          if (width == screen.width && height == screen.height) {
+            GLFW.requestFullscreen();
+          } else {
+            GLFW.exitFullscreen();
+            Browser.setCanvasSize(width, height);
+            win.width = width;
+            win.height = height;
+          }
+        }
+  
+        if (!win.windowSizeFunc) return;
+  
+  
+        dynCall_viii(win.windowSizeFunc, win.id, width, height);
+      },createWindow:function (width, height, title, monitor, share) {
+        var i, id;
+        for (i = 0; i < GLFW.windows.length && GLFW.windows[i] !== null; i++);
+        if (i > 0) throw "glfwCreateWindow only supports one window at time currently";
+  
+        // id for window
+        id = i + 1;
+  
+        // not valid
+        if (width <= 0 || height <= 0) return 0;
+  
+        if (monitor) {
+          GLFW.requestFullscreen();
+        } else {
+          Browser.setCanvasSize(width, height);
+        }
+  
+        // Create context when there are no existing alive windows
+        for (i = 0; i < GLFW.windows.length && GLFW.windows[i] == null; i++);
+        if (i == GLFW.windows.length) {
+          var contextAttributes = {
+            antialias: (GLFW.hints[0x0002100D] > 1), // GLFW_SAMPLES
+            depth: (GLFW.hints[0x00021005] > 0),     // GLFW_DEPTH_BITS
+            stencil: (GLFW.hints[0x00021006] > 0),   // GLFW_STENCIL_BITS
+            alpha: (GLFW.hints[0x00021004] > 0)      // GLFW_ALPHA_BITS 
+          }
+          Module.ctx = Browser.createContext(Module['canvas'], true, true, contextAttributes);
+        }
+  
+        // If context creation failed, do not return a valid window
+        if (!Module.ctx) return 0;
+  
+        // Get non alive id
+        var win = new GLFW.Window(id, width, height, title, monitor, share);
+  
+        // Set window to array
+        if (id - 1 == GLFW.windows.length) {
+          GLFW.windows.push(win);
+        } else {
+          GLFW.windows[id - 1] = win;
+        }
+  
+        GLFW.active = win;
+        return win.id;
+      },destroyWindow:function (winid) {
+        var win = GLFW.WindowFromId(winid);
+        if (!win) return;
+  
+        if (win.windowCloseFunc)
+          dynCall_vi(win.windowCloseFunc, win.id);
+  
+        GLFW.windows[win.id - 1] = null;
+        if (GLFW.active.id == win.id)
+          GLFW.active = null;
+  
+        // Destroy context when no alive windows
+        for (var i = 0; i < GLFW.windows.length; i++)
+          if (GLFW.windows[i] !== null) return;
+  
+        Module.ctx = Browser.destroyContext(Module['canvas'], true, true);
+      },swapBuffers:function (winid) {
+      },GLFW2ParamToGLFW3Param:function (param) {
+        var table = {
+          0x00030001:0, // GLFW_MOUSE_CURSOR
+          0x00030002:0, // GLFW_STICKY_KEYS
+          0x00030003:0, // GLFW_STICKY_MOUSE_BUTTONS
+          0x00030004:0, // GLFW_SYSTEM_KEYS
+          0x00030005:0, // GLFW_KEY_REPEAT
+          0x00030006:0, // GLFW_AUTO_POLL_EVENTS
+          0x00020001:0, // GLFW_OPENED
+          0x00020002:0, // GLFW_ACTIVE
+          0x00020003:0, // GLFW_ICONIFIED
+          0x00020004:0, // GLFW_ACCELERATED
+          0x00020005:0x00021001, // GLFW_RED_BITS
+          0x00020006:0x00021002, // GLFW_GREEN_BITS
+          0x00020007:0x00021003, // GLFW_BLUE_BITS
+          0x00020008:0x00021004, // GLFW_ALPHA_BITS
+          0x00020009:0x00021005, // GLFW_DEPTH_BITS
+          0x0002000A:0x00021006, // GLFW_STENCIL_BITS
+          0x0002000B:0x0002100F, // GLFW_REFRESH_RATE
+          0x0002000C:0x00021007, // GLFW_ACCUM_RED_BITS
+          0x0002000D:0x00021008, // GLFW_ACCUM_GREEN_BITS
+          0x0002000E:0x00021009, // GLFW_ACCUM_BLUE_BITS
+          0x0002000F:0x0002100A, // GLFW_ACCUM_ALPHA_BITS
+          0x00020010:0x0002100B, // GLFW_AUX_BUFFERS
+          0x00020011:0x0002100C, // GLFW_STEREO
+          0x00020012:0, // GLFW_WINDOW_NO_RESIZE
+          0x00020013:0x0002100D, // GLFW_FSAA_SAMPLES
+          0x00020014:0x00022002, // GLFW_OPENGL_VERSION_MAJOR
+          0x00020015:0x00022003, // GLFW_OPENGL_VERSION_MINOR
+          0x00020016:0x00022006, // GLFW_OPENGL_FORWARD_COMPAT
+          0x00020017:0x00022007, // GLFW_OPENGL_DEBUG_CONTEXT
+          0x00020018:0x00022008, // GLFW_OPENGL_PROFILE
+        };
+        return table[param];
+      }};function _glfwCreateWindow(width, height, title, monitor, share) {
+      return GLFW.createWindow(width, height, title, monitor, share);
     }
 
-  function _gettimeofday(ptr) {
-      var now = Date.now();
-      HEAP32[((ptr)>>2)]=(now/1000)|0; // seconds
-      HEAP32[(((ptr)+(4))>>2)]=((now % 1000)*1000)|0; // microseconds
-      return 0;
+  function _glfwGetKey(winid, key) {
+      return GLFW.getKey(winid, key);
     }
 
-   
-
-   
-
-  function _llvm_stackrestore(p) {
-      var self = _llvm_stacksave;
-      var ret = self.LLVM_SAVEDSTACKS[p];
-      self.LLVM_SAVEDSTACKS.splice(p, 1);
-      stackRestore(ret);
+  function _glfwGetMouseButton(winid, button) {
+      return GLFW.getMouseButton(winid, button);
     }
 
-  function _llvm_stacksave() {
-      var self = _llvm_stacksave;
-      if (!self.LLVM_SAVEDSTACKS) {
-        self.LLVM_SAVEDSTACKS = [];
-      }
-      self.LLVM_SAVEDSTACKS.push(stackSave());
-      return self.LLVM_SAVEDSTACKS.length-1;
+  function _glfwGetProcAddress(procname) {
+      return _emscripten_GetProcAddress(procname);
     }
 
+  function _glfwGetTime() {
+      return GLFW.getTime() - GLFW.initialTime;
+    }
+
+  function _glfwGetWindowSize(winid, width, height) {
+      GLFW.getWindowSize(winid, width, height);
+    }
+
+  function _glfwInit() {
+      if (GLFW.windows) return 1; // GL_TRUE
+  
+      GLFW.initialTime = GLFW.getTime();
+      GLFW.hints = GLFW.defaultHints;
+      GLFW.windows = new Array()
+      GLFW.active = null;
+  
+      window.addEventListener("gamepadconnected", GLFW.onGamepadConnected, true);
+      window.addEventListener("gamepaddisconnected", GLFW.onGamepadDisconnected, true);
+      window.addEventListener("keydown", GLFW.onKeydown, true);
+      window.addEventListener("keypress", GLFW.onKeyPress, true);
+      window.addEventListener("keyup", GLFW.onKeyup, true);
+      window.addEventListener("blur", GLFW.onBlur, true);
+      Module["canvas"].addEventListener("mousemove", GLFW.onMousemove, true);
+      Module["canvas"].addEventListener("mousedown", GLFW.onMouseButtonDown, true);
+      Module["canvas"].addEventListener("mouseup", GLFW.onMouseButtonUp, true);
+      Module["canvas"].addEventListener('wheel', GLFW.onMouseWheel, true);
+      Module["canvas"].addEventListener('mousewheel', GLFW.onMouseWheel, true);
+      Module["canvas"].addEventListener('mouseenter', GLFW.onMouseenter, true);
+      Module["canvas"].addEventListener('mouseleave', GLFW.onMouseleave, true);
+      Module["canvas"].addEventListener('drop', GLFW.onDrop, true);
+      Module["canvas"].addEventListener('dragover', GLFW.onDragover, true);
+  
+      Browser.resizeListeners.push(function(width, height) {
+         GLFW.onCanvasResize(width, height);
+      });
+      return 1; // GL_TRUE
+    }
+
+  function _glfwMakeContextCurrent(winid) {}
+
+  function _glfwPollEvents() {}
+
+  function _glfwSetCursorPosCallback(winid, cbfun) {
+      return GLFW.setCursorPosCallback(winid, cbfun);
+    }
+
+  function _glfwSetErrorCallback(cbfun) {
+      var prevcbfun = GLFW.errorFunc;
+      GLFW.errorFunc = cbfun;
+      return prevcbfun;
+    }
+
+  function _glfwSetScrollCallback(winid, cbfun) {
+      return GLFW.setScrollCallback(winid, cbfun);
+    }
+
+  function _glfwSwapBuffers(winid) {
+      GLFW.swapBuffers(winid);
+    }
+
+  function _glfwTerminate() {
+      window.removeEventListener("gamepadconnected", GLFW.onGamepadConnected, true);
+      window.removeEventListener("gamepaddisconnected", GLFW.onGamepadDisconnected, true);
+      window.removeEventListener("keydown", GLFW.onKeydown, true);
+      window.removeEventListener("keypress", GLFW.onKeyPress, true);
+      window.removeEventListener("keyup", GLFW.onKeyup, true);
+      window.removeEventListener("blur", GLFW.onBlur, true);
+      Module["canvas"].removeEventListener("mousemove", GLFW.onMousemove, true);
+      Module["canvas"].removeEventListener("mousedown", GLFW.onMouseButtonDown, true);
+      Module["canvas"].removeEventListener("mouseup", GLFW.onMouseButtonUp, true);
+      Module["canvas"].removeEventListener('wheel', GLFW.onMouseWheel, true);
+      Module["canvas"].removeEventListener('mousewheel', GLFW.onMouseWheel, true);
+      Module["canvas"].removeEventListener('mouseenter', GLFW.onMouseenter, true);
+      Module["canvas"].removeEventListener('mouseleave', GLFW.onMouseleave, true);
+      Module["canvas"].removeEventListener('drop', GLFW.onDrop, true);
+      Module["canvas"].removeEventListener('dragover', GLFW.onDragover, true);
+  
+  
+      Module["canvas"].width = Module["canvas"].height = 1;
+      GLFW.windows = null;
+      GLFW.active = null;
+    }
 
   
   function _emscripten_memcpy_big(dest, src, num) {
@@ -8946,46 +9045,6 @@ function copyTempDouble(ptr) {
 
    
 
-   
-
-  
-  function _usleep(useconds) {
-      // int usleep(useconds_t useconds);
-      // http://pubs.opengroup.org/onlinepubs/000095399/functions/usleep.html
-      // We're single-threaded, so use a busy loop. Super-ugly.
-      var msec = useconds / 1000;
-      if ((ENVIRONMENT_IS_WEB || ENVIRONMENT_IS_WORKER) && self['performance'] && self['performance']['now']) {
-        var start = self['performance']['now']();
-        while (self['performance']['now']() - start < msec) {
-          // Do nothing.
-        }
-      } else {
-        var start = Date.now();
-        while (Date.now() - start < msec) {
-          // Do nothing.
-        }
-      }
-      return 0;
-    }function _nanosleep(rqtp, rmtp) {
-      // int nanosleep(const struct timespec  *rqtp, struct timespec *rmtp);
-      if (rqtp === 0) {
-        ___setErrNo(22);
-        return -1;
-      }
-      var seconds = HEAP32[((rqtp)>>2)];
-      var nanoseconds = HEAP32[(((rqtp)+(4))>>2)];
-      if (nanoseconds < 0 || nanoseconds > 999999999 || seconds < 0) {
-        ___setErrNo(22);
-        return -1;
-      }
-      if (rmtp !== 0) {
-        HEAP32[((rmtp)>>2)]=0;
-        HEAP32[(((rmtp)+(4))>>2)]=0;
-      }
-      return _usleep((seconds * 1e6) + (nanoseconds / 1000));
-    }
-
-
   
   
   function abortOnCannotGrowMemory(requestedSize) {
@@ -8994,31 +9053,9 @@ function copyTempDouble(ptr) {
       abortOnCannotGrowMemory(requestedSize);
     } 
 
-  function _sigaction(signum, act, oldact) {
-      //int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact);
-      err('Calling stub instead of sigaction()');
-      return 0;
-    }
-
-  
-  var __sigalrm_handler=0;function _signal(sig, func) {
-      if (sig == 14 /*SIGALRM*/) {
-        __sigalrm_handler = func;
-      } else {
-        err('Calling stub instead of signal()');
-      }
-      return 0;
-    }
-
-
 FS.staticInit();Module["FS_createFolder"] = FS.createFolder;Module["FS_createPath"] = FS.createPath;Module["FS_createDataFile"] = FS.createDataFile;Module["FS_createPreloadedFile"] = FS.createPreloadedFile;Module["FS_createLazyFile"] = FS.createLazyFile;Module["FS_createLink"] = FS.createLink;Module["FS_createDevice"] = FS.createDevice;Module["FS_unlink"] = FS.unlink;;
-if (typeof dateNow !== 'undefined') {
-    _emscripten_get_now = dateNow;
-  } else if (typeof performance === 'object' && performance && typeof performance['now'] === 'function') {
-    _emscripten_get_now = function() { return performance['now'](); };
-  } else {
-    _emscripten_get_now = Date.now;
-  };
+var GLctx; GL.init();
+for (var i = 0; i < 32; i++) __tempFixedLengthArray.push(new Array(i));;
 Module["requestFullScreen"] = function Module_requestFullScreen(lockPointer, resizeCanvas, vrDevice) { err("Module.requestFullScreen is deprecated. Please call Module.requestFullscreen instead."); Module["requestFullScreen"] = Module["requestFullscreen"]; Browser.requestFullScreen(lockPointer, resizeCanvas, vrDevice) };
   Module["requestFullscreen"] = function Module_requestFullscreen(lockPointer, resizeCanvas, vrDevice) { Browser.requestFullscreen(lockPointer, resizeCanvas, vrDevice) };
   Module["requestAnimationFrame"] = function Module_requestAnimationFrame(func) { Browser.requestAnimationFrame(func) };
@@ -9027,8 +9064,13 @@ Module["requestFullScreen"] = function Module_requestFullScreen(lockPointer, res
   Module["resumeMainLoop"] = function Module_resumeMainLoop() { Browser.mainLoop.resume() };
   Module["getUserMedia"] = function Module_getUserMedia() { Browser.getUserMedia() }
   Module["createContext"] = function Module_createContext(canvas, useWebGL, setInModule, webGLContextAttributes) { return Browser.createContext(canvas, useWebGL, setInModule, webGLContextAttributes) };
-var GLctx; GL.init();
-for (var i = 0; i < 32; i++) __tempFixedLengthArray.push(new Array(i));;
+if (typeof dateNow !== 'undefined') {
+    _emscripten_get_now = dateNow;
+  } else if (typeof performance === 'object' && performance && typeof performance['now'] === 'function') {
+    _emscripten_get_now = function() { return performance['now'](); };
+  } else {
+    _emscripten_get_now = Date.now;
+  };
 var ASSERTIONS = true;
 
 // Copyright 2017 The Emscripten Authors.  All rights reserved.
@@ -9069,13 +9111,7 @@ function nullFunc_iidiiii(x) { abortFnPtrError(x, 'iidiiii'); }
 function nullFunc_iii(x) { abortFnPtrError(x, 'iii'); }
 function nullFunc_iiii(x) { abortFnPtrError(x, 'iiii'); }
 function nullFunc_iiiii(x) { abortFnPtrError(x, 'iiiii'); }
-function nullFunc_iiiiidii(x) { abortFnPtrError(x, 'iiiiidii'); }
 function nullFunc_iiiiii(x) { abortFnPtrError(x, 'iiiiii'); }
-function nullFunc_iiiiiii(x) { abortFnPtrError(x, 'iiiiiii'); }
-function nullFunc_iiiiiiii(x) { abortFnPtrError(x, 'iiiiiiii'); }
-function nullFunc_iiiiiiiii(x) { abortFnPtrError(x, 'iiiiiiiii'); }
-function nullFunc_iiiiiiiiii(x) { abortFnPtrError(x, 'iiiiiiiiii'); }
-function nullFunc_ji(x) { abortFnPtrError(x, 'ji'); }
 function nullFunc_jiji(x) { abortFnPtrError(x, 'jiji'); }
 function nullFunc_v(x) { abortFnPtrError(x, 'v'); }
 function nullFunc_vf(x) { abortFnPtrError(x, 'vf'); }
@@ -9083,12 +9119,14 @@ function nullFunc_vff(x) { abortFnPtrError(x, 'vff'); }
 function nullFunc_vffff(x) { abortFnPtrError(x, 'vffff'); }
 function nullFunc_vfi(x) { abortFnPtrError(x, 'vfi'); }
 function nullFunc_vi(x) { abortFnPtrError(x, 'vi'); }
+function nullFunc_vidd(x) { abortFnPtrError(x, 'vidd'); }
 function nullFunc_vif(x) { abortFnPtrError(x, 'vif'); }
 function nullFunc_viff(x) { abortFnPtrError(x, 'viff'); }
 function nullFunc_vifff(x) { abortFnPtrError(x, 'vifff'); }
 function nullFunc_viffff(x) { abortFnPtrError(x, 'viffff'); }
 function nullFunc_vii(x) { abortFnPtrError(x, 'vii'); }
 function nullFunc_viif(x) { abortFnPtrError(x, 'viif'); }
+function nullFunc_viifi(x) { abortFnPtrError(x, 'viifi'); }
 function nullFunc_viii(x) { abortFnPtrError(x, 'viii'); }
 function nullFunc_viiii(x) { abortFnPtrError(x, 'viiii'); }
 function nullFunc_viiiii(x) { abortFnPtrError(x, 'viiiii'); }
@@ -9096,150 +9134,8 @@ function nullFunc_viiiiii(x) { abortFnPtrError(x, 'viiiiii'); }
 function nullFunc_viiiiiii(x) { abortFnPtrError(x, 'viiiiiii'); }
 function nullFunc_viiiiiiii(x) { abortFnPtrError(x, 'viiiiiiii'); }
 function nullFunc_viiiiiiiii(x) { abortFnPtrError(x, 'viiiiiiiii'); }
+function nullFunc_viiiiiiiiii(x) { abortFnPtrError(x, 'viiiiiiiiii'); }
 function nullFunc_viiiiiiiiiii(x) { abortFnPtrError(x, 'viiiiiiiiiii'); }
-
-function invoke_i(index) {
-  var sp = stackSave();
-  try {
-    return dynCall_i(index);
-  } catch(e) {
-    stackRestore(sp);
-    if (e !== e+0 && e !== 'longjmp') throw e;
-    _setThrew(1, 0);
-  }
-}
-
-function invoke_ii(index,a1) {
-  var sp = stackSave();
-  try {
-    return dynCall_ii(index,a1);
-  } catch(e) {
-    stackRestore(sp);
-    if (e !== e+0 && e !== 'longjmp') throw e;
-    _setThrew(1, 0);
-  }
-}
-
-function invoke_iii(index,a1,a2) {
-  var sp = stackSave();
-  try {
-    return dynCall_iii(index,a1,a2);
-  } catch(e) {
-    stackRestore(sp);
-    if (e !== e+0 && e !== 'longjmp') throw e;
-    _setThrew(1, 0);
-  }
-}
-
-function invoke_iiii(index,a1,a2,a3) {
-  var sp = stackSave();
-  try {
-    return dynCall_iiii(index,a1,a2,a3);
-  } catch(e) {
-    stackRestore(sp);
-    if (e !== e+0 && e !== 'longjmp') throw e;
-    _setThrew(1, 0);
-  }
-}
-
-function invoke_iiiii(index,a1,a2,a3,a4) {
-  var sp = stackSave();
-  try {
-    return dynCall_iiiii(index,a1,a2,a3,a4);
-  } catch(e) {
-    stackRestore(sp);
-    if (e !== e+0 && e !== 'longjmp') throw e;
-    _setThrew(1, 0);
-  }
-}
-
-function invoke_iiiiii(index,a1,a2,a3,a4,a5) {
-  var sp = stackSave();
-  try {
-    return dynCall_iiiiii(index,a1,a2,a3,a4,a5);
-  } catch(e) {
-    stackRestore(sp);
-    if (e !== e+0 && e !== 'longjmp') throw e;
-    _setThrew(1, 0);
-  }
-}
-
-function invoke_iiiiiiiii(index,a1,a2,a3,a4,a5,a6,a7,a8) {
-  var sp = stackSave();
-  try {
-    return dynCall_iiiiiiiii(index,a1,a2,a3,a4,a5,a6,a7,a8);
-  } catch(e) {
-    stackRestore(sp);
-    if (e !== e+0 && e !== 'longjmp') throw e;
-    _setThrew(1, 0);
-  }
-}
-
-function invoke_iiiiiiiiii(index,a1,a2,a3,a4,a5,a6,a7,a8,a9) {
-  var sp = stackSave();
-  try {
-    return dynCall_iiiiiiiiii(index,a1,a2,a3,a4,a5,a6,a7,a8,a9);
-  } catch(e) {
-    stackRestore(sp);
-    if (e !== e+0 && e !== 'longjmp') throw e;
-    _setThrew(1, 0);
-  }
-}
-
-function invoke_jiji(index,a1,a2,a3,a4) {
-  var sp = stackSave();
-  try {
-    return dynCall_jiji(index,a1,a2,a3,a4);
-  } catch(e) {
-    stackRestore(sp);
-    if (e !== e+0 && e !== 'longjmp') throw e;
-    _setThrew(1, 0);
-  }
-}
-
-function invoke_vi(index,a1) {
-  var sp = stackSave();
-  try {
-    dynCall_vi(index,a1);
-  } catch(e) {
-    stackRestore(sp);
-    if (e !== e+0 && e !== 'longjmp') throw e;
-    _setThrew(1, 0);
-  }
-}
-
-function invoke_vii(index,a1,a2) {
-  var sp = stackSave();
-  try {
-    dynCall_vii(index,a1,a2);
-  } catch(e) {
-    stackRestore(sp);
-    if (e !== e+0 && e !== 'longjmp') throw e;
-    _setThrew(1, 0);
-  }
-}
-
-function invoke_viii(index,a1,a2,a3) {
-  var sp = stackSave();
-  try {
-    dynCall_viii(index,a1,a2,a3);
-  } catch(e) {
-    stackRestore(sp);
-    if (e !== e+0 && e !== 'longjmp') throw e;
-    _setThrew(1, 0);
-  }
-}
-
-function invoke_viiii(index,a1,a2,a3,a4) {
-  var sp = stackSave();
-  try {
-    dynCall_viiii(index,a1,a2,a3,a4);
-  } catch(e) {
-    stackRestore(sp);
-    if (e !== e+0 && e !== 'longjmp') throw e;
-    _setThrew(1, 0);
-  }
-}
 
 var asmGlobalArg = {};
 
@@ -9254,13 +9150,7 @@ var asmLibraryArg = {
   "nullFunc_iii": nullFunc_iii,
   "nullFunc_iiii": nullFunc_iiii,
   "nullFunc_iiiii": nullFunc_iiiii,
-  "nullFunc_iiiiidii": nullFunc_iiiiidii,
   "nullFunc_iiiiii": nullFunc_iiiiii,
-  "nullFunc_iiiiiii": nullFunc_iiiiiii,
-  "nullFunc_iiiiiiii": nullFunc_iiiiiiii,
-  "nullFunc_iiiiiiiii": nullFunc_iiiiiiiii,
-  "nullFunc_iiiiiiiiii": nullFunc_iiiiiiiiii,
-  "nullFunc_ji": nullFunc_ji,
   "nullFunc_jiji": nullFunc_jiji,
   "nullFunc_v": nullFunc_v,
   "nullFunc_vf": nullFunc_vf,
@@ -9268,12 +9158,14 @@ var asmLibraryArg = {
   "nullFunc_vffff": nullFunc_vffff,
   "nullFunc_vfi": nullFunc_vfi,
   "nullFunc_vi": nullFunc_vi,
+  "nullFunc_vidd": nullFunc_vidd,
   "nullFunc_vif": nullFunc_vif,
   "nullFunc_viff": nullFunc_viff,
   "nullFunc_vifff": nullFunc_vifff,
   "nullFunc_viffff": nullFunc_viffff,
   "nullFunc_vii": nullFunc_vii,
   "nullFunc_viif": nullFunc_viif,
+  "nullFunc_viifi": nullFunc_viifi,
   "nullFunc_viii": nullFunc_viii,
   "nullFunc_viiii": nullFunc_viiii,
   "nullFunc_viiiii": nullFunc_viiiii,
@@ -9281,23 +9173,9 @@ var asmLibraryArg = {
   "nullFunc_viiiiiii": nullFunc_viiiiiii,
   "nullFunc_viiiiiiii": nullFunc_viiiiiiii,
   "nullFunc_viiiiiiiii": nullFunc_viiiiiiiii,
+  "nullFunc_viiiiiiiiii": nullFunc_viiiiiiiiii,
   "nullFunc_viiiiiiiiiii": nullFunc_viiiiiiiiiii,
-  "invoke_i": invoke_i,
-  "invoke_ii": invoke_ii,
-  "invoke_iii": invoke_iii,
-  "invoke_iiii": invoke_iiii,
-  "invoke_iiiii": invoke_iiiii,
-  "invoke_iiiiii": invoke_iiiiii,
-  "invoke_iiiiiiiii": invoke_iiiiiiiii,
-  "invoke_iiiiiiiiii": invoke_iiiiiiiiii,
-  "invoke_jiji": invoke_jiji,
-  "invoke_vi": invoke_vi,
-  "invoke_vii": invoke_vii,
-  "invoke_viii": invoke_viii,
-  "invoke_viiii": invoke_viiii,
-  "_JSEvents_requestFullscreen": _JSEvents_requestFullscreen,
-  "_JSEvents_resizeCanvasForFullscreen": _JSEvents_resizeCanvasForFullscreen,
-  "___buildEnvironment": ___buildEnvironment,
+  "___assert_fail": ___assert_fail,
   "___lock": ___lock,
   "___setErrNo": ___setErrNo,
   "___syscall140": ___syscall140,
@@ -9309,111 +9187,69 @@ var asmLibraryArg = {
   "___syscall6": ___syscall6,
   "___unlock": ___unlock,
   "__computeUnpackAlignedImageSize": __computeUnpackAlignedImageSize,
-  "__emscripten_do_request_fullscreen": __emscripten_do_request_fullscreen,
-  "__fillFullscreenChangeEventData": __fillFullscreenChangeEventData,
-  "__fillGamepadEventData": __fillGamepadEventData,
-  "__fillMouseEventData": __fillMouseEventData,
-  "__fillPointerlockChangeEventData": __fillPointerlockChangeEventData,
-  "__fillVisibilityChangeEventData": __fillVisibilityChangeEventData,
-  "__findCanvasEventTarget": __findCanvasEventTarget,
-  "__findEventTarget": __findEventTarget,
-  "__get_canvas_element_size": __get_canvas_element_size,
   "__glGenObject": __glGenObject,
-  "__registerFocusEventCallback": __registerFocusEventCallback,
-  "__registerFullscreenChangeEventCallback": __registerFullscreenChangeEventCallback,
-  "__registerGamepadEventCallback": __registerGamepadEventCallback,
-  "__registerKeyEventCallback": __registerKeyEventCallback,
-  "__registerMouseEventCallback": __registerMouseEventCallback,
-  "__registerPointerlockChangeEventCallback": __registerPointerlockChangeEventCallback,
-  "__registerRestoreOldStyle": __registerRestoreOldStyle,
-  "__registerTouchEventCallback": __registerTouchEventCallback,
-  "__registerUiEventCallback": __registerUiEventCallback,
-  "__registerVisibilityChangeEventCallback": __registerVisibilityChangeEventCallback,
-  "__registerWheelEventCallback": __registerWheelEventCallback,
-  "__requestPointerLock": __requestPointerLock,
-  "__setLetterbox": __setLetterbox,
-  "__set_canvas_element_size": __set_canvas_element_size,
-  "_abort": _abort,
-  "_clock_gettime": _clock_gettime,
-  "_dlclose": _dlclose,
-  "_dlerror": _dlerror,
-  "_dlopen": _dlopen,
-  "_dlsym": _dlsym,
-  "_eglBindAPI": _eglBindAPI,
-  "_eglChooseConfig": _eglChooseConfig,
-  "_eglCreateContext": _eglCreateContext,
-  "_eglCreateWindowSurface": _eglCreateWindowSurface,
-  "_eglDestroyContext": _eglDestroyContext,
-  "_eglDestroySurface": _eglDestroySurface,
-  "_eglGetConfigAttrib": _eglGetConfigAttrib,
-  "_eglGetDisplay": _eglGetDisplay,
-  "_eglGetError": _eglGetError,
-  "_eglGetProcAddress": _eglGetProcAddress,
-  "_eglInitialize": _eglInitialize,
-  "_eglMakeCurrent": _eglMakeCurrent,
-  "_eglQueryString": _eglQueryString,
-  "_eglSwapBuffers": _eglSwapBuffers,
-  "_eglSwapInterval": _eglSwapInterval,
-  "_eglTerminate": _eglTerminate,
-  "_eglWaitClient": _eglWaitClient,
-  "_eglWaitGL": _eglWaitGL,
-  "_eglWaitNative": _eglWaitNative,
-  "_emscripten_asm_const_i": _emscripten_asm_const_i,
-  "_emscripten_asm_const_ii": _emscripten_asm_const_ii,
-  "_emscripten_asm_const_iii": _emscripten_asm_const_iii,
-  "_emscripten_asm_const_iiii": _emscripten_asm_const_iiii,
-  "_emscripten_asm_const_iiiii": _emscripten_asm_const_iiiii,
-  "_emscripten_asm_const_iiiiii": _emscripten_asm_const_iiiiii,
-  "_emscripten_cancel_main_loop": _emscripten_cancel_main_loop,
-  "_emscripten_exit_fullscreen": _emscripten_exit_fullscreen,
-  "_emscripten_exit_pointerlock": _emscripten_exit_pointerlock,
-  "_emscripten_get_canvas_element_size": _emscripten_get_canvas_element_size,
-  "_emscripten_get_device_pixel_ratio": _emscripten_get_device_pixel_ratio,
-  "_emscripten_get_element_css_size": _emscripten_get_element_css_size,
-  "_emscripten_get_gamepad_status": _emscripten_get_gamepad_status,
+  "__heapObjectForWebGLType": __heapObjectForWebGLType,
   "_emscripten_get_heap_size": _emscripten_get_heap_size,
   "_emscripten_get_now": _emscripten_get_now,
-  "_emscripten_get_now_is_monotonic": _emscripten_get_now_is_monotonic,
-  "_emscripten_get_num_gamepads": _emscripten_get_num_gamepads,
-  "_emscripten_get_preloaded_image_data": _emscripten_get_preloaded_image_data,
-  "_emscripten_get_preloaded_image_data_from_FILE": _emscripten_get_preloaded_image_data_from_FILE,
   "_emscripten_glActiveTexture": _emscripten_glActiveTexture,
   "_emscripten_glAttachShader": _emscripten_glAttachShader,
+  "_emscripten_glBeginQuery": _emscripten_glBeginQuery,
   "_emscripten_glBeginQueryEXT": _emscripten_glBeginQueryEXT,
+  "_emscripten_glBeginTransformFeedback": _emscripten_glBeginTransformFeedback,
   "_emscripten_glBindAttribLocation": _emscripten_glBindAttribLocation,
   "_emscripten_glBindBuffer": _emscripten_glBindBuffer,
+  "_emscripten_glBindBufferBase": _emscripten_glBindBufferBase,
+  "_emscripten_glBindBufferRange": _emscripten_glBindBufferRange,
   "_emscripten_glBindFramebuffer": _emscripten_glBindFramebuffer,
   "_emscripten_glBindRenderbuffer": _emscripten_glBindRenderbuffer,
+  "_emscripten_glBindSampler": _emscripten_glBindSampler,
   "_emscripten_glBindTexture": _emscripten_glBindTexture,
+  "_emscripten_glBindTransformFeedback": _emscripten_glBindTransformFeedback,
+  "_emscripten_glBindVertexArray": _emscripten_glBindVertexArray,
   "_emscripten_glBindVertexArrayOES": _emscripten_glBindVertexArrayOES,
   "_emscripten_glBlendColor": _emscripten_glBlendColor,
   "_emscripten_glBlendEquation": _emscripten_glBlendEquation,
   "_emscripten_glBlendEquationSeparate": _emscripten_glBlendEquationSeparate,
   "_emscripten_glBlendFunc": _emscripten_glBlendFunc,
   "_emscripten_glBlendFuncSeparate": _emscripten_glBlendFuncSeparate,
+  "_emscripten_glBlitFramebuffer": _emscripten_glBlitFramebuffer,
   "_emscripten_glBufferData": _emscripten_glBufferData,
   "_emscripten_glBufferSubData": _emscripten_glBufferSubData,
   "_emscripten_glCheckFramebufferStatus": _emscripten_glCheckFramebufferStatus,
   "_emscripten_glClear": _emscripten_glClear,
+  "_emscripten_glClearBufferfi": _emscripten_glClearBufferfi,
+  "_emscripten_glClearBufferfv": _emscripten_glClearBufferfv,
+  "_emscripten_glClearBufferiv": _emscripten_glClearBufferiv,
+  "_emscripten_glClearBufferuiv": _emscripten_glClearBufferuiv,
   "_emscripten_glClearColor": _emscripten_glClearColor,
   "_emscripten_glClearDepthf": _emscripten_glClearDepthf,
   "_emscripten_glClearStencil": _emscripten_glClearStencil,
+  "_emscripten_glClientWaitSync": _emscripten_glClientWaitSync,
   "_emscripten_glColorMask": _emscripten_glColorMask,
   "_emscripten_glCompileShader": _emscripten_glCompileShader,
   "_emscripten_glCompressedTexImage2D": _emscripten_glCompressedTexImage2D,
+  "_emscripten_glCompressedTexImage3D": _emscripten_glCompressedTexImage3D,
   "_emscripten_glCompressedTexSubImage2D": _emscripten_glCompressedTexSubImage2D,
+  "_emscripten_glCompressedTexSubImage3D": _emscripten_glCompressedTexSubImage3D,
+  "_emscripten_glCopyBufferSubData": _emscripten_glCopyBufferSubData,
   "_emscripten_glCopyTexImage2D": _emscripten_glCopyTexImage2D,
   "_emscripten_glCopyTexSubImage2D": _emscripten_glCopyTexSubImage2D,
+  "_emscripten_glCopyTexSubImage3D": _emscripten_glCopyTexSubImage3D,
   "_emscripten_glCreateProgram": _emscripten_glCreateProgram,
   "_emscripten_glCreateShader": _emscripten_glCreateShader,
   "_emscripten_glCullFace": _emscripten_glCullFace,
   "_emscripten_glDeleteBuffers": _emscripten_glDeleteBuffers,
   "_emscripten_glDeleteFramebuffers": _emscripten_glDeleteFramebuffers,
   "_emscripten_glDeleteProgram": _emscripten_glDeleteProgram,
+  "_emscripten_glDeleteQueries": _emscripten_glDeleteQueries,
   "_emscripten_glDeleteQueriesEXT": _emscripten_glDeleteQueriesEXT,
   "_emscripten_glDeleteRenderbuffers": _emscripten_glDeleteRenderbuffers,
+  "_emscripten_glDeleteSamplers": _emscripten_glDeleteSamplers,
   "_emscripten_glDeleteShader": _emscripten_glDeleteShader,
+  "_emscripten_glDeleteSync": _emscripten_glDeleteSync,
   "_emscripten_glDeleteTextures": _emscripten_glDeleteTextures,
+  "_emscripten_glDeleteTransformFeedbacks": _emscripten_glDeleteTransformFeedbacks,
+  "_emscripten_glDeleteVertexArrays": _emscripten_glDeleteVertexArrays,
   "_emscripten_glDeleteVertexArraysOES": _emscripten_glDeleteVertexArraysOES,
   "_emscripten_glDepthFunc": _emscripten_glDepthFunc,
   "_emscripten_glDepthMask": _emscripten_glDepthMask,
@@ -9422,75 +9258,136 @@ var asmLibraryArg = {
   "_emscripten_glDisable": _emscripten_glDisable,
   "_emscripten_glDisableVertexAttribArray": _emscripten_glDisableVertexAttribArray,
   "_emscripten_glDrawArrays": _emscripten_glDrawArrays,
+  "_emscripten_glDrawArraysInstanced": _emscripten_glDrawArraysInstanced,
   "_emscripten_glDrawArraysInstancedANGLE": _emscripten_glDrawArraysInstancedANGLE,
+  "_emscripten_glDrawArraysInstancedARB": _emscripten_glDrawArraysInstancedARB,
+  "_emscripten_glDrawArraysInstancedEXT": _emscripten_glDrawArraysInstancedEXT,
+  "_emscripten_glDrawArraysInstancedNV": _emscripten_glDrawArraysInstancedNV,
+  "_emscripten_glDrawBuffers": _emscripten_glDrawBuffers,
+  "_emscripten_glDrawBuffersEXT": _emscripten_glDrawBuffersEXT,
   "_emscripten_glDrawBuffersWEBGL": _emscripten_glDrawBuffersWEBGL,
   "_emscripten_glDrawElements": _emscripten_glDrawElements,
+  "_emscripten_glDrawElementsInstanced": _emscripten_glDrawElementsInstanced,
   "_emscripten_glDrawElementsInstancedANGLE": _emscripten_glDrawElementsInstancedANGLE,
+  "_emscripten_glDrawElementsInstancedARB": _emscripten_glDrawElementsInstancedARB,
+  "_emscripten_glDrawElementsInstancedEXT": _emscripten_glDrawElementsInstancedEXT,
+  "_emscripten_glDrawElementsInstancedNV": _emscripten_glDrawElementsInstancedNV,
+  "_emscripten_glDrawRangeElements": _emscripten_glDrawRangeElements,
   "_emscripten_glEnable": _emscripten_glEnable,
   "_emscripten_glEnableVertexAttribArray": _emscripten_glEnableVertexAttribArray,
+  "_emscripten_glEndQuery": _emscripten_glEndQuery,
   "_emscripten_glEndQueryEXT": _emscripten_glEndQueryEXT,
+  "_emscripten_glEndTransformFeedback": _emscripten_glEndTransformFeedback,
+  "_emscripten_glFenceSync": _emscripten_glFenceSync,
   "_emscripten_glFinish": _emscripten_glFinish,
   "_emscripten_glFlush": _emscripten_glFlush,
+  "_emscripten_glFlushMappedBufferRange": _emscripten_glFlushMappedBufferRange,
   "_emscripten_glFramebufferRenderbuffer": _emscripten_glFramebufferRenderbuffer,
   "_emscripten_glFramebufferTexture2D": _emscripten_glFramebufferTexture2D,
+  "_emscripten_glFramebufferTextureLayer": _emscripten_glFramebufferTextureLayer,
   "_emscripten_glFrontFace": _emscripten_glFrontFace,
   "_emscripten_glGenBuffers": _emscripten_glGenBuffers,
   "_emscripten_glGenFramebuffers": _emscripten_glGenFramebuffers,
+  "_emscripten_glGenQueries": _emscripten_glGenQueries,
   "_emscripten_glGenQueriesEXT": _emscripten_glGenQueriesEXT,
   "_emscripten_glGenRenderbuffers": _emscripten_glGenRenderbuffers,
+  "_emscripten_glGenSamplers": _emscripten_glGenSamplers,
   "_emscripten_glGenTextures": _emscripten_glGenTextures,
+  "_emscripten_glGenTransformFeedbacks": _emscripten_glGenTransformFeedbacks,
+  "_emscripten_glGenVertexArrays": _emscripten_glGenVertexArrays,
   "_emscripten_glGenVertexArraysOES": _emscripten_glGenVertexArraysOES,
   "_emscripten_glGenerateMipmap": _emscripten_glGenerateMipmap,
   "_emscripten_glGetActiveAttrib": _emscripten_glGetActiveAttrib,
   "_emscripten_glGetActiveUniform": _emscripten_glGetActiveUniform,
+  "_emscripten_glGetActiveUniformBlockName": _emscripten_glGetActiveUniformBlockName,
+  "_emscripten_glGetActiveUniformBlockiv": _emscripten_glGetActiveUniformBlockiv,
+  "_emscripten_glGetActiveUniformsiv": _emscripten_glGetActiveUniformsiv,
   "_emscripten_glGetAttachedShaders": _emscripten_glGetAttachedShaders,
   "_emscripten_glGetAttribLocation": _emscripten_glGetAttribLocation,
   "_emscripten_glGetBooleanv": _emscripten_glGetBooleanv,
+  "_emscripten_glGetBufferParameteri64v": _emscripten_glGetBufferParameteri64v,
   "_emscripten_glGetBufferParameteriv": _emscripten_glGetBufferParameteriv,
+  "_emscripten_glGetBufferPointerv": _emscripten_glGetBufferPointerv,
   "_emscripten_glGetError": _emscripten_glGetError,
   "_emscripten_glGetFloatv": _emscripten_glGetFloatv,
+  "_emscripten_glGetFragDataLocation": _emscripten_glGetFragDataLocation,
   "_emscripten_glGetFramebufferAttachmentParameteriv": _emscripten_glGetFramebufferAttachmentParameteriv,
+  "_emscripten_glGetInteger64i_v": _emscripten_glGetInteger64i_v,
+  "_emscripten_glGetInteger64v": _emscripten_glGetInteger64v,
+  "_emscripten_glGetIntegeri_v": _emscripten_glGetIntegeri_v,
   "_emscripten_glGetIntegerv": _emscripten_glGetIntegerv,
+  "_emscripten_glGetInternalformativ": _emscripten_glGetInternalformativ,
+  "_emscripten_glGetProgramBinary": _emscripten_glGetProgramBinary,
   "_emscripten_glGetProgramInfoLog": _emscripten_glGetProgramInfoLog,
   "_emscripten_glGetProgramiv": _emscripten_glGetProgramiv,
   "_emscripten_glGetQueryObjecti64vEXT": _emscripten_glGetQueryObjecti64vEXT,
   "_emscripten_glGetQueryObjectivEXT": _emscripten_glGetQueryObjectivEXT,
   "_emscripten_glGetQueryObjectui64vEXT": _emscripten_glGetQueryObjectui64vEXT,
+  "_emscripten_glGetQueryObjectuiv": _emscripten_glGetQueryObjectuiv,
   "_emscripten_glGetQueryObjectuivEXT": _emscripten_glGetQueryObjectuivEXT,
+  "_emscripten_glGetQueryiv": _emscripten_glGetQueryiv,
   "_emscripten_glGetQueryivEXT": _emscripten_glGetQueryivEXT,
   "_emscripten_glGetRenderbufferParameteriv": _emscripten_glGetRenderbufferParameteriv,
+  "_emscripten_glGetSamplerParameterfv": _emscripten_glGetSamplerParameterfv,
+  "_emscripten_glGetSamplerParameteriv": _emscripten_glGetSamplerParameteriv,
   "_emscripten_glGetShaderInfoLog": _emscripten_glGetShaderInfoLog,
   "_emscripten_glGetShaderPrecisionFormat": _emscripten_glGetShaderPrecisionFormat,
   "_emscripten_glGetShaderSource": _emscripten_glGetShaderSource,
   "_emscripten_glGetShaderiv": _emscripten_glGetShaderiv,
   "_emscripten_glGetString": _emscripten_glGetString,
+  "_emscripten_glGetStringi": _emscripten_glGetStringi,
+  "_emscripten_glGetSynciv": _emscripten_glGetSynciv,
   "_emscripten_glGetTexParameterfv": _emscripten_glGetTexParameterfv,
   "_emscripten_glGetTexParameteriv": _emscripten_glGetTexParameteriv,
+  "_emscripten_glGetTransformFeedbackVarying": _emscripten_glGetTransformFeedbackVarying,
+  "_emscripten_glGetUniformBlockIndex": _emscripten_glGetUniformBlockIndex,
+  "_emscripten_glGetUniformIndices": _emscripten_glGetUniformIndices,
   "_emscripten_glGetUniformLocation": _emscripten_glGetUniformLocation,
   "_emscripten_glGetUniformfv": _emscripten_glGetUniformfv,
   "_emscripten_glGetUniformiv": _emscripten_glGetUniformiv,
+  "_emscripten_glGetUniformuiv": _emscripten_glGetUniformuiv,
+  "_emscripten_glGetVertexAttribIiv": _emscripten_glGetVertexAttribIiv,
+  "_emscripten_glGetVertexAttribIuiv": _emscripten_glGetVertexAttribIuiv,
   "_emscripten_glGetVertexAttribPointerv": _emscripten_glGetVertexAttribPointerv,
   "_emscripten_glGetVertexAttribfv": _emscripten_glGetVertexAttribfv,
   "_emscripten_glGetVertexAttribiv": _emscripten_glGetVertexAttribiv,
   "_emscripten_glHint": _emscripten_glHint,
+  "_emscripten_glInvalidateFramebuffer": _emscripten_glInvalidateFramebuffer,
+  "_emscripten_glInvalidateSubFramebuffer": _emscripten_glInvalidateSubFramebuffer,
   "_emscripten_glIsBuffer": _emscripten_glIsBuffer,
   "_emscripten_glIsEnabled": _emscripten_glIsEnabled,
   "_emscripten_glIsFramebuffer": _emscripten_glIsFramebuffer,
   "_emscripten_glIsProgram": _emscripten_glIsProgram,
+  "_emscripten_glIsQuery": _emscripten_glIsQuery,
   "_emscripten_glIsQueryEXT": _emscripten_glIsQueryEXT,
   "_emscripten_glIsRenderbuffer": _emscripten_glIsRenderbuffer,
+  "_emscripten_glIsSampler": _emscripten_glIsSampler,
   "_emscripten_glIsShader": _emscripten_glIsShader,
+  "_emscripten_glIsSync": _emscripten_glIsSync,
   "_emscripten_glIsTexture": _emscripten_glIsTexture,
+  "_emscripten_glIsTransformFeedback": _emscripten_glIsTransformFeedback,
+  "_emscripten_glIsVertexArray": _emscripten_glIsVertexArray,
   "_emscripten_glIsVertexArrayOES": _emscripten_glIsVertexArrayOES,
   "_emscripten_glLineWidth": _emscripten_glLineWidth,
   "_emscripten_glLinkProgram": _emscripten_glLinkProgram,
+  "_emscripten_glMapBufferRange": _emscripten_glMapBufferRange,
+  "_emscripten_glPauseTransformFeedback": _emscripten_glPauseTransformFeedback,
   "_emscripten_glPixelStorei": _emscripten_glPixelStorei,
   "_emscripten_glPolygonOffset": _emscripten_glPolygonOffset,
+  "_emscripten_glProgramBinary": _emscripten_glProgramBinary,
+  "_emscripten_glProgramParameteri": _emscripten_glProgramParameteri,
   "_emscripten_glQueryCounterEXT": _emscripten_glQueryCounterEXT,
+  "_emscripten_glReadBuffer": _emscripten_glReadBuffer,
   "_emscripten_glReadPixels": _emscripten_glReadPixels,
   "_emscripten_glReleaseShaderCompiler": _emscripten_glReleaseShaderCompiler,
   "_emscripten_glRenderbufferStorage": _emscripten_glRenderbufferStorage,
+  "_emscripten_glRenderbufferStorageMultisample": _emscripten_glRenderbufferStorageMultisample,
+  "_emscripten_glResumeTransformFeedback": _emscripten_glResumeTransformFeedback,
   "_emscripten_glSampleCoverage": _emscripten_glSampleCoverage,
+  "_emscripten_glSamplerParameterf": _emscripten_glSamplerParameterf,
+  "_emscripten_glSamplerParameterfv": _emscripten_glSamplerParameterfv,
+  "_emscripten_glSamplerParameteri": _emscripten_glSamplerParameteri,
+  "_emscripten_glSamplerParameteriv": _emscripten_glSamplerParameteriv,
   "_emscripten_glScissor": _emscripten_glScissor,
   "_emscripten_glShaderBinary": _emscripten_glShaderBinary,
   "_emscripten_glShaderSource": _emscripten_glShaderSource,
@@ -9501,30 +9398,51 @@ var asmLibraryArg = {
   "_emscripten_glStencilOp": _emscripten_glStencilOp,
   "_emscripten_glStencilOpSeparate": _emscripten_glStencilOpSeparate,
   "_emscripten_glTexImage2D": _emscripten_glTexImage2D,
+  "_emscripten_glTexImage3D": _emscripten_glTexImage3D,
   "_emscripten_glTexParameterf": _emscripten_glTexParameterf,
   "_emscripten_glTexParameterfv": _emscripten_glTexParameterfv,
   "_emscripten_glTexParameteri": _emscripten_glTexParameteri,
   "_emscripten_glTexParameteriv": _emscripten_glTexParameteriv,
+  "_emscripten_glTexStorage2D": _emscripten_glTexStorage2D,
+  "_emscripten_glTexStorage3D": _emscripten_glTexStorage3D,
   "_emscripten_glTexSubImage2D": _emscripten_glTexSubImage2D,
+  "_emscripten_glTexSubImage3D": _emscripten_glTexSubImage3D,
+  "_emscripten_glTransformFeedbackVaryings": _emscripten_glTransformFeedbackVaryings,
   "_emscripten_glUniform1f": _emscripten_glUniform1f,
   "_emscripten_glUniform1fv": _emscripten_glUniform1fv,
   "_emscripten_glUniform1i": _emscripten_glUniform1i,
   "_emscripten_glUniform1iv": _emscripten_glUniform1iv,
+  "_emscripten_glUniform1ui": _emscripten_glUniform1ui,
+  "_emscripten_glUniform1uiv": _emscripten_glUniform1uiv,
   "_emscripten_glUniform2f": _emscripten_glUniform2f,
   "_emscripten_glUniform2fv": _emscripten_glUniform2fv,
   "_emscripten_glUniform2i": _emscripten_glUniform2i,
   "_emscripten_glUniform2iv": _emscripten_glUniform2iv,
+  "_emscripten_glUniform2ui": _emscripten_glUniform2ui,
+  "_emscripten_glUniform2uiv": _emscripten_glUniform2uiv,
   "_emscripten_glUniform3f": _emscripten_glUniform3f,
   "_emscripten_glUniform3fv": _emscripten_glUniform3fv,
   "_emscripten_glUniform3i": _emscripten_glUniform3i,
   "_emscripten_glUniform3iv": _emscripten_glUniform3iv,
+  "_emscripten_glUniform3ui": _emscripten_glUniform3ui,
+  "_emscripten_glUniform3uiv": _emscripten_glUniform3uiv,
   "_emscripten_glUniform4f": _emscripten_glUniform4f,
   "_emscripten_glUniform4fv": _emscripten_glUniform4fv,
   "_emscripten_glUniform4i": _emscripten_glUniform4i,
   "_emscripten_glUniform4iv": _emscripten_glUniform4iv,
+  "_emscripten_glUniform4ui": _emscripten_glUniform4ui,
+  "_emscripten_glUniform4uiv": _emscripten_glUniform4uiv,
+  "_emscripten_glUniformBlockBinding": _emscripten_glUniformBlockBinding,
   "_emscripten_glUniformMatrix2fv": _emscripten_glUniformMatrix2fv,
+  "_emscripten_glUniformMatrix2x3fv": _emscripten_glUniformMatrix2x3fv,
+  "_emscripten_glUniformMatrix2x4fv": _emscripten_glUniformMatrix2x4fv,
   "_emscripten_glUniformMatrix3fv": _emscripten_glUniformMatrix3fv,
+  "_emscripten_glUniformMatrix3x2fv": _emscripten_glUniformMatrix3x2fv,
+  "_emscripten_glUniformMatrix3x4fv": _emscripten_glUniformMatrix3x4fv,
   "_emscripten_glUniformMatrix4fv": _emscripten_glUniformMatrix4fv,
+  "_emscripten_glUniformMatrix4x2fv": _emscripten_glUniformMatrix4x2fv,
+  "_emscripten_glUniformMatrix4x3fv": _emscripten_glUniformMatrix4x3fv,
+  "_emscripten_glUnmapBuffer": _emscripten_glUnmapBuffer,
   "_emscripten_glUseProgram": _emscripten_glUseProgram,
   "_emscripten_glValidateProgram": _emscripten_glValidateProgram,
   "_emscripten_glVertexAttrib1f": _emscripten_glVertexAttrib1f,
@@ -9535,55 +9453,44 @@ var asmLibraryArg = {
   "_emscripten_glVertexAttrib3fv": _emscripten_glVertexAttrib3fv,
   "_emscripten_glVertexAttrib4f": _emscripten_glVertexAttrib4f,
   "_emscripten_glVertexAttrib4fv": _emscripten_glVertexAttrib4fv,
+  "_emscripten_glVertexAttribDivisor": _emscripten_glVertexAttribDivisor,
   "_emscripten_glVertexAttribDivisorANGLE": _emscripten_glVertexAttribDivisorANGLE,
+  "_emscripten_glVertexAttribDivisorARB": _emscripten_glVertexAttribDivisorARB,
+  "_emscripten_glVertexAttribDivisorEXT": _emscripten_glVertexAttribDivisorEXT,
+  "_emscripten_glVertexAttribDivisorNV": _emscripten_glVertexAttribDivisorNV,
+  "_emscripten_glVertexAttribI4i": _emscripten_glVertexAttribI4i,
+  "_emscripten_glVertexAttribI4iv": _emscripten_glVertexAttribI4iv,
+  "_emscripten_glVertexAttribI4ui": _emscripten_glVertexAttribI4ui,
+  "_emscripten_glVertexAttribI4uiv": _emscripten_glVertexAttribI4uiv,
+  "_emscripten_glVertexAttribIPointer": _emscripten_glVertexAttribIPointer,
   "_emscripten_glVertexAttribPointer": _emscripten_glVertexAttribPointer,
   "_emscripten_glViewport": _emscripten_glViewport,
-  "_emscripten_longjmp": _emscripten_longjmp,
+  "_emscripten_glWaitSync": _emscripten_glWaitSync,
   "_emscripten_memcpy_big": _emscripten_memcpy_big,
-  "_emscripten_request_fullscreen_strategy": _emscripten_request_fullscreen_strategy,
-  "_emscripten_request_pointerlock": _emscripten_request_pointerlock,
   "_emscripten_resize_heap": _emscripten_resize_heap,
-  "_emscripten_sample_gamepad_data": _emscripten_sample_gamepad_data,
-  "_emscripten_set_blur_callback_on_thread": _emscripten_set_blur_callback_on_thread,
-  "_emscripten_set_canvas_element_size": _emscripten_set_canvas_element_size,
-  "_emscripten_set_element_css_size": _emscripten_set_element_css_size,
-  "_emscripten_set_focus_callback_on_thread": _emscripten_set_focus_callback_on_thread,
-  "_emscripten_set_fullscreenchange_callback_on_thread": _emscripten_set_fullscreenchange_callback_on_thread,
-  "_emscripten_set_gamepadconnected_callback_on_thread": _emscripten_set_gamepadconnected_callback_on_thread,
-  "_emscripten_set_gamepaddisconnected_callback_on_thread": _emscripten_set_gamepaddisconnected_callback_on_thread,
-  "_emscripten_set_keydown_callback_on_thread": _emscripten_set_keydown_callback_on_thread,
-  "_emscripten_set_keypress_callback_on_thread": _emscripten_set_keypress_callback_on_thread,
-  "_emscripten_set_keyup_callback_on_thread": _emscripten_set_keyup_callback_on_thread,
   "_emscripten_set_main_loop": _emscripten_set_main_loop,
   "_emscripten_set_main_loop_arg": _emscripten_set_main_loop_arg,
   "_emscripten_set_main_loop_timing": _emscripten_set_main_loop_timing,
-  "_emscripten_set_mousedown_callback_on_thread": _emscripten_set_mousedown_callback_on_thread,
-  "_emscripten_set_mouseenter_callback_on_thread": _emscripten_set_mouseenter_callback_on_thread,
-  "_emscripten_set_mouseleave_callback_on_thread": _emscripten_set_mouseleave_callback_on_thread,
-  "_emscripten_set_mousemove_callback_on_thread": _emscripten_set_mousemove_callback_on_thread,
-  "_emscripten_set_mouseup_callback_on_thread": _emscripten_set_mouseup_callback_on_thread,
-  "_emscripten_set_pointerlockchange_callback_on_thread": _emscripten_set_pointerlockchange_callback_on_thread,
-  "_emscripten_set_resize_callback_on_thread": _emscripten_set_resize_callback_on_thread,
-  "_emscripten_set_touchcancel_callback_on_thread": _emscripten_set_touchcancel_callback_on_thread,
-  "_emscripten_set_touchend_callback_on_thread": _emscripten_set_touchend_callback_on_thread,
-  "_emscripten_set_touchmove_callback_on_thread": _emscripten_set_touchmove_callback_on_thread,
-  "_emscripten_set_touchstart_callback_on_thread": _emscripten_set_touchstart_callback_on_thread,
-  "_emscripten_set_visibilitychange_callback_on_thread": _emscripten_set_visibilitychange_callback_on_thread,
-  "_emscripten_set_wheel_callback_on_thread": _emscripten_set_wheel_callback_on_thread,
-  "_exit": _exit,
-  "_getenv": _getenv,
-  "_gettimeofday": _gettimeofday,
-  "_llvm_stackrestore": _llvm_stackrestore,
-  "_llvm_stacksave": _llvm_stacksave,
-  "_longjmp": _longjmp,
-  "_nanosleep": _nanosleep,
-  "_sigaction": _sigaction,
-  "_signal": _signal,
-  "_usleep": _usleep,
+  "_glDrawElements": _glDrawElements,
+  "_glfwCreateWindow": _glfwCreateWindow,
+  "_glfwGetKey": _glfwGetKey,
+  "_glfwGetMouseButton": _glfwGetMouseButton,
+  "_glfwGetProcAddress": _glfwGetProcAddress,
+  "_glfwGetTime": _glfwGetTime,
+  "_glfwGetWindowSize": _glfwGetWindowSize,
+  "_glfwInit": _glfwInit,
+  "_glfwMakeContextCurrent": _glfwMakeContextCurrent,
+  "_glfwPollEvents": _glfwPollEvents,
+  "_glfwSetCursorPosCallback": _glfwSetCursorPosCallback,
+  "_glfwSetErrorCallback": _glfwSetErrorCallback,
+  "_glfwSetScrollCallback": _glfwSetScrollCallback,
+  "_glfwSwapBuffers": _glfwSwapBuffers,
+  "_glfwTerminate": _glfwTerminate,
   "abortOnCannotGrowMemory": abortOnCannotGrowMemory,
   "demangle": demangle,
   "demangleAll": demangleAll,
   "emscriptenWebGLGet": emscriptenWebGLGet,
+  "emscriptenWebGLGetIndexed": emscriptenWebGLGetIndexed,
   "emscriptenWebGLGetTexPixelData": emscriptenWebGLGetTexPixelData,
   "emscriptenWebGLGetUniform": emscriptenWebGLGetUniform,
   "emscriptenWebGLGetVertexAttrib": emscriptenWebGLGetVertexAttrib,
@@ -9598,22 +9505,10 @@ var asm =Module["asm"]// EMSCRIPTEN_END_ASM
 (asmGlobalArg, asmLibraryArg, buffer);
 
 Module["asm"] = asm;
-var ___emscripten_environ_constructor = Module["___emscripten_environ_constructor"] = function() {
-  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
-  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
-  return Module["asm"]["___emscripten_environ_constructor"].apply(null, arguments)
-};
-
 var ___errno_location = Module["___errno_location"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
   return Module["asm"]["___errno_location"].apply(null, arguments)
-};
-
-var __get_environ = Module["__get_environ"] = function() {
-  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
-  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
-  return Module["asm"]["__get_environ"].apply(null, arguments)
 };
 
 var _editor_get_next_tile_type = Module["_editor_get_next_tile_type"] = function() {
@@ -9646,12 +9541,6 @@ var _fflush = Module["_fflush"] = function() {
   return Module["asm"]["_fflush"].apply(null, arguments)
 };
 
-var _fileno = Module["_fileno"] = function() {
-  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
-  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
-  return Module["asm"]["_fileno"].apply(null, arguments)
-};
-
 var _free = Module["_free"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
@@ -9664,18 +9553,6 @@ var _init_AWO = Module["_init_AWO"] = function() {
   return Module["asm"]["_init_AWO"].apply(null, arguments)
 };
 
-var _llvm_bswap_i16 = Module["_llvm_bswap_i16"] = function() {
-  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
-  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
-  return Module["asm"]["_llvm_bswap_i16"].apply(null, arguments)
-};
-
-var _llvm_bswap_i32 = Module["_llvm_bswap_i32"] = function() {
-  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
-  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
-  return Module["asm"]["_llvm_bswap_i32"].apply(null, arguments)
-};
-
 var _malloc = Module["_malloc"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
@@ -9686,12 +9563,6 @@ var _memcpy = Module["_memcpy"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
   return Module["asm"]["_memcpy"].apply(null, arguments)
-};
-
-var _memmove = Module["_memmove"] = function() {
-  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
-  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
-  return Module["asm"]["_memmove"].apply(null, arguments)
 };
 
 var _memset = Module["_memset"] = function() {
@@ -9712,34 +9583,16 @@ var _run_AWO = Module["_run_AWO"] = function() {
   return Module["asm"]["_run_AWO"].apply(null, arguments)
 };
 
-var _saveSetjmp = Module["_saveSetjmp"] = function() {
-  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
-  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
-  return Module["asm"]["_saveSetjmp"].apply(null, arguments)
-};
-
 var _sbrk = Module["_sbrk"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
   return Module["asm"]["_sbrk"].apply(null, arguments)
 };
 
-var _setThrew = Module["_setThrew"] = function() {
-  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
-  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
-  return Module["asm"]["_setThrew"].apply(null, arguments)
-};
-
 var _strstr = Module["_strstr"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
   return Module["asm"]["_strstr"].apply(null, arguments)
-};
-
-var _testSetjmp = Module["_testSetjmp"] = function() {
-  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
-  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
-  return Module["asm"]["_testSetjmp"].apply(null, arguments)
 };
 
 var _update_game_size = Module["_update_game_size"] = function() {
@@ -9808,46 +9661,10 @@ var dynCall_iiiii = Module["dynCall_iiiii"] = function() {
   return Module["asm"]["dynCall_iiiii"].apply(null, arguments)
 };
 
-var dynCall_iiiiidii = Module["dynCall_iiiiidii"] = function() {
-  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
-  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
-  return Module["asm"]["dynCall_iiiiidii"].apply(null, arguments)
-};
-
 var dynCall_iiiiii = Module["dynCall_iiiiii"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
   return Module["asm"]["dynCall_iiiiii"].apply(null, arguments)
-};
-
-var dynCall_iiiiiii = Module["dynCall_iiiiiii"] = function() {
-  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
-  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
-  return Module["asm"]["dynCall_iiiiiii"].apply(null, arguments)
-};
-
-var dynCall_iiiiiiii = Module["dynCall_iiiiiiii"] = function() {
-  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
-  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
-  return Module["asm"]["dynCall_iiiiiiii"].apply(null, arguments)
-};
-
-var dynCall_iiiiiiiii = Module["dynCall_iiiiiiiii"] = function() {
-  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
-  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
-  return Module["asm"]["dynCall_iiiiiiiii"].apply(null, arguments)
-};
-
-var dynCall_iiiiiiiiii = Module["dynCall_iiiiiiiiii"] = function() {
-  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
-  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
-  return Module["asm"]["dynCall_iiiiiiiiii"].apply(null, arguments)
-};
-
-var dynCall_ji = Module["dynCall_ji"] = function() {
-  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
-  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
-  return Module["asm"]["dynCall_ji"].apply(null, arguments)
 };
 
 var dynCall_jiji = Module["dynCall_jiji"] = function() {
@@ -9892,6 +9709,12 @@ var dynCall_vi = Module["dynCall_vi"] = function() {
   return Module["asm"]["dynCall_vi"].apply(null, arguments)
 };
 
+var dynCall_vidd = Module["dynCall_vidd"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return Module["asm"]["dynCall_vidd"].apply(null, arguments)
+};
+
 var dynCall_vif = Module["dynCall_vif"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
@@ -9926,6 +9749,12 @@ var dynCall_viif = Module["dynCall_viif"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
   return Module["asm"]["dynCall_viif"].apply(null, arguments)
+};
+
+var dynCall_viifi = Module["dynCall_viifi"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return Module["asm"]["dynCall_viifi"].apply(null, arguments)
 };
 
 var dynCall_viii = Module["dynCall_viii"] = function() {
@@ -9968,6 +9797,12 @@ var dynCall_viiiiiiiii = Module["dynCall_viiiiiiiii"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
   return Module["asm"]["dynCall_viiiiiiiii"].apply(null, arguments)
+};
+
+var dynCall_viiiiiiiiii = Module["dynCall_viiiiiiiiii"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return Module["asm"]["dynCall_viiiiiiiiii"].apply(null, arguments)
 };
 
 var dynCall_viiiiiiiiiii = Module["dynCall_viiiiiiiiiii"] = function() {
