@@ -1,5 +1,5 @@
 import { AWOInterface } from "./AWO.interface";
-import { AWOState } from "./AWO.interface.state-enum";
+import { AWOState, AWOStateStr } from "./AWO.interface.state-enum";
 
 /**
  * Class used as an interface for all communications with the AWO core game program.
@@ -21,8 +21,9 @@ export class AWOInterfaceHelper {
             return true;
         }
 
-        // TODO: print string
-        console.error(`${initFuncName}: expected state to be ${expected}, was ${interf.state}`);
+        console.error(
+            `${initFuncName}: expected state to be '${AWOStateStr[expected]}', was '${AWOStateStr[interf.state]}'`
+        );
 
         return true;
     }

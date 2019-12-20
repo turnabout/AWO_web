@@ -32,3 +32,11 @@ export enum AWOState {
      */
     Game_Running,
 }
+
+export let AWOStateStr = [
+    "Uninitialized",
+    "Interface_Initialized",
+    "Game_Initialized",
+    "Game_Ready",
+    "Game_Running",
+];
