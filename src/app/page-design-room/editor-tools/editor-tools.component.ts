@@ -30,6 +30,7 @@ export class EditorToolsComponent implements OnInit {
             this.tileTypeData = this.gameService.generateEditorTilesData();
         } else {
             this.gameService.initializedChange.subscribe((value) => {
+                console.log(value);
                 this.tileTypeData = this.gameService.generateEditorTilesData();
             });
         }

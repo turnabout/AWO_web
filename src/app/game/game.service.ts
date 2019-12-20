@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
 import { Observable, of, Subject } from "rxjs";
+import { AWOFunctions, AWOInterface } from "./AWO/AWO.interface";
 
 import { LoadingService } from "../loading/loading.service";
-import { loadGame, initGame } from "./init";
 import { TileTypeData, TileVarData } from "../page-design-room/editor-tools/editor-tools.component";
 
 @Injectable({
@@ -10,53 +10,49 @@ import { TileTypeData, TileVarData } from "../page-design-room/editor-tools/edit
 })
 export class GameService {
 
-    // Path to emscripten-generated files
-    private static emDirPath = "assets/";
+    // Interface for communicating with AWO's base game program.
+    private AWOinterface: AWOInterface;
 
-    // Module object generated and used by emscripten as an interface to the outside world.
-    // Can be used to speak with emscripten and use its interfaces.
-    private emModuleObj: any;
-
-    // Pointer to the main AWO Game instance.
-    public gamePtr: number;
-
-    // Whether the game surface is currently initialized or not.
+    // Whether the game is currently initialized or not.
     public initialized = false;
     public initializedChange: Subject<boolean> = new Subject<boolean>();
 
     constructor(private loadingService: LoadingService) {
-        console.log("herro");
-
         this.initializedChange.subscribe((value) => {
             this.initialized = value;
         });
-
-        /*
-        this.myBool = new Observable((observer) => {
-            const {next, error} = observer;
-            let watchId;
-
-
-        });
-        */
     }
 
     /**
-     * Perform the initial game load.
+     * Initialize the game's interface and internal components.
      */
-    public loadGame(gameCanvas: HTMLCanvasElement) {
+    public initializeGame(gameCanvas: HTMLCanvasElement) {
+        this.AWOinterface = new AWOInterface(gameCanvas);
+
         setTimeout(() => {
-            this.emModuleObj = loadGame(
-                gameCanvas,
-                this.loadingService,
-                GameService.emDirPath,
+            this.AWOinterface.initializeInterface(
                 () => {
-                    this.gamePtr = initGame(this.emModuleObj);
-                    this.initializedChange.next(true);
+                    this.loadingService.start("Loading...");
                 },
+                (progress: number, progressStr: string) => {
+                    this.loadingService.update(progress, progressStr);
+                },
+                () => {
+                    this.loadingService.end();
+                    this.initializedChange.next(true);
+
+                    // TODO: move elsewhere
+                    this.AWOinterface.initializeGame(
+                        window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth,
+                        window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight
+                    );
+
+                    // TODO: move
+                    this.AWOinterface.prepareGame();
+                    this.AWOinterface.runGame();
+                }
             );
         });
-
     }
 
     /**
@@ -64,6 +60,7 @@ export class GameService {
      */
     public generateEditorTilesData(): TileTypeData[] {
 
+        /*
         let result: TileTypeData[] = [];
 
         // Wrap function to get tile variations' data
@@ -103,7 +100,7 @@ export class GameService {
 
         this.emModuleObj._free(varValuePtr);
         return result;
+        */
+        return undefined;
     }
-
-
 }

@@ -125,12 +125,13 @@ Module.expectedDataFileDownloads++;
     function assert(check, msg) {
       if (!check) throw msg + new Error().stack;
     }
-Module['FS_createPath']('/', 'Resources', true, true);
-Module['FS_createPath']('/Resources', 'Data', true, true);
-Module['FS_createPath']('/Resources', 'Fonts', true, true);
-Module['FS_createPath']('/Resources', 'Shaders', true, true);
-Module['FS_createPath']('/Resources', 'Shaders_ES', true, true);
-Module['FS_createPath']('/Resources', 'Textures', true, true);
+Module['FS_createPath']('/', 'AWO', true, true);
+Module['FS_createPath']('/AWO', 'Resources', true, true);
+Module['FS_createPath']('/AWO/Resources', 'Data', true, true);
+Module['FS_createPath']('/AWO/Resources', 'Fonts', true, true);
+Module['FS_createPath']('/AWO/Resources', 'Shaders', true, true);
+Module['FS_createPath']('/AWO/Resources', 'Shaders_ES', true, true);
+Module['FS_createPath']('/AWO/Resources', 'Textures', true, true);
 
     function DataRequest(start, end, audio) {
       this.start = start;
@@ -206,7 +207,7 @@ Module['FS_createPath']('/Resources', 'Textures', true, true);
   }
 
  }
- loadPackage({"files": [{"start": 0, "audio": 0, "end": 80889, "filename": "/Resources/Data/game_data.json"}, {"start": 80889, "audio": 0, "end": 99517, "filename": "/Resources/Fonts/aw2-gba.ttf"}, {"start": 99517, "audio": 0, "end": 99737, "filename": "/Resources/Fonts/license.txt"}, {"start": 99737, "audio": 0, "end": 100410, "filename": "/Resources/Fonts/readme.txt"}, {"start": 100410, "audio": 0, "end": 100860, "filename": "/Resources/Shaders/sprite.frag"}, {"start": 100860, "audio": 0, "end": 101239, "filename": "/Resources/Shaders/sprite.vert"}, {"start": 101239, "audio": 0, "end": 103032, "filename": "/Resources/Shaders/tiles.frag"}, {"start": 103032, "audio": 0, "end": 103344, "filename": "/Resources/Shaders/tiles.vert"}, {"start": 103344, "audio": 0, "end": 103813, "filename": "/Resources/Shaders_ES/sprite.frag"}, {"start": 103813, "audio": 0, "end": 104152, "filename": "/Resources/Shaders_ES/sprite.vert"}, {"start": 104152, "audio": 0, "end": 105963, "filename": "/Resources/Shaders_ES/tiles.frag"}, {"start": 105963, "audio": 0, "end": 106246, "filename": "/Resources/Shaders_ES/tiles.vert"}, {"start": 106246, "audio": 0, "end": 197052, "filename": "/Resources/Textures/spritesheet.png"}], "remote_package_size": 197052, "package_uuid": "29d19e99-a29a-4f4b-9e0a-b3a27e8d4a5e"});
+ loadPackage({"files": [{"start": 0, "audio": 0, "end": 82962, "filename": "/AWO/Resources/Data/game_data.json"}, {"start": 82962, "audio": 0, "end": 101590, "filename": "/AWO/Resources/Fonts/aw2-gba.ttf"}, {"start": 101590, "audio": 0, "end": 101810, "filename": "/AWO/Resources/Fonts/license.txt"}, {"start": 101810, "audio": 0, "end": 102483, "filename": "/AWO/Resources/Fonts/readme.txt"}, {"start": 102483, "audio": 0, "end": 102649, "filename": "/AWO/Resources/Shaders/basic.frag"}, {"start": 102649, "audio": 0, "end": 102924, "filename": "/AWO/Resources/Shaders/basic.vert"}, {"start": 102924, "audio": 0, "end": 104717, "filename": "/AWO/Resources/Shaders/grid.frag"}, {"start": 104717, "audio": 0, "end": 105029, "filename": "/AWO/Resources/Shaders/grid.vert"}, {"start": 105029, "audio": 0, "end": 105402, "filename": "/AWO/Resources/Shaders_ES/basic.frag"}, {"start": 105402, "audio": 0, "end": 105646, "filename": "/AWO/Resources/Shaders_ES/basic.vert"}, {"start": 105646, "audio": 0, "end": 107457, "filename": "/AWO/Resources/Shaders_ES/grid.frag"}, {"start": 107457, "audio": 0, "end": 107740, "filename": "/AWO/Resources/Shaders_ES/grid.vert"}, {"start": 107740, "audio": 0, "end": 352096, "filename": "/AWO/Resources/Textures/spritesheet.png"}], "remote_package_size": 352096, "package_uuid": "440d600a-87bc-4b9f-824b-56c5f5199f70"});
 
 })();
 
@@ -1316,11 +1317,11 @@ function updateGlobalBufferViews() {
 
 
 var STATIC_BASE = 1024,
-    STACK_BASE = 22480,
+    STACK_BASE = 22752,
     STACKTOP = STACK_BASE,
-    STACK_MAX = 5265360,
-    DYNAMIC_BASE = 5265360,
-    DYNAMICTOP_PTR = 22448;
+    STACK_MAX = 5265632,
+    DYNAMIC_BASE = 5265632,
+    DYNAMICTOP_PTR = 22720;
 
 assert(STACK_BASE % 16 === 0, 'stack must start aligned');
 assert(DYNAMIC_BASE % 16 === 0, 'heap must start aligned');
@@ -1832,7 +1833,7 @@ var ASM_CONSTS = [];
 
 
 
-// STATICTOP = STATIC_BASE + 21456;
+// STATICTOP = STATIC_BASE + 21728;
 /* global initializers */ /*__ATINIT__.push();*/
 
 
@@ -1843,7 +1844,7 @@ var ASM_CONSTS = [];
 
 
 /* no memory initializer */
-var tempDoublePtr = 22464
+var tempDoublePtr = 22736
 assert(tempDoublePtr % 8 == 0);
 
 function copyTempFloat(ptr) { // functions, because inlining this code increases code size too much
@@ -9009,6 +9010,10 @@ function copyTempDouble(ptr) {
       return GLFW.setScrollCallback(winid, cbfun);
     }
 
+  function _glfwSetWindowSize(winid, width, height) {
+      GLFW.setWindowSize(winid, width, height);
+    }
+
   function _glfwSwapBuffers(winid) {
       GLFW.swapBuffers(winid);
     }
@@ -9484,6 +9489,7 @@ var asmLibraryArg = {
   "_glfwSetCursorPosCallback": _glfwSetCursorPosCallback,
   "_glfwSetErrorCallback": _glfwSetErrorCallback,
   "_glfwSetScrollCallback": _glfwSetScrollCallback,
+  "_glfwSetWindowSize": _glfwSetWindowSize,
   "_glfwSwapBuffers": _glfwSwapBuffers,
   "_glfwTerminate": _glfwTerminate,
   "abortOnCannotGrowMemory": abortOnCannotGrowMemory,

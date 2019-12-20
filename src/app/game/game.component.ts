@@ -30,6 +30,6 @@ export class GameComponent {
     constructor(private gameService: GameService) { }
 
     ngAfterViewInit() {
-        this.gameService.loadGame(this.gameCanvas.nativeElement as HTMLCanvasElement);
+        this.gameService.initializeGame(this.gameCanvas.nativeElement as HTMLCanvasElement);
     }
 }
