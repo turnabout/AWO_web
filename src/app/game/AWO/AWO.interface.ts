@@ -1,10 +1,11 @@
 // import AWO_EM_MODULE from "assets/AWO.js";
 import { AWOFunctions, AWOFunctionStrings } from "./AWO.functions-enum";
-import { AWOState } from "./AWO.interface.state";
+import { AWOState } from "./AWO.interface.state-enum";
+import { AWOInterfaceHelper } from "./AWO.interface.helper";
 import { getEmscriptenModule } from "./AWO.interface.get-emscripten-module";
 
 export { AWOFunctions } from "./AWO.functions-enum";
-export { AWOState } from "./AWO.interface.state";
+export { AWOState } from "./AWO.interface.state-enum";
 
 /**
  * Class used as an interface for all communications with the AWO core game program.
@@ -48,8 +49,7 @@ export class AWOInterface {
         progressUpdateCB: (progress: number, progressStr: string) => void,
         loadEndCB: () => void,
     ): void {
-        if (this.internalState !== AWOState.Uninitialized) {
-            console.error(`initializeInterface: expected state to be ${AWOState.Uninitialized}, was ${this.internalState}`);
+        if (!AWOInterfaceHelper.isInitStateExpected(this, AWOState.Uninitialized, "initializeInterface")) {
             return;
         }
 
@@ -73,9 +73,8 @@ export class AWOInterface {
      * @param windowWidth The window's width.
      * @param windowHeight The window's height.
      */
-    initializeGame(windowWidth: number, windowHeight: number) {
-        if (this.internalState !== AWOState.Interface_Initialized) {
-            console.error(`initializeGame: expected state to be ${AWOState.Interface_Initialized}, was ${this.internalState}`);
+    initializeGame(windowWidth: number, windowHeight: number): void {
+        if (!AWOInterfaceHelper.isInitStateExpected(this, AWOState.Interface_Initialized, "initializeGame")) {
             return;
         }
 
@@ -92,9 +91,8 @@ export class AWOInterface {
      * Prepares the game for a match between players.
      * Updates state: Game_Initialized -> Game_Ready
      */
-    prepareGame() {
-        if (this.internalState !== AWOState.Game_Initialized) {
-            console.error(`prepareGame: expected state to be ${AWOState.Game_Initialized}, was ${this.internalState}`);
+    prepareGame(): void {
+        if (!AWOInterfaceHelper.isInitStateExpected(this, AWOState.Game_Initialized, "prepareGame")) {
             return;
         }
 
@@ -106,9 +104,8 @@ export class AWOInterface {
      * Begins running the prepared game.
      * Updates state: Game_Ready -> Game_Running
      */
-    runGame() {
-        if (this.internalState !== AWOState.Game_Ready) {
-            console.error(`runGame: expected state to be ${AWOState.Game_Ready}, was ${this.internalState}`);
+    runGame(): void {
+        if (!AWOInterfaceHelper.isInitStateExpected(this, AWOState.Game_Ready, "runGame")) {
             return;
         }
 
@@ -120,7 +117,7 @@ export class AWOInterface {
      * Initializes the array of all exported functions that can be used to interact with the game.
      * Done during interface initialization.
      */
-    private initializeFunctions() {
+    private initializeFunctions(): void {
         // TODO
     }
 
