@@ -21,7 +21,6 @@ export class AWOEditorInterface {
             return null;
         }
 
-
         const result: TileTypeData[] = [];
 
         // Wrap function to get tile variations' data
@@ -62,5 +61,4 @@ export class AWOEditorInterface {
         this.interfaceState.emModuleObj._free(varValuePtr);
         return result;
     }
-
 }

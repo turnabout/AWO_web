@@ -28,5 +28,7 @@ export class AWOInterface {
     constructor() {
         this.interfaceState = new AWOInterfaceState();
         this.init = new AWOInitializationInterface(this.interfaceState);
+        this.editor = new AWOEditorInterface(this.interfaceState);
+        this.game = new AWOGameInterface(this.interfaceState);
     }
 }

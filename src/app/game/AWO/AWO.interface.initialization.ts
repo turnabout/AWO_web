@@ -52,7 +52,7 @@ export class AWOInitializationInterface {
             return;
         }
 
-        this.interfaceState.emModuleObj.ccall(
+        this.interfaceState.gamePtr = this.interfaceState.emModuleObj.ccall(
             "init_AWO",
             "number",
             ["number", "number"],
