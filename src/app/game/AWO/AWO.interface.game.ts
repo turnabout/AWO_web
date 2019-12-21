@@ -15,7 +15,7 @@ export class AWOGameInterface {
      * @param height The new window's height.
      */
     updateSize(width: number, height: number): void {
-        if (!this.interfaceState.isState(AWOState.Game_Running)) {
+        if (!this.interfaceState.checkState(AWOState.Game_Running)) {
             return;
         }
 

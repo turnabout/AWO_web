@@ -17,7 +17,7 @@ export class AWOEditorInterface {
      */
     getTileData(): TileTypeData[] {
 
-        if (!this.interfaceState.isStateMinimum(AWOState.Interface_Initialized)) {
+        if (!this.interfaceState.checkStateMinimum(AWOState.Interface_Initialized)) {
             return null;
         }
 

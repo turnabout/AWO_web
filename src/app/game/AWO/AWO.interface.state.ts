@@ -28,7 +28,7 @@ export class AWOInterfaceState {
      * @param expected The expected state.
      * @returns Whether the state is as expected.
      */
-    isState(expected: AWOState): boolean {
+    checkState(expected: AWOState): boolean {
 
         if (this.state === expected) {
             return true;
@@ -48,7 +48,7 @@ export class AWOInterfaceState {
      * @param expected List of possible expected states.
      * @returns Whether the state is as expected.
      */
-    isStateOneOf(...expected: AWOState[]): boolean {
+    checkStateOneOf(...expected: AWOState[]): boolean {
 
         // Return positive result if one of the expected states was found
         for (const expectedState of expected) {
@@ -78,7 +78,7 @@ export class AWOInterfaceState {
      * @param expectedMin Minimum expected state.
      * @returns Whether the state is as expected.
      */
-    isStateMinimum(expectedMin: AWOState): boolean {
+    checkStateMinimum(expectedMin: AWOState): boolean {
 
         if (this.state >= expectedMin) {
             return true;

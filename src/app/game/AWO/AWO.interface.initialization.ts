@@ -24,7 +24,7 @@ export class AWOInitializationInterface {
         progressUpdateCB: (progress: number, progressStr: string) => void,
         loadEndCB: () => void,
     ): void {
-        if (!this.interfaceState.isState(AWOState.Uninitialized)) {
+        if (!this.interfaceState.checkState(AWOState.Uninitialized)) {
             return;
         }
 
@@ -44,11 +44,11 @@ export class AWOInitializationInterface {
      * Initializes the game's base components.
      * Updates state: Interface_Initialized -> Game_Initialized
      *
-     * @param windowWidth The window's width.
-     * @param windowHeight The window's height.
+     * @param width The window's width.
+     * @param height The window's height.
      */
-    initializeGame(windowWidth: number, windowHeight: number): void {
-        if (!this.interfaceState.isState(AWOState.Interface_Initialized)) {
+    initializeGame(width: number, height: number): void {
+        if (!this.interfaceState.checkState(AWOState.Interface_Initialized)) {
             return;
         }
 
@@ -56,7 +56,7 @@ export class AWOInitializationInterface {
             "init_AWO",
             "number",
             ["number", "number"],
-            [windowWidth, windowHeight]
+            [width, height]
         );
 
         this.interfaceState.state = AWOState.Game_Initialized;
@@ -67,7 +67,7 @@ export class AWOInitializationInterface {
      * Updates state: Game_Initialized -> Game_Ready
      */
     prepareGame(): void {
-        if (!this.interfaceState.isState(AWOState.Game_Initialized)) {
+        if (!this.interfaceState.checkState(AWOState.Game_Initialized)) {
             return;
         }
 
@@ -80,7 +80,7 @@ export class AWOInitializationInterface {
      * Updates state: Game_Ready -> Game_Running
      */
     runGame(): void {
-        if (!this.interfaceState.isState(AWOState.Game_Ready)) {
+        if (!this.interfaceState.checkState(AWOState.Game_Ready)) {
             return;
         }
 
