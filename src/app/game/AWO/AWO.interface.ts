@@ -45,7 +45,7 @@ export class AWOInterface {
         progressUpdateCB: (progress: number, progressStr: string) => void,
         loadEndCB: () => void,
     ): void {
-        if (!AWOInterfaceHelper.isInitStateExpected(this, AWOState.Uninitialized, "initializeInterface")) {
+        if (!AWOInterfaceHelper.isInitStateExpected(this, AWOState.Uninitialized)) {
             return;
         }
 
@@ -69,7 +69,7 @@ export class AWOInterface {
      * @param windowHeight The window's height.
      */
     initializeGame(windowWidth: number, windowHeight: number): void {
-        if (!AWOInterfaceHelper.isInitStateExpected(this, AWOState.Interface_Initialized, "initializeGame")) {
+        if (!AWOInterfaceHelper.isInitStateExpected(this, AWOState.Interface_Initialized)) {
             return;
         }
 
@@ -87,7 +87,7 @@ export class AWOInterface {
      * Updates state: Game_Initialized -> Game_Ready
      */
     prepareGame(): void {
-        if (!AWOInterfaceHelper.isInitStateExpected(this, AWOState.Game_Initialized, "prepareGame")) {
+        if (!AWOInterfaceHelper.isInitStateExpected(this, AWOState.Game_Initialized)) {
             return;
         }
 
@@ -100,7 +100,7 @@ export class AWOInterface {
      * Updates state: Game_Ready -> Game_Running
      */
     runGame(): void {
-        if (!AWOInterfaceHelper.isInitStateExpected(this, AWOState.Game_Ready, "runGame")) {
+        if (!AWOInterfaceHelper.isInitStateExpected(this, AWOState.Game_Ready)) {
             return;
         }
 
@@ -133,7 +133,9 @@ export class AWOInterface {
      * @returns The generated tile data array.
      */
     getTileData(): TileTypeData[] {
-        console.log(`state: ${this.state}`);
+        if (!AWOInterfaceHelper.isInitStateExpected(this, AWOState.Game_Initialized)) {
+            return;
+        }
 
         let result: TileTypeData[] = [];
 

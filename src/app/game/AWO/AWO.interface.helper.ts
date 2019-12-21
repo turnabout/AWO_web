@@ -12,17 +12,17 @@ export class AWOInterfaceHelper {
      *
      * @param interf The AWO interface.
      * @param expected The expected state.
-     * @param initFuncName The initialization function expecting the state.
      * @returns Whether the state is as expected.
      */
-    static isInitStateExpected(interf: AWOInterface, expected: AWOState, initFuncName: string): boolean {
+    static isInitStateExpected(interf: AWOInterface, expected: AWOState): boolean {
 
         if (interf.state === expected) {
             return true;
         }
 
         console.error(
-            `${initFuncName}: expected state to be '${AWOStateStr[expected]}', was '${AWOStateStr[interf.state]}'`
+            `expected state to be '${AWOStateStr[expected]}', was '${AWOStateStr[interf.state]}' 
+            ${(new Error).stack}`
         );
 
         return true;
