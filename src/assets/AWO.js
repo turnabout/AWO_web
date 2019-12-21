@@ -207,7 +207,7 @@ Module['FS_createPath']('/AWO/Resources', 'Textures', true, true);
   }
 
  }
- loadPackage({"files": [{"start": 0, "audio": 0, "end": 82962, "filename": "/AWO/Resources/Data/game_data.json"}, {"start": 82962, "audio": 0, "end": 101590, "filename": "/AWO/Resources/Fonts/aw2-gba.ttf"}, {"start": 101590, "audio": 0, "end": 101810, "filename": "/AWO/Resources/Fonts/license.txt"}, {"start": 101810, "audio": 0, "end": 102483, "filename": "/AWO/Resources/Fonts/readme.txt"}, {"start": 102483, "audio": 0, "end": 102649, "filename": "/AWO/Resources/Shaders/basic.frag"}, {"start": 102649, "audio": 0, "end": 102924, "filename": "/AWO/Resources/Shaders/basic.vert"}, {"start": 102924, "audio": 0, "end": 104717, "filename": "/AWO/Resources/Shaders/grid.frag"}, {"start": 104717, "audio": 0, "end": 105029, "filename": "/AWO/Resources/Shaders/grid.vert"}, {"start": 105029, "audio": 0, "end": 105402, "filename": "/AWO/Resources/Shaders_ES/basic.frag"}, {"start": 105402, "audio": 0, "end": 105646, "filename": "/AWO/Resources/Shaders_ES/basic.vert"}, {"start": 105646, "audio": 0, "end": 107457, "filename": "/AWO/Resources/Shaders_ES/grid.frag"}, {"start": 107457, "audio": 0, "end": 107740, "filename": "/AWO/Resources/Shaders_ES/grid.vert"}, {"start": 107740, "audio": 0, "end": 352096, "filename": "/AWO/Resources/Textures/spritesheet.png"}], "remote_package_size": 352096, "package_uuid": "136eea46-2ead-4f30-bf19-d556036be27b"});
+ loadPackage({"files": [{"start": 0, "audio": 0, "end": 82974, "filename": "/AWO/Resources/Data/game_data.json"}, {"start": 82974, "audio": 0, "end": 101602, "filename": "/AWO/Resources/Fonts/aw2-gba.ttf"}, {"start": 101602, "audio": 0, "end": 101822, "filename": "/AWO/Resources/Fonts/license.txt"}, {"start": 101822, "audio": 0, "end": 102495, "filename": "/AWO/Resources/Fonts/readme.txt"}, {"start": 102495, "audio": 0, "end": 102661, "filename": "/AWO/Resources/Shaders/basic.frag"}, {"start": 102661, "audio": 0, "end": 102936, "filename": "/AWO/Resources/Shaders/basic.vert"}, {"start": 102936, "audio": 0, "end": 104729, "filename": "/AWO/Resources/Shaders/grid.frag"}, {"start": 104729, "audio": 0, "end": 105041, "filename": "/AWO/Resources/Shaders/grid.vert"}, {"start": 105041, "audio": 0, "end": 105414, "filename": "/AWO/Resources/Shaders_ES/basic.frag"}, {"start": 105414, "audio": 0, "end": 105658, "filename": "/AWO/Resources/Shaders_ES/basic.vert"}, {"start": 105658, "audio": 0, "end": 107469, "filename": "/AWO/Resources/Shaders_ES/grid.frag"}, {"start": 107469, "audio": 0, "end": 107752, "filename": "/AWO/Resources/Shaders_ES/grid.vert"}, {"start": 107752, "audio": 0, "end": 351688, "filename": "/AWO/Resources/Textures/spritesheet.png"}], "remote_package_size": 351688, "package_uuid": "041d15ea-ceaf-42a2-a2e3-fd0654d2ef2f"});
 
 })();
 
@@ -1317,11 +1317,11 @@ function updateGlobalBufferViews() {
 
 
 var STATIC_BASE = 1024,
-    STACK_BASE = 22784,
+    STACK_BASE = 22752,
     STACKTOP = STACK_BASE,
-    STACK_MAX = 5265664,
-    DYNAMIC_BASE = 5265664,
-    DYNAMICTOP_PTR = 22752;
+    STACK_MAX = 5265632,
+    DYNAMIC_BASE = 5265632,
+    DYNAMICTOP_PTR = 22720;
 
 assert(STACK_BASE % 16 === 0, 'stack must start aligned');
 assert(DYNAMIC_BASE % 16 === 0, 'heap must start aligned');
@@ -1833,7 +1833,7 @@ var ASM_CONSTS = [];
 
 
 
-// STATICTOP = STATIC_BASE + 21760;
+// STATICTOP = STATIC_BASE + 21728;
 /* global initializers */ /*__ATINIT__.push();*/
 
 
@@ -1844,7 +1844,7 @@ var ASM_CONSTS = [];
 
 
 /* no memory initializer */
-var tempDoublePtr = 22768
+var tempDoublePtr = 22736
 assert(tempDoublePtr % 8 == 0);
 
 function copyTempFloat(ptr) { // functions, because inlining this code increases code size too much

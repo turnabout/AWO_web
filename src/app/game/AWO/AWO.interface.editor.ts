@@ -1,5 +1,5 @@
 import { AWOInterfaceState } from "./AWO.interface.state";
-import { TileTypeData, TileVariationData } from "./AWO.interface.editor.types";
+import { TileTypeData, TileVariationData, SelectedEntityKind } from "./AWO.interface.editor.types";
 import { AWOState } from "./AWO.interface.state-enum";
 
 /**
@@ -66,14 +66,16 @@ export class AWOEditorInterface {
      * Updates the game editor's selected tile type and variation.
      * An array containing data on every individual tile type, which also contains an array with every tile variation.
      *
-     * @returns The generated tile data array.
+     * @param kind The kind of the entity to update to. Tile or unit.
+     * @param type The type of the entity to update to.
+     * @param variation The variation of the entity to update to.
      */
-    updateEditorSelectedTile(type: number, variation: number): void {
+    updateEditorSelectedTile(kind: SelectedEntityKind, type: number, variation: number): void {
         this.interfaceState.emModuleObj.ccall(
             "editor_update_selected_tile",
             null,
-            ["number", "number", "number"],
-            [this.interfaceState.gamePtr, type, variation]
+            ["number", "number", "number", "number"],
+            [this.interfaceState.gamePtr, kind, type, variation]
         );
     }
 }

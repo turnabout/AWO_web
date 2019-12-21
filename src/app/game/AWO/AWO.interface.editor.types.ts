@@ -14,3 +14,11 @@ export declare interface TileVariationData {
     value: number;
     name: string;
 }
+
+/**
+ * Every possible kind of entity the game editor can select.
+ */
+export enum SelectedEntityKind {
+    Tile,
+    Unit,
+}

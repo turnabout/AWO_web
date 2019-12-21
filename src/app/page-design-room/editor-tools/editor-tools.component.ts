@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { GameService, TileTypeData, TileVariationData } from "../../game/game.service";
+import { GameService, TileTypeData, TileVariationData, SelectedEntityKind } from "../../game/game.service";
 
 @Component({
     selector: "app-editor-tools",
@@ -24,6 +24,7 @@ export class EditorToolsComponent implements OnInit {
 
         // Internally update the selected tile
         this.gameService.AWOinterface.editor.updateEditorSelectedTile(
+            SelectedEntityKind.Tile,
             this.selectedTileType.value,
             this.selectedTileVariation.value
         );
