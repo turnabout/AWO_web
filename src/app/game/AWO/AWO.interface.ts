@@ -1,10 +1,8 @@
-// import AWO_EM_MODULE from "assets/AWO.js";
-import { AWOFunctions, AWOFunctionStrings } from "./AWO.functions-enum";
 import { AWOState } from "./AWO.interface.state-enum";
 import { AWOInterfaceHelper } from "./AWO.interface.helper";
 import { getEmscriptenModule } from "./AWO.interface.get-emscripten-module";
+import { TileTypeData, TileVariationData } from "./AWO.interface.interfaces";
 
-export { AWOFunctions } from "./AWO.functions-enum";
 export { AWOState } from "./AWO.interface.state-enum";
 
 /**
@@ -23,9 +21,6 @@ export class AWOInterface {
 
     // AWO's current state.
     private internalState: AWOState;
-
-    // Functions used to interact with AWO.
-    private functions: {(...any): any}[];
 
     /**
      * @param gameCanvas Canvas element used by the game.
@@ -61,7 +56,6 @@ export class AWOInterface {
             progressUpdateCB,
             () => {
                 this.internalState = AWOState.Interface_Initialized;
-                this.initializeFunctions();
                 loadEndCB();
         });
     }
@@ -109,16 +103,73 @@ export class AWOInterface {
             return;
         }
 
-        this.emModuleObj.ccall("run_AWO", null, ["number"], [this.gamePtr]);
+        setTimeout(() => {
+            this.emModuleObj.ccall("run_AWO", null, ["number"], [this.gamePtr]);
+        });
+
         this.internalState = AWOState.Game_Running;
     }
 
     /**
-     * Initializes the array of all exported functions that can be used to interact with the game.
-     * Done during interface initialization.
+     * Updates the game's internal size. Must be called whenever the user's window is resized.
+     *
+     * @param width The new window's width.
+     * @param height The new window's height.
      */
-    private initializeFunctions(): void {
-        // TODO
+    updateSize(width: number, height: number): void {
+        this.emModuleObj.ccall(
+            "update_game_size",
+            "void",
+            ["number", "number"],
+            [width, height],
+        );
     }
 
+    /**
+     * Gets basic data for all neutral tiles (values and names).
+     * An array containing data on every individual tile type, which also contains an array with every tile variation.
+     *
+     * @returns The generated tile data array.
+     */
+    getTileData(): TileTypeData[] {
+        let result: TileTypeData[] = [];
+
+        // Wrap function to get tile variations' data
+        let get_next_tile_var: any = this.emModuleObj.cwrap(
+            "editor_get_next_tile_var",
+            "string",
+            ["number", "number", "number"]
+        );
+
+        // Loop every tile type
+        let tileTypeString: string;
+        let tileTypeValue: number = 0;
+        let varValuePtr: any = this.emModuleObj._malloc(1);
+
+        while (tileTypeString = this.emModuleObj.ccall("editor_get_next_tile_type", "string", [])) {
+
+            // Create this tile type object
+            let tileTypeData: TileTypeData = {
+                value: tileTypeValue,
+                name: tileTypeString,
+                variations: []
+            };
+
+
+            // Loop and record all of this tile type's variations
+            let variationStr: string;
+            while (variationStr = get_next_tile_var(this.gamePtr, tileTypeValue, varValuePtr)) {
+               tileTypeData.variations.push({
+                    name: variationStr,
+                    value: this.emModuleObj.getValue(varValuePtr, "i8")
+                });
+            }
+
+            result.push(tileTypeData);
+            tileTypeValue++;
+        }
+
+        this.emModuleObj._free(varValuePtr);
+        return result;
+    }
 }

@@ -1,9 +1,9 @@
 import { Injectable } from "@angular/core";
 import { Observable, of, Subject } from "rxjs";
-import { AWOFunctions, AWOInterface } from "./AWO/AWO.interface";
+import { AWOInterface } from "./AWO/AWO.interface";
 
 import { LoadingService } from "../loading/loading.service";
-import { TileTypeData, TileVarData } from "../page-design-room/editor-tools/editor-tools.component";
+export * from "./AWO/AWO.interface";
 
 @Injectable({
     providedIn: "root"
@@ -11,7 +11,7 @@ import { TileTypeData, TileVarData } from "../page-design-room/editor-tools/edit
 export class GameService {
 
     // Interface for communicating with AWO's base game program.
-    private AWOinterface: AWOInterface;
+    public AWOinterface: AWOInterface;
 
     // Whether the game is currently initialized or not.
     public initialized = false;
@@ -50,57 +50,12 @@ export class GameService {
                     // TODO: move
                     this.AWOinterface.prepareGame();
                     this.AWOinterface.runGame();
+
+                    // let res: any = this.AWOinterface.getTileData();
+                    // console.log(res);
+
                 }
             );
         });
-    }
-
-    /**
-     * Generates the array of TileTypeData used by the design room's editor tools component.
-     */
-    public generateEditorTilesData(): TileTypeData[] {
-
-        /*
-        let result: TileTypeData[] = [];
-
-        // Wrap function to get tile variations' data
-        let get_next_tile_var: any = this.emModuleObj.cwrap(
-            "editor_get_next_tile_var",
-            "string",
-            ["number", "number", "number"]
-        );
-
-        // Loop every tile type
-        let ttString: string;
-        let ttVal: number = 0;
-        let varValuePtr: any = this.emModuleObj._malloc(1);
-
-        while (ttString = this.emModuleObj.ccall("editor_get_next_tile_type", "string", [])) {
-
-            // Create this tile type object
-            let tt: TileTypeData = {
-                name: ttString,
-                vars: []
-            };
-
-            // Add all of its variations' objects
-            let tvString: string;
-
-            // myFunc(this.gamePtr, 5, varValuePtr);
-            while (tvString = get_next_tile_var(this.gamePtr, ttVal, varValuePtr)) {
-                tt.vars.push({
-                    name: tvString,
-                    val: this.emModuleObj.getValue(varValuePtr, "i8")
-                });
-            }
-
-            result.push(tt);
-            ttVal++;
-        }
-
-        this.emModuleObj._free(varValuePtr);
-        return result;
-        */
-        return undefined;
     }
 }

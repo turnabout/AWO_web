@@ -26,6 +26,7 @@ export class EditorToolsComponent implements OnInit {
     constructor(private gameService: GameService) { }
 
     ngOnInit() {
+        /*
         if (this.gameService.initialized) {
             this.tileTypeData = this.gameService.generateEditorTilesData();
         } else {
@@ -34,5 +35,6 @@ export class EditorToolsComponent implements OnInit {
                 this.tileTypeData = this.gameService.generateEditorTilesData();
             });
         }
+        */
     }
 }
