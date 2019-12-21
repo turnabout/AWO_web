@@ -3,7 +3,8 @@ import { AWOInterfaceHelper } from "./AWO.interface.helper";
 import { getEmscriptenModule } from "./AWO.interface.get-emscripten-module";
 import { TileTypeData, TileVariationData } from "./AWO.interface.interfaces";
 
-export { AWOState } from "./AWO.interface.state-enum";
+export * from "./AWO.interface.state-enum";
+export * from "./AWO.interface.interfaces";
 
 /**
  * Class used as an interface for all communications with the AWO core game program.
