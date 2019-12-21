@@ -1,5 +1,4 @@
 import { AWOState } from "./AWO.interface.state-enum";
-import { AWOInterfaceHelper } from "./AWO.interface.helper";
 import { getEmscriptenModule } from "./AWO.interface.get-emscripten-module";
 import { TileTypeData, TileVariationData } from "./AWO.interface.types";
 import { AWOInitializationInterface } from "./AWO.interface.initialization";

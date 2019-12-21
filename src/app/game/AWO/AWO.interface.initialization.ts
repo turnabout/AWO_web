@@ -1,8 +1,6 @@
 import { AWOState } from "./AWO.interface.state-enum";
 import { AWOInterfaceState } from "./AWO.interface.state";
 
-import { AWOInterfaceHelper } from "./AWO.interface.helper";
-
 /**
  * Interface containing all initialization entry points with the AWO core game program.
  */
