@@ -11,7 +11,7 @@ export * from "./AWO/AWO.interface";
 export class GameService {
 
     // Interface for communicating with AWO's base game program.
-    public AWOinterface: AWOInterface;
+    public AWO: AWOInterface;
 
     // Whether the game is currently initialized or not.
     public initialized = false;
@@ -27,10 +27,10 @@ export class GameService {
      * Initialize the game's interface and internal components.
      */
     public initializeGame(gameCanvas: HTMLCanvasElement) {
-        this.AWOinterface = new AWOInterface();
+        this.AWO = new AWOInterface();
 
         setTimeout(() => {
-            this.AWOinterface.init.initializeInterface(
+            this.AWO.init.initializeInterface(
                 gameCanvas,
                 () => {
                     this.loadingService.start("Loading...");
@@ -41,7 +41,7 @@ export class GameService {
                 () => {
 
                     // TODO: move elsewhere
-                    this.AWOinterface.init.initializeGame(
+                    this.AWO.init.initializeGame(
                         window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth,
                         window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight
                     );
@@ -50,8 +50,8 @@ export class GameService {
                     this.initializedChange.next(true);
 
                     // TODO: move elsewhere
-                    this.AWOinterface.init.prepareGame();
-                    this.AWOinterface.init.runGame();
+                    this.AWO.init.prepareGame();
+                    this.AWO.init.runGame();
                 }
 
             );

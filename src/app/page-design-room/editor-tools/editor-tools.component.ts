@@ -23,7 +23,7 @@ export class EditorToolsComponent implements OnInit {
         this.selectedTileVariation = tileVariation;
 
         // Internally update the selected tile
-        this.gameService.AWOinterface.editor.updateEditorSelectedTile(
+        this.gameService.AWO.editor.updateEditorSelectedTile(
             SelectedEntityKind.Tile,
             this.selectedTileType.value,
             this.selectedTileVariation.value
@@ -32,10 +32,10 @@ export class EditorToolsComponent implements OnInit {
 
     ngOnInit() {
         if (this.gameService.initialized) {
-            this.tileData = this.gameService.AWOinterface.editor.getTileData();
+            this.tileData = this.gameService.AWO.editor.getTileData();
         } else {
             this.gameService.initializedChange.subscribe((value) => {
-                this.tileData = this.gameService.AWOinterface.editor.getTileData();
+                this.tileData = this.gameService.AWO.editor.getTileData();
             });
         }
     }
