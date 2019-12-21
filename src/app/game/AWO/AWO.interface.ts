@@ -2,34 +2,49 @@ import { AWOState } from "./AWO.interface.state-enum";
 import { AWOInterfaceHelper } from "./AWO.interface.helper";
 import { getEmscriptenModule } from "./AWO.interface.get-emscripten-module";
 import { TileTypeData, TileVariationData } from "./AWO.interface.types";
+import { AWOInitializationInterface } from "./AWO.interface.initialization";
+import { AWOInterfaceState } from "./AWO.interface.state";
 
 export * from "./AWO.interface.state-enum";
 export * from "./AWO.interface.types";
 
 /**
- * Class used as an interface for all communications with the AWO core game program.
+ * Main AWO interface class used as an entry point for all communications with the AWO core game program.
  */
 export class AWOInterface {
 
     // Path to emscripten-generated files
-    private static emDirPath = "assets/";
+    // private static emDirPath = "assets/";
 
     // Emscripten module object used as an interface to the AWO core game program.
-    private emModuleObj: any;
+    // private emModuleObj: any;
 
     // Pointer to the current AWO game instance.
-    private gamePtr: number;
+    // private gamePtr: number;
 
     // AWO's current state.
-    private internalState: AWOState;
+    // private internalState: AWOState;
 
-    /**
-     * @param gameCanvas Canvas element used by the game.
-     */
-    constructor(private gameCanvas: HTMLCanvasElement) { this.internalState = AWOState.Uninitialized; }
+    // Initialization interface
+    public init: AWOInitializationInterface;
+
+    // Reference to the current AWO interface state.
+    private interfaceState: AWOInterfaceState;
 
     public get state(): AWOState {
-        return this.internalState;
+        return this.interfaceState.state;
+    }
+
+    /**
+     * @param gameCanvas Canvas element used by the game. TODO: move
+     */
+    constructor(private gameCanvas: HTMLCanvasElement) {
+        this.interfaceState = new AWOInterfaceState();
+        this.init = new AWOInitializationInterface(this.interfaceState);
+    }
+
+    testy() {
+        this.interfaceState.state = AWOState.Game_Running;
     }
 
     /**
@@ -45,6 +60,7 @@ export class AWOInterface {
         progressUpdateCB: (progress: number, progressStr: string) => void,
         loadEndCB: () => void,
     ): void {
+        /*
         if (!AWOInterfaceHelper.isInitStateExpected(this, AWOState.Uninitialized)) {
             return;
         }
@@ -59,6 +75,10 @@ export class AWOInterface {
                 this.internalState = AWOState.Interface_Initialized;
                 loadEndCB();
         });
+
+        // Set child interfaces
+        this.initInterface = new AWOInitializationInterface(this.emModuleObj);
+        */
     }
 
     /**
@@ -69,17 +89,13 @@ export class AWOInterface {
      * @param windowHeight The window's height.
      */
     initializeGame(windowWidth: number, windowHeight: number): void {
-        if (!AWOInterfaceHelper.isInitStateExpected(this, AWOState.Interface_Initialized)) {
-            return;
-        }
+        /*
+        this.gamePtr = this.initInterface.initializeGame(this.state, windowWidth, windowHeight);
 
-        this.gamePtr = this.emModuleObj.ccall(
-            "init_AWO",
-            "number",
-            ["number", "number"],
-            [windowWidth, windowHeight]
-        );
-        this.internalState = AWOState.Game_Initialized;
+        if (this.gamePtr != null) {
+            this.internalState = AWOState.Game_Initialized;
+        }
+        */
     }
 
     /**
@@ -87,12 +103,14 @@ export class AWOInterface {
      * Updates state: Game_Initialized -> Game_Ready
      */
     prepareGame(): void {
+        /*
         if (!AWOInterfaceHelper.isInitStateExpected(this, AWOState.Game_Initialized)) {
             return;
         }
 
         // TODO
         this.internalState = AWOState.Game_Ready;
+        */
     }
 
     /**
@@ -100,6 +118,7 @@ export class AWOInterface {
      * Updates state: Game_Ready -> Game_Running
      */
     runGame(): void {
+        /*
         if (!AWOInterfaceHelper.isInitStateExpected(this, AWOState.Game_Ready)) {
             return;
         }
@@ -109,6 +128,7 @@ export class AWOInterface {
         });
 
         this.internalState = AWOState.Game_Running;
+        */
     }
 
     /**
@@ -118,12 +138,14 @@ export class AWOInterface {
      * @param height The new window's height.
      */
     updateSize(width: number, height: number): void {
+        /*
         this.emModuleObj.ccall(
             "update_game_size",
             "void",
             ["number", "number"],
             [width, height],
         );
+        */
     }
 
     /**
@@ -133,7 +155,7 @@ export class AWOInterface {
      * @returns The generated tile data array.
      */
     getTileData(): TileTypeData[] {
-
+        /*
         if (!AWOInterfaceHelper.expectStateMinimum(this, AWOState.Interface_Initialized)) {
             return;
         }
@@ -177,5 +199,7 @@ export class AWOInterface {
 
         this.emModuleObj._free(varValuePtr);
         return result;
+        */
+        return null;
     }
 }

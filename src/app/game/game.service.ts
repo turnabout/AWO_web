@@ -29,7 +29,15 @@ export class GameService {
     public initializeGame(gameCanvas: HTMLCanvasElement) {
         this.AWOinterface = new AWOInterface(gameCanvas);
 
+        console.log(this.AWOinterface.state);
+        this.AWOinterface.init.initializeGame();
+        console.log(this.AWOinterface.state);
+        this.AWOinterface.testy();
+        this.AWOinterface.init.testy();
+
+
         setTimeout(() => {
+            /*
             this.AWOinterface.initializeInterface(
                         () => {
                     this.loadingService.start("Loading...");
@@ -53,6 +61,7 @@ export class GameService {
                     this.AWOinterface.runGame();
                 }
             );
+            */
         });
     }
 }
