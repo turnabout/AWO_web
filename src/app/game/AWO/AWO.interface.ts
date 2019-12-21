@@ -133,7 +133,8 @@ export class AWOInterface {
      * @returns The generated tile data array.
      */
     getTileData(): TileTypeData[] {
-        if (!AWOInterfaceHelper.isInitStateExpected(this, AWOState.Game_Initialized)) {
+
+        if (!AWOInterfaceHelper.expectStateMinimum(this, AWOState.Interface_Initialized)) {
             return;
         }
 
