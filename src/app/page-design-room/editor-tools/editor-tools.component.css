@@ -4,6 +4,10 @@
     bottom: 0;
     right: 0;
     width: 100%;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .editor-tools .box {
