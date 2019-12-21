@@ -31,15 +31,13 @@ export class GameService {
 
         setTimeout(() => {
             this.AWOinterface.initializeInterface(
-                () => {
+                        () => {
                     this.loadingService.start("Loading...");
                 },
                 (progress: number, progressStr: string) => {
                     this.loadingService.update(progress, progressStr);
                 },
                 () => {
-                    this.loadingService.end();
-                    this.initializedChange.next(true);
 
                     // TODO: move elsewhere
                     this.AWOinterface.initializeGame(
@@ -47,13 +45,12 @@ export class GameService {
                         window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight
                     );
 
-                    // TODO: move
+                    this.loadingService.end();
+                    this.initializedChange.next(true);
+
+                    // TODO: move elsewhere
                     this.AWOinterface.prepareGame();
                     this.AWOinterface.runGame();
-
-                    // let res: any = this.AWOinterface.getTileData();
-                    // console.log(res);
-
                 }
             );
         });

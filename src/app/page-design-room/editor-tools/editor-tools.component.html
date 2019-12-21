@@ -2,15 +2,15 @@
     <div class="box">
         <div class="inner">
 
-            <div class="tiles" *ngIf="tileTypeData.length">
+            <div class="tiles" *ngIf="tileData.length">
                 <h2>Tile</h2>
 
                 <select
                     [(ngModel)]="selectedTileType"
-                    (ngModelChange)="selectedTileVar = $event.vars[0]"
+                    (ngModelChange)="selectedTileVariation = $event.variations[0]"
                 >
                     <option
-                        *ngFor="let tileType of tileTypeData"
+                        *ngFor="let tileType of tileData"
                         [ngValue]="tileType"
                     >
                         {{ tileType.name }}
@@ -20,9 +20,9 @@
                 <div *ngIf="selectedTileType">
                     <h3>Variation</h3>
 
-                    <select [(ngModel)]="selectedTileVar">
+                    <select [(ngModel)]="selectedTileVariation">
                         <option
-                            *ngFor="let tileVar of selectedTileType.vars"
+                            *ngFor="let tileVar of selectedTileType.variations"
                             [ngValue]="tileVar"
                         >
                             {{ tileVar.name }}

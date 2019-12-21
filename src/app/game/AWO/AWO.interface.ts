@@ -133,6 +133,8 @@ export class AWOInterface {
      * @returns The generated tile data array.
      */
     getTileData(): TileTypeData[] {
+        console.log(`state: ${this.state}`);
+
         let result: TileTypeData[] = [];
 
         // Wrap function to get tile variations' data
