@@ -1,6 +1,6 @@
 import { AWOState } from "./AWO.interface.state-enum";
 import { AWOInterfaceState } from "./AWO.interface.state";
-import {getEmscriptenModule} from "./AWO.interface.get-emscripten-module";
+import { getEmscriptenModule } from "./AWO.interface.get-emscripten-module";
 
 /**
  * Interface containing all initialization entry points with the AWO core game program.
