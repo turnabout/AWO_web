@@ -2,12 +2,13 @@
     <div class="box">
         <div class="inner">
 
+            <!-- Tile type selector -->
             <div class="tiles" *ngIf="tileData.length">
                 <h2>Tile</h2>
 
                 <select
                     [(ngModel)]="selectedTileType"
-                    (ngModelChange)="selectedTileVariation = $event.variations[0]"
+                    (ngModelChange)="updatedSelectedTile($event.variations[0])"
                 >
                     <option
                         *ngFor="let tileType of tileData"
@@ -17,10 +18,14 @@
                     </option>
                 </select>
 
+                <!-- Tile variation selector -->
                 <div *ngIf="selectedTileType">
                     <h3>Variation</h3>
 
-                    <select [(ngModel)]="selectedTileVariation">
+                    <select
+                        [(ngModel)]="selectedTileVariation"
+                        (ngModelChange)="updatedSelectedTile($event)"
+                    >
                         <option
                             *ngFor="let tileVar of selectedTileType.variations"
                             [ngValue]="tileVar"

@@ -61,4 +61,19 @@ export class AWOEditorInterface {
         this.interfaceState.emModuleObj._free(varValuePtr);
         return result;
     }
+
+    /**
+     * Updates the game editor's selected tile type and variation.
+     * An array containing data on every individual tile type, which also contains an array with every tile variation.
+     *
+     * @returns The generated tile data array.
+     */
+    updateEditorSelectedTile(type: number, variation: number): void {
+        this.interfaceState.emModuleObj.ccall(
+            "editor_update_selected_tile",
+            null,
+            ["number", "number", "number"],
+            [this.interfaceState.gamePtr, type, variation]
+        );
+    }
 }

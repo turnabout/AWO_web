@@ -14,6 +14,21 @@ export class EditorToolsComponent implements OnInit {
 
     constructor(private gameService: GameService) { }
 
+    /**
+     * Updates the currently selected tile.
+     * Uses `selectedTileType` which is set automatically and the given variation.
+     * @param tileVariation The tile variation to update the selected tile to.
+     */
+    updatedSelectedTile(tileVariation: TileVariationData) {
+        this.selectedTileVariation = tileVariation;
+
+        // Internally update the selected tile
+        this.gameService.AWOinterface.editor.updateEditorSelectedTile(
+            this.selectedTileType.value,
+            this.selectedTileVariation.value
+        );
+    }
+
     ngOnInit() {
         if (this.gameService.initialized) {
             this.tileData = this.gameService.AWOinterface.editor.getTileData();

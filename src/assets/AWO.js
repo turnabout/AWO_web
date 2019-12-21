@@ -207,7 +207,7 @@ Module['FS_createPath']('/AWO/Resources', 'Textures', true, true);
   }
 
  }
- loadPackage({"files": [{"start": 0, "audio": 0, "end": 82962, "filename": "/AWO/Resources/Data/game_data.json"}, {"start": 82962, "audio": 0, "end": 101590, "filename": "/AWO/Resources/Fonts/aw2-gba.ttf"}, {"start": 101590, "audio": 0, "end": 101810, "filename": "/AWO/Resources/Fonts/license.txt"}, {"start": 101810, "audio": 0, "end": 102483, "filename": "/AWO/Resources/Fonts/readme.txt"}, {"start": 102483, "audio": 0, "end": 102649, "filename": "/AWO/Resources/Shaders/basic.frag"}, {"start": 102649, "audio": 0, "end": 102924, "filename": "/AWO/Resources/Shaders/basic.vert"}, {"start": 102924, "audio": 0, "end": 104717, "filename": "/AWO/Resources/Shaders/grid.frag"}, {"start": 104717, "audio": 0, "end": 105029, "filename": "/AWO/Resources/Shaders/grid.vert"}, {"start": 105029, "audio": 0, "end": 105402, "filename": "/AWO/Resources/Shaders_ES/basic.frag"}, {"start": 105402, "audio": 0, "end": 105646, "filename": "/AWO/Resources/Shaders_ES/basic.vert"}, {"start": 105646, "audio": 0, "end": 107457, "filename": "/AWO/Resources/Shaders_ES/grid.frag"}, {"start": 107457, "audio": 0, "end": 107740, "filename": "/AWO/Resources/Shaders_ES/grid.vert"}, {"start": 107740, "audio": 0, "end": 352096, "filename": "/AWO/Resources/Textures/spritesheet.png"}], "remote_package_size": 352096, "package_uuid": "440d600a-87bc-4b9f-824b-56c5f5199f70"});
+ loadPackage({"files": [{"start": 0, "audio": 0, "end": 82962, "filename": "/AWO/Resources/Data/game_data.json"}, {"start": 82962, "audio": 0, "end": 101590, "filename": "/AWO/Resources/Fonts/aw2-gba.ttf"}, {"start": 101590, "audio": 0, "end": 101810, "filename": "/AWO/Resources/Fonts/license.txt"}, {"start": 101810, "audio": 0, "end": 102483, "filename": "/AWO/Resources/Fonts/readme.txt"}, {"start": 102483, "audio": 0, "end": 102649, "filename": "/AWO/Resources/Shaders/basic.frag"}, {"start": 102649, "audio": 0, "end": 102924, "filename": "/AWO/Resources/Shaders/basic.vert"}, {"start": 102924, "audio": 0, "end": 104717, "filename": "/AWO/Resources/Shaders/grid.frag"}, {"start": 104717, "audio": 0, "end": 105029, "filename": "/AWO/Resources/Shaders/grid.vert"}, {"start": 105029, "audio": 0, "end": 105402, "filename": "/AWO/Resources/Shaders_ES/basic.frag"}, {"start": 105402, "audio": 0, "end": 105646, "filename": "/AWO/Resources/Shaders_ES/basic.vert"}, {"start": 105646, "audio": 0, "end": 107457, "filename": "/AWO/Resources/Shaders_ES/grid.frag"}, {"start": 107457, "audio": 0, "end": 107740, "filename": "/AWO/Resources/Shaders_ES/grid.vert"}, {"start": 107740, "audio": 0, "end": 352096, "filename": "/AWO/Resources/Textures/spritesheet.png"}], "remote_package_size": 352096, "package_uuid": "136eea46-2ead-4f30-bf19-d556036be27b"});
 
 })();
 
@@ -1317,11 +1317,11 @@ function updateGlobalBufferViews() {
 
 
 var STATIC_BASE = 1024,
-    STACK_BASE = 22752,
+    STACK_BASE = 22784,
     STACKTOP = STACK_BASE,
-    STACK_MAX = 5265632,
-    DYNAMIC_BASE = 5265632,
-    DYNAMICTOP_PTR = 22720;
+    STACK_MAX = 5265664,
+    DYNAMIC_BASE = 5265664,
+    DYNAMICTOP_PTR = 22752;
 
 assert(STACK_BASE % 16 === 0, 'stack must start aligned');
 assert(DYNAMIC_BASE % 16 === 0, 'heap must start aligned');
@@ -1833,7 +1833,7 @@ var ASM_CONSTS = [];
 
 
 
-// STATICTOP = STATIC_BASE + 21728;
+// STATICTOP = STATIC_BASE + 21760;
 /* global initializers */ /*__ATINIT__.push();*/
 
 
@@ -1844,7 +1844,7 @@ var ASM_CONSTS = [];
 
 
 /* no memory initializer */
-var tempDoublePtr = 22736
+var tempDoublePtr = 22768
 assert(tempDoublePtr % 8 == 0);
 
 function copyTempFloat(ptr) { // functions, because inlining this code increases code size too much
@@ -9529,10 +9529,10 @@ var _editor_get_next_tile_var = Module["_editor_get_next_tile_var"] = function()
   return Module["asm"]["_editor_get_next_tile_var"].apply(null, arguments)
 };
 
-var _editor_update_tile_type = Module["_editor_update_tile_type"] = function() {
+var _editor_update_selected_tile = Module["_editor_update_selected_tile"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
-  return Module["asm"]["_editor_update_tile_type"].apply(null, arguments)
+  return Module["asm"]["_editor_update_selected_tile"].apply(null, arguments)
 };
 
 var _emscripten_GetProcAddress = Module["_emscripten_GetProcAddress"] = function() {
