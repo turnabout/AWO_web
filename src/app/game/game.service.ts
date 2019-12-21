@@ -27,13 +27,12 @@ export class GameService {
      * Initialize the game's interface and internal components.
      */
     public initializeGame(gameCanvas: HTMLCanvasElement) {
-        this.AWOinterface = new AWOInterface(gameCanvas);
+        this.AWOinterface = new AWOInterface();
 
-        console.log(this.AWOinterface.state);
-        this.AWOinterface.init.initializeGame();
-        console.log(this.AWOinterface.state);
-        this.AWOinterface.testy();
-        this.AWOinterface.init.testy();
+        // console.log(this.AWOinterface.state);
+        // this.AWOinterface.init.initializeGame();
+        // console.log(this.AWOinterface.state);
+        // this.AWOinterface.testy();
 
 
         setTimeout(() => {

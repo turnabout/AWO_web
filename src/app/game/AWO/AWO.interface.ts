@@ -12,122 +12,21 @@ export * from "./AWO.interface.types";
  */
 export class AWOInterface {
 
-    // Path to emscripten-generated files
-    // private static emDirPath = "assets/";
-
-    // Emscripten module object used as an interface to the AWO core game program.
-    // private emModuleObj: any;
-
-    // Pointer to the current AWO game instance.
-    // private gamePtr: number;
-
-    // AWO's current state.
-    // private internalState: AWOState;
-
-    // Initialization interface
-    public init: AWOInitializationInterface;
-
     // Reference to the current AWO interface state.
     private interfaceState: AWOInterfaceState;
 
+    // Child interfaces
+    // Initialization interface
+    public init: AWOInitializationInterface;
+
+    // The current AWO interface state.
     public get state(): AWOState {
         return this.interfaceState.state;
     }
 
-    /**
-     * @param gameCanvas Canvas element used by the game. TODO: move
-     */
-    constructor(private gameCanvas: HTMLCanvasElement) {
+    constructor() {
         this.interfaceState = new AWOInterfaceState();
         this.init = new AWOInitializationInterface(this.interfaceState);
-    }
-
-    testy() {
-        this.interfaceState.state = AWOState.Game_Running;
-    }
-
-    /**
-     * Initializes the interface by internally initializing Emscripten.
-     * Updates state: Uninitialized -> Interface_Initialized
-     *
-     * @param loadStartCB Called when the AWO interface's Emscripten module loading begins.
-     * @param progressUpdateCB Called when the AWO interface's Emscripten module loading updates.
-     * @param loadEndCB Called when the AWO interface's Emscripten module loading finishes.
-     */
-    initializeInterface(
-        loadStartCB: () => void,
-        progressUpdateCB: (progress: number, progressStr: string) => void,
-        loadEndCB: () => void,
-    ): void {
-        /*
-        if (!AWOInterfaceHelper.isInitStateExpected(this, AWOState.Uninitialized)) {
-            return;
-        }
-
-        loadStartCB();
-
-        this.emModuleObj = getEmscriptenModule(
-            this.gameCanvas,
-            AWOInterface.emDirPath,
-            progressUpdateCB,
-            () => {
-                this.internalState = AWOState.Interface_Initialized;
-                loadEndCB();
-        });
-
-        // Set child interfaces
-        this.initInterface = new AWOInitializationInterface(this.emModuleObj);
-        */
-    }
-
-    /**
-     * Initializes the game's base components.
-     * Updates state: Interface_Initialized -> Game_Initialized
-     *
-     * @param windowWidth The window's width.
-     * @param windowHeight The window's height.
-     */
-    initializeGame(windowWidth: number, windowHeight: number): void {
-        /*
-        this.gamePtr = this.initInterface.initializeGame(this.state, windowWidth, windowHeight);
-
-        if (this.gamePtr != null) {
-            this.internalState = AWOState.Game_Initialized;
-        }
-        */
-    }
-
-    /**
-     * Prepares the game for a match between players.
-     * Updates state: Game_Initialized -> Game_Ready
-     */
-    prepareGame(): void {
-        /*
-        if (!AWOInterfaceHelper.isInitStateExpected(this, AWOState.Game_Initialized)) {
-            return;
-        }
-
-        // TODO
-        this.internalState = AWOState.Game_Ready;
-        */
-    }
-
-    /**
-     * Begins running the prepared game.
-     * Updates state: Game_Ready -> Game_Running
-     */
-    runGame(): void {
-        /*
-        if (!AWOInterfaceHelper.isInitStateExpected(this, AWOState.Game_Ready)) {
-            return;
-        }
-
-        setTimeout(() => {
-            this.emModuleObj.ccall("run_AWO", null, ["number"], [this.gamePtr]);
-        });
-
-        this.internalState = AWOState.Game_Running;
-        */
     }
 
     /**
