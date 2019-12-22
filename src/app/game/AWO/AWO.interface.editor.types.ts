@@ -13,6 +13,7 @@ export declare interface TileTypeData {
 export declare interface TileVariationData {
     value: number;
     name: string;
+    imageDataURL: string;
 }
 
 /**

@@ -7,7 +7,14 @@ import { AWOState } from "./AWO.interface.state-enum";
  */
 export class AWOEditorInterface {
 
-    constructor(private interfaceState: AWOInterfaceState) {}
+    // Private canvas & context used to generate base-64 encoded images for entities.
+    private canvas: HTMLCanvasElement;
+    private ctx: CanvasRenderingContext2D;
+
+    constructor(private interfaceState: AWOInterfaceState) {
+        this.canvas = document.createElement("canvas");
+        this.ctx = this.canvas.getContext("2d");
+    }
 
     /**
      * Gets basic data for all neutral tiles (values and names).
@@ -48,9 +55,10 @@ export class AWOEditorInterface {
             // Loop and record all of this tile type's variations
             let variationStr: string;
             while (variationStr = getNextTileVar(this.interfaceState.gamePtr, tileTypeValue, varValuePtr)) {
-               tileTypeData.variations.push({
+                tileTypeData.variations.push({
                     name: variationStr,
-                    value: this.interfaceState.emModuleObj.getValue(varValuePtr, "i8")
+                    value: this.interfaceState.emModuleObj.getValue(varValuePtr, "i8"),
+                    imageDataURL: this.getEntityImageDataURL()
                 });
             }
 
@@ -77,5 +85,63 @@ export class AWOEditorInterface {
             ["number", "number", "number", "number"],
             [this.interfaceState.gamePtr, kind, type, variation]
         );
+    }
+
+    /**
+     * Generates an image data URL for the given entity.
+     * TODO
+     *
+     * @param kind The kind of the entity to get the image data URL for.
+     * @param type The type of the entity to get the image data URL for.
+     * @param variation The variation of the entity.
+     * @returns The generated image data URL string.
+     */
+    private getEntityImageDataURL(): string {
+
+        // Get buffer filled with pixel data of entity from AWO core
+        const lenPtr: any = this.interfaceState.emModuleObj._malloc(4);
+        const widthPtr: any = this.interfaceState.emModuleObj._malloc(4);
+        const heightPtr: any = this.interfaceState.emModuleObj._malloc(4);
+
+        let tempBuffer: any = this.interfaceState.emModuleObj.ccall(
+            "testy",
+            "number",
+            ["number", "number"],
+            [this.interfaceState.gamePtr, lenPtr]
+        );
+
+        // Transfer buffer length
+        const bufferLen: number = this.interfaceState.emModuleObj.getValue(lenPtr, "i32");
+        // const width: number = this.interfaceState.emModuleObj.getValue(widthPtr, "i32");
+        // const height: number = this.interfaceState.emModuleObj.getValue(heightPtr, "i32");
+
+        const width = 20;
+        const height = 20;
+
+        // Transfer buffer's bytes into array for ease of use
+        let buffer = new Uint8ClampedArray(bufferLen);
+
+        for (let i = 0; i < bufferLen; i++) {
+            // The AND operation is so values get interpreted as unsigned
+            buffer[i] = this.interfaceState.emModuleObj.getValue(tempBuffer + i, "i8") & 0xFF;
+        }
+
+        // Free allocated buffers
+        this.interfaceState.emModuleObj._free(lenPtr);
+        this.interfaceState.emModuleObj._free(tempBuffer);
+        this.interfaceState.emModuleObj._free(widthPtr);
+        this.interfaceState.emModuleObj._free(heightPtr);
+
+        // Convert buffer data to an image data URL & return
+        this.canvas.width = width;
+        this.canvas.height = height;
+
+        this.ctx.putImageData(
+            new ImageData(buffer, width, height),
+            0,
+            0
+        );
+
+        return this.canvas.toDataURL("image/png");
     }
 }

@@ -6,6 +6,22 @@
             <div class="tiles" *ngIf="tileData.length">
                 <h2>Tile</h2>
 
+                <div
+                    *ngFor="let tile of tileData"
+                >
+                    {{ tile.name }}
+                    <img [src]="tile.variations[0].imageDataURL" />
+
+                    <div
+                        class="bla"
+                        [ngStyle]="{ 'background-image': 'url(' + tile.variations[0].imageDataURL + ')'}"
+                    ></div>
+
+
+                </div>
+
+                <!-- Tile variation selector -->
+                <!--
                 <select
                     [(ngModel)]="selectedTileType"
                     (ngModelChange)="updatedSelectedTile($event.variations[0])"
@@ -18,7 +34,6 @@
                     </option>
                 </select>
 
-                <!-- Tile variation selector -->
                 <div *ngIf="selectedTileType">
                     <h3>Variation</h3>
 
@@ -36,6 +51,7 @@
                 </div>
 
             </div>
+            -->
 
         </div>
     </div>

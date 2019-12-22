@@ -17,3 +17,9 @@
 .editor-tools .box .inner {
     height: 300px;
 }
+
+.bla {
+    width: 20px;
+    height: 20px;
+    border: 1px solid red;
+}
