@@ -19,7 +19,7 @@ export class AWOGameInterface {
             return;
         }
 
-        this.interfaceState.emModuleObj.ccall(
+        this.interfaceState.emscripten.ccall(
             "update_game_size",
             "void",
             ["number", "number"],

@@ -11,7 +11,7 @@ export class AWOEditorInterface {
     private canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
 
-    constructor(private interfaceState: AWOInterfaceState) {
+    constructor(private state: AWOInterfaceState) {
         this.canvas = document.createElement("canvas");
         this.ctx = this.canvas.getContext("2d");
     }
@@ -24,14 +24,14 @@ export class AWOEditorInterface {
      */
     getTileData(): TileTypeData[] {
 
-        if (!this.interfaceState.checkStateMinimum(AWOState.Interface_Initialized)) {
+        if (!this.state.checkStateMinimum(AWOState.Interface_Initialized)) {
             return null;
         }
 
         const result: TileTypeData[] = [];
 
         // Wrap function to get tile variations' data
-        const getNextTileVar: any = this.interfaceState.emModuleObj.cwrap(
+        const getNextTileVar: any = this.state.emscripten.cwrap(
             "editor_get_next_tile_var",
             "string",
             ["number", "number", "number"]
@@ -40,9 +40,9 @@ export class AWOEditorInterface {
         // Loop every tile type
         let tileTypeString: string;
         let tileTypeValue: number = 0;
-        const varValuePtr: any = this.interfaceState.emModuleObj._malloc(1);
+        const varValuePtr: any = this.state.emscripten._malloc(1);
 
-        while (tileTypeString = this.interfaceState.emModuleObj.ccall("editor_get_next_tile_type", "string", [])) {
+        while (tileTypeString = this.state.emscripten.ccall("editor_get_next_tile_type", "string", [])) {
 
             // Create this tile type object
             const tileTypeData: TileTypeData = {
@@ -54,10 +54,10 @@ export class AWOEditorInterface {
 
             // Loop and record all of this tile type's variations
             let variationStr: string;
-            while (variationStr = getNextTileVar(this.interfaceState.gamePtr, tileTypeValue, varValuePtr)) {
+            while (variationStr = getNextTileVar(this.state.gamePtr, tileTypeValue, varValuePtr)) {
                 tileTypeData.variations.push({
                     name: variationStr,
-                    value: this.interfaceState.emModuleObj.getValue(varValuePtr, "i8"),
+                    value: this.state.emscripten.getValue(varValuePtr, "i8"),
                     imageDataURL: this.getEntityImageDataURL()
                 });
             }
@@ -66,7 +66,7 @@ export class AWOEditorInterface {
             tileTypeValue++;
         }
 
-        this.interfaceState.emModuleObj._free(varValuePtr);
+        this.state.emscripten._free(varValuePtr);
         return result;
     }
 
@@ -79,11 +79,11 @@ export class AWOEditorInterface {
      * @param variation The variation of the entity to update to.
      */
     updateEditorSelectedTile(kind: SelectedEntityKind, type: number, variation: number): void {
-        this.interfaceState.emModuleObj.ccall(
+        this.state.emscripten.ccall(
             "editor_update_selected_tile",
             null,
             ["number", "number", "number", "number"],
-            [this.interfaceState.gamePtr, kind, type, variation]
+            [this.state.gamePtr, kind, type, variation]
         );
     }
 
@@ -99,21 +99,21 @@ export class AWOEditorInterface {
     private getEntityImageDataURL(): string {
 
         // Get buffer filled with pixel data of entity from AWO core
-        const lenPtr: any = this.interfaceState.emModuleObj._malloc(4);
-        const widthPtr: any = this.interfaceState.emModuleObj._malloc(4);
-        const heightPtr: any = this.interfaceState.emModuleObj._malloc(4);
+        const lenPtr: any = this.state.emscripten._malloc(4);
+        const widthPtr: any = this.state.emscripten._malloc(4);
+        const heightPtr: any = this.state.emscripten._malloc(4);
 
-        let tempBuffer: any = this.interfaceState.emModuleObj.ccall(
+        let tempBuffer: any = this.state.emscripten.ccall(
             "testy",
             "number",
             ["number", "number"],
-            [this.interfaceState.gamePtr, lenPtr]
+            [this.state.gamePtr, lenPtr]
         );
 
         // Transfer buffer length
-        const bufferLen: number = this.interfaceState.emModuleObj.getValue(lenPtr, "i32");
-        // const width: number = this.interfaceState.emModuleObj.getValue(widthPtr, "i32");
-        // const height: number = this.interfaceState.emModuleObj.getValue(heightPtr, "i32");
+        const bufferLen: number = this.state.emscripten.getValue(lenPtr, "i32");
+        // const width: number = this.interfaceState.emscripten.getValue(widthPtr, "i32");
+        // const height: number = this.interfaceState.emscripten.getValue(heightPtr, "i32");
 
         const width = 20;
         const height = 20;
@@ -123,14 +123,14 @@ export class AWOEditorInterface {
 
         for (let i = 0; i < bufferLen; i++) {
             // The AND operation is so values get interpreted as unsigned
-            buffer[i] = this.interfaceState.emModuleObj.getValue(tempBuffer + i, "i8") & 0xFF;
+            buffer[i] = this.state.emscripten.getValue(tempBuffer + i, "i8") & 0xFF;
         }
 
         // Free allocated buffers
-        this.interfaceState.emModuleObj._free(lenPtr);
-        this.interfaceState.emModuleObj._free(tempBuffer);
-        this.interfaceState.emModuleObj._free(widthPtr);
-        this.interfaceState.emModuleObj._free(heightPtr);
+        this.state.emscripten._free(lenPtr);
+        this.state.emscripten._free(tempBuffer);
+        this.state.emscripten._free(widthPtr);
+        this.state.emscripten._free(heightPtr);
 
         // Convert buffer data to an image data URL & return
         this.canvas.width = width;

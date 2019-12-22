@@ -7,11 +7,11 @@ import { getEmscriptenModule } from "./AWO.interface.get-emscripten-module";
  */
 export class AWOInitializationInterface {
 
-    constructor(private interfaceState: AWOInterfaceState) {}
+    constructor(private state: AWOInterfaceState) {}
 
     /**
      * Initializes the interface by internally initializing Emscripten.
-     * Updates state: Uninitialized -> Interface_Initialized
+     * Updates status: Uninitialized -> Interface_Initialized
      *
      * @param gameCanvas Canvas element used by the game.
      * @param loadStartCB Called when the AWO interface's Emscripten module loading begins.
@@ -24,71 +24,71 @@ export class AWOInitializationInterface {
         progressUpdateCB: (progress: number, progressStr: string) => void,
         loadEndCB: () => void,
     ): void {
-        if (!this.interfaceState.checkState(AWOState.Uninitialized)) {
+        if (!this.state.checkState(AWOState.Uninitialized)) {
             return;
         }
 
         loadStartCB();
 
-        this.interfaceState.emModuleObj = getEmscriptenModule(
+        this.state.emscripten = getEmscriptenModule(
             gameCanvas,
             AWOInterfaceState.emDirPath,
             progressUpdateCB,
             () => {
-                this.interfaceState.state = AWOState.Interface_Initialized;
+                this.state.status = AWOState.Interface_Initialized;
                 loadEndCB();
         });
     }
 
     /**
      * Initializes the game's base components.
-     * Updates state: Interface_Initialized -> Game_Initialized
+     * Updates status: Interface_Initialized -> Game_Initialized
      *
      * @param width The window's width.
      * @param height The window's height.
      */
     initializeGame(width: number, height: number): void {
-        if (!this.interfaceState.checkState(AWOState.Interface_Initialized)) {
+        if (!this.state.checkState(AWOState.Interface_Initialized)) {
             return;
         }
 
-        this.interfaceState.gamePtr = this.interfaceState.emModuleObj.ccall(
+        this.state.gamePtr = this.state.emscripten.ccall(
             "init_AWO",
             "number",
             ["number", "number"],
             [width, height]
         );
 
-        this.interfaceState.state = AWOState.Game_Initialized;
+        this.state.status = AWOState.Game_Initialized;
     }
 
     /**
      * Prepares the game for a match between players.
-     * Updates state: Game_Initialized -> Game_Ready
+     * Updates status: Game_Initialized -> Game_Ready
      */
     prepareGame(): void {
-        if (!this.interfaceState.checkState(AWOState.Game_Initialized)) {
+        if (!this.state.checkState(AWOState.Game_Initialized)) {
             return;
         }
 
         // TODO
-        this.interfaceState.state = AWOState.Game_Ready;
+        this.state.status = AWOState.Game_Ready;
     }
 
     /**
      * Begins running the prepared game.
-     * Updates state: Game_Ready -> Game_Running
+     * Updates status: Game_Ready -> Game_Running
      */
     runGame(): void {
-        if (!this.interfaceState.checkState(AWOState.Game_Ready)) {
+        if (!this.state.checkState(AWOState.Game_Ready)) {
             return;
         }
 
         // Start running the game
         setTimeout(() => {
-            this.interfaceState.emModuleObj.ccall("run_AWO", null, ["number"], [this.interfaceState.gamePtr]);
+            this.state.emscripten.ccall("run_AWO", null, ["number"], [this.state.gamePtr]);
         });
 
-        this.interfaceState.state = AWOState.Game_Running;
+        this.state.status = AWOState.Game_Running;
     }
 }

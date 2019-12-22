@@ -12,7 +12,7 @@ export * from "./AWO.interface.editor.types";
  */
 export class AWOInterface {
 
-    // Reference to the current AWO interface state.
+    // Reference to the current AWO interface status.
     private interfaceState: AWOInterfaceState;
 
     // Child interfaces
@@ -20,9 +20,9 @@ export class AWOInterface {
     public editor: AWOEditorInterface;
     public game: AWOGameInterface;
 
-    // The current AWO interface state.
+    // The current AWO interface status.
     public get state(): AWOState {
-        return this.interfaceState.state;
+        return this.interfaceState.status;
     }
 
     constructor() {

@@ -5,7 +5,7 @@ export enum AWOState {
 
     /**
      * Completely uninitialized.
-     * Starting state. The Emscripten module must be initialized before anything can be done.
+     * Starting status. The Emscripten module must be initialized before anything can be done.
      */
     Uninitialized,
 

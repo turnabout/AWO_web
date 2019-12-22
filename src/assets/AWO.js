@@ -52,10 +52,10 @@ Module.expectedDataFileDownloads++;
       err('warning: you defined Module.locateFilePackage, that has been renamed to Module.locateFile (using your locateFilePackage for now)');
     }
     var REMOTE_PACKAGE_NAME = Module['locateFile'] ? Module['locateFile'](REMOTE_PACKAGE_BASE, '') : REMOTE_PACKAGE_BASE;
-  
+
     var REMOTE_PACKAGE_SIZE = metadata.remote_package_size;
     var PACKAGE_UUID = metadata.package_uuid;
-  
+
     function fetchRemotePackage(packageName, packageSize, callback, errback) {
       var xhr = new XMLHttpRequest();
       xhr.open('GET', packageName, true);
@@ -107,7 +107,7 @@ Module.expectedDataFileDownloads++;
     function handleError(error) {
       console.error('package error:', error);
     };
-  
+
       var fetchedCallback = null;
       var fetched = Module['getPreloadedPackage'] ? Module['getPreloadedPackage'](REMOTE_PACKAGE_NAME, REMOTE_PACKAGE_SIZE) : null;
 
@@ -119,7 +119,7 @@ Module.expectedDataFileDownloads++;
           fetched = data;
         }
       }, handleError);
-    
+
   function runWithFS() {
 
     function assert(check, msg) {
@@ -165,20 +165,20 @@ Module['FS_createPath']('/AWO/Resources', 'Textures', true, true);
           new DataRequest(files[i].start, files[i].end, files[i].audio).open('GET', files[i].filename);
         }
 
-  
+
     function processPackageData(arrayBuffer) {
       Module.finishedDataFileDownloads++;
       assert(arrayBuffer, 'Loading data file failed.');
       assert(arrayBuffer instanceof ArrayBuffer, 'bad input to processPackageData');
       var byteArray = new Uint8Array(arrayBuffer);
       var curr;
-      
+
         // copy the entire loaded file into a spot in the heap. Files will refer to slices in that. They cannot be freed though
         // (we may be allocating before malloc is ready, during startup).
         var ptr = Module['getMemory'](byteArray.length);
         Module['HEAPU8'].set(byteArray, ptr);
         DataRequest.prototype.byteArray = Module['HEAPU8'].subarray(ptr, ptr+byteArray.length);
-  
+
           var files = metadata.files;
           for (var i = 0; i < files.length; ++i) {
             DataRequest.prototype.requests[files[i].filename].onload();
@@ -187,9 +187,9 @@ Module['FS_createPath']('/AWO/Resources', 'Textures', true, true);
 
     };
     Module['addRunDependency']('datafile_F:/AWO_web/src/assets/AWO.data');
-  
+
     if (!Module.preloadResults) Module.preloadResults = {};
-  
+
       Module.preloadResults[PACKAGE_NAME] = {fromCache: false};
       if (fetched) {
         processPackageData(fetched);
@@ -197,7 +197,7 @@ Module['FS_createPath']('/AWO/Resources', 'Textures', true, true);
       } else {
         fetchedCallback = processPackageData;
       }
-    
+
   }
   if (Module['calledRun']) {
     runWithFS();
@@ -1912,8 +1912,8 @@ function copyTempDouble(ptr) {
 
   function ___lock() {}
 
-  
-  
+
+
   var PATH={splitPath:function (filename) {
         var splitPathRe = /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
         return splitPathRe.exec(filename).slice(1);
@@ -1980,14 +1980,14 @@ function copyTempDouble(ptr) {
       },join2:function (l, r) {
         return PATH.normalize(l + '/' + r);
       }};
-  
-  
+
+
   function ___setErrNo(value) {
       if (Module['___errno_location']) HEAP32[((Module['___errno_location']())>>2)]=value;
       else err('failed to set errno from JS');
       return value;
     }
-  
+
   var PATH_FS={resolve:function () {
         var resolvedPath = '',
           resolvedAbsolute = false;
@@ -2040,7 +2040,7 @@ function copyTempDouble(ptr) {
         outputParts = outputParts.concat(toParts.slice(samePartsLength));
         return outputParts.join('/');
       }};
-  
+
   var TTY={ttys:[],init:function () {
         // https://github.com/emscripten-core/emscripten/pull/1555
         // if (ENVIRONMENT_IS_NODE) {
@@ -2161,7 +2161,7 @@ function copyTempDouble(ptr) {
             tty.output = [];
           }
         }}};
-  
+
   var MEMFS={ops_table:null,mount:function (mount) {
         return MEMFS.createNode(null, '/', 16384 | 511 /* 0777 */, 0);
       },createNode:function (parent, name, mode, dev) {
@@ -2230,7 +2230,7 @@ function copyTempDouble(ptr) {
           // When the byte data of the file is populated, this will point to either a typed array, or a normal JS array. Typed arrays are preferred
           // for performance, and used by default. However, typed arrays are not resizable like normal JS arrays are, so there is a small disk size
           // penalty involved for appending file writes that continuously grow a file similar to std::vector capacity vs used -scheme.
-          node.contents = null; 
+          node.contents = null;
         } else if (FS.isLink(node.mode)) {
           node.node_ops = MEMFS.ops_table.link.node;
           node.stream_ops = MEMFS.ops_table.link.stream;
@@ -2387,11 +2387,11 @@ function copyTempDouble(ptr) {
           }
           return size;
         },write:function (stream, buffer, offset, length, position, canOwn) {
-  
+
           if (!length) return 0;
           var node = stream.node;
           node.timestamp = Date.now();
-  
+
           if (buffer.subarray && (!node.contents || node.contents.subarray)) { // This write is from a typed array to a typed array?
             if (canOwn) {
               assert(position === 0, 'canOwn must imply no weird position inside the file');
@@ -2407,7 +2407,7 @@ function copyTempDouble(ptr) {
               return length;
             }
           }
-  
+
           // Appending to an existing file and we need to reallocate, or source data did not come as a typed array.
           MEMFS.expandFileStorage(node, position+length);
           if (node.contents.subarray && buffer.subarray) node.contents.set(buffer.subarray(offset, offset + length), position); // Use typed array write if available.
@@ -2476,12 +2476,12 @@ function copyTempDouble(ptr) {
             // MAP_PRIVATE calls need not to be synced back to underlying fs
             return 0;
           }
-  
+
           var bytesWritten = MEMFS.stream_ops.write(stream, buffer, 0, length, offset, false);
           // should we check if bytesWritten and length are the same?
           return 0;
         }}};
-  
+
   var IDBFS={dbs:{},indexedDB:function () {
         if (typeof indexedDB !== 'undefined') return indexedDB;
         var ret = null;
@@ -2494,13 +2494,13 @@ function copyTempDouble(ptr) {
       },syncfs:function (mount, populate, callback) {
         IDBFS.getLocalSet(mount, function(err, local) {
           if (err) return callback(err);
-  
+
           IDBFS.getRemoteSet(mount, function(err, remote) {
             if (err) return callback(err);
-  
+
             var src = populate ? remote : local;
             var dst = populate ? local : remote;
-  
+
             IDBFS.reconcile(src, dst, callback);
           });
         });
@@ -2510,7 +2510,7 @@ function copyTempDouble(ptr) {
         if (db) {
           return callback(null, db);
         }
-  
+
         var req;
         try {
           req = IDBFS.indexedDB().open(name, IDBFS.DB_VERSION);
@@ -2523,22 +2523,22 @@ function copyTempDouble(ptr) {
         req.onupgradeneeded = function(e) {
           var db = e.target.result;
           var transaction = e.target.transaction;
-  
+
           var fileStore;
-  
+
           if (db.objectStoreNames.contains(IDBFS.DB_STORE_NAME)) {
             fileStore = transaction.objectStore(IDBFS.DB_STORE_NAME);
           } else {
             fileStore = db.createObjectStore(IDBFS.DB_STORE_NAME);
           }
-  
+
           if (!fileStore.indexNames.contains('timestamp')) {
             fileStore.createIndex('timestamp', 'timestamp', { unique: false });
           }
         };
         req.onsuccess = function() {
           db = req.result;
-  
+
           // add to the cache
           IDBFS.dbs[name] = db;
           callback(null, db);
@@ -2549,7 +2549,7 @@ function copyTempDouble(ptr) {
         };
       },getLocalSet:function (mount, callback) {
         var entries = {};
-  
+
         function isRealDir(p) {
           return p !== '.' && p !== '..';
         };
@@ -2558,52 +2558,52 @@ function copyTempDouble(ptr) {
             return PATH.join2(root, p);
           }
         };
-  
+
         var check = FS.readdir(mount.mountpoint).filter(isRealDir).map(toAbsolute(mount.mountpoint));
-  
+
         while (check.length) {
           var path = check.pop();
           var stat;
-  
+
           try {
             stat = FS.stat(path);
           } catch (e) {
             return callback(e);
           }
-  
+
           if (FS.isDir(stat.mode)) {
             check.push.apply(check, FS.readdir(path).filter(isRealDir).map(toAbsolute(path)));
           }
-  
+
           entries[path] = { timestamp: stat.mtime };
         }
-  
+
         return callback(null, { type: 'local', entries: entries });
       },getRemoteSet:function (mount, callback) {
         var entries = {};
-  
+
         IDBFS.getDB(mount.mountpoint, function(err, db) {
           if (err) return callback(err);
-  
+
           try {
             var transaction = db.transaction([IDBFS.DB_STORE_NAME], 'readonly');
             transaction.onerror = function(e) {
               callback(this.error);
               e.preventDefault();
             };
-  
+
             var store = transaction.objectStore(IDBFS.DB_STORE_NAME);
             var index = store.index('timestamp');
-  
+
             index.openKeyCursor().onsuccess = function(event) {
               var cursor = event.target.result;
-  
+
               if (!cursor) {
                 return callback(null, { type: 'remote', db: db, entries: entries });
               }
-  
+
               entries[cursor.primaryKey] = { timestamp: cursor.key };
-  
+
               cursor.continue();
             };
           } catch (e) {
@@ -2612,7 +2612,7 @@ function copyTempDouble(ptr) {
         });
       },loadLocalEntry:function (path, callback) {
         var stat, node;
-  
+
         try {
           var lookup = FS.lookupPath(path);
           node = lookup.node;
@@ -2620,7 +2620,7 @@ function copyTempDouble(ptr) {
         } catch (e) {
           return callback(e);
         }
-  
+
         if (FS.isDir(stat.mode)) {
           return callback(null, { timestamp: stat.mtime, mode: stat.mode });
         } else if (FS.isFile(stat.mode)) {
@@ -2640,19 +2640,19 @@ function copyTempDouble(ptr) {
           } else {
             return callback(new Error('node type not supported'));
           }
-  
+
           FS.chmod(path, entry.mode);
           FS.utime(path, entry.timestamp, entry.timestamp);
         } catch (e) {
           return callback(e);
         }
-  
+
         callback(null);
       },removeLocalEntry:function (path, callback) {
         try {
           var lookup = FS.lookupPath(path);
           var stat = FS.stat(path);
-  
+
           if (FS.isDir(stat.mode)) {
             FS.rmdir(path);
           } else if (FS.isFile(stat.mode)) {
@@ -2661,7 +2661,7 @@ function copyTempDouble(ptr) {
         } catch (e) {
           return callback(e);
         }
-  
+
         callback(null);
       },loadRemoteEntry:function (store, path, callback) {
         var req = store.get(path);
@@ -2686,7 +2686,7 @@ function copyTempDouble(ptr) {
         };
       },reconcile:function (src, dst, callback) {
         var total = 0;
-  
+
         var create = [];
         Object.keys(src.entries).forEach(function (key) {
           var e = src.entries[key];
@@ -2696,7 +2696,7 @@ function copyTempDouble(ptr) {
             total++;
           }
         });
-  
+
         var remove = [];
         Object.keys(dst.entries).forEach(function (key) {
           var e = dst.entries[key];
@@ -2706,34 +2706,34 @@ function copyTempDouble(ptr) {
             total++;
           }
         });
-  
+
         if (!total) {
           return callback(null);
         }
-  
+
         var errored = false;
         var db = src.type === 'remote' ? src.db : dst.db;
         var transaction = db.transaction([IDBFS.DB_STORE_NAME], 'readwrite');
         var store = transaction.objectStore(IDBFS.DB_STORE_NAME);
-  
+
         function done(err) {
           if (err && !errored) {
             errored = true;
             return callback(err);
           }
         };
-  
+
         transaction.onerror = function(e) {
           done(this.error);
           e.preventDefault();
         };
-  
+
         transaction.oncomplete = function(e) {
           if (!errored) {
             callback(null);
           }
         };
-  
+
         // sort paths in ascending order so directory entries are created
         // before the files inside them
         create.sort().forEach(function (path) {
@@ -2749,7 +2749,7 @@ function copyTempDouble(ptr) {
             });
           }
         });
-  
+
         // sort paths in descending order so files are deleted before their
         // parent directories
         remove.sort().reverse().forEach(function(path) {
@@ -2760,7 +2760,7 @@ function copyTempDouble(ptr) {
           }
         });
       }};
-  
+
   var WORKERFS={DIR_MODE:16895,FILE_MODE:33279,reader:null,mount:function (mount) {
         assert(ENVIRONMENT_IS_WORKER);
         if (!WORKERFS.reader) WORKERFS.reader = new FileReaderSync();
@@ -2890,18 +2890,18 @@ function copyTempDouble(ptr) {
           }
           return position;
         }}};
-  
+
   var ERRNO_MESSAGES={0:"Success",1:"Not super-user",2:"No such file or directory",3:"No such process",4:"Interrupted system call",5:"I/O error",6:"No such device or address",7:"Arg list too long",8:"Exec format error",9:"Bad file number",10:"No children",11:"No more processes",12:"Not enough core",13:"Permission denied",14:"Bad address",15:"Block device required",16:"Mount device busy",17:"File exists",18:"Cross-device link",19:"No such device",20:"Not a directory",21:"Is a directory",22:"Invalid argument",23:"Too many open files in system",24:"Too many open files",25:"Not a typewriter",26:"Text file busy",27:"File too large",28:"No space left on device",29:"Illegal seek",30:"Read only file system",31:"Too many links",32:"Broken pipe",33:"Math arg out of domain of func",34:"Math result not representable",35:"File locking deadlock error",36:"File or path name too long",37:"No record locks available",38:"Function not implemented",39:"Directory not empty",40:"Too many symbolic links",42:"No message of desired type",43:"Identifier removed",44:"Channel number out of range",45:"Level 2 not synchronized",46:"Level 3 halted",47:"Level 3 reset",48:"Link number out of range",49:"Protocol driver not attached",50:"No CSI structure available",51:"Level 2 halted",52:"Invalid exchange",53:"Invalid request descriptor",54:"Exchange full",55:"No anode",56:"Invalid request code",57:"Invalid slot",59:"Bad font file fmt",60:"Device not a stream",61:"No data (for no delay io)",62:"Timer expired",63:"Out of streams resources",64:"Machine is not on the network",65:"Package not installed",66:"The object is remote",67:"The link has been severed",68:"Advertise error",69:"Srmount error",70:"Communication error on send",71:"Protocol error",72:"Multihop attempted",73:"Cross mount point (not really error)",74:"Trying to read unreadable message",75:"Value too large for defined data type",76:"Given log. name not unique",77:"f.d. invalid for this operation",78:"Remote address changed",79:"Can   access a needed shared lib",80:"Accessing a corrupted shared lib",81:".lib section in a.out corrupted",82:"Attempting to link in too many libs",83:"Attempting to exec a shared library",84:"Illegal byte sequence",86:"Streams pipe error",87:"Too many users",88:"Socket operation on non-socket",89:"Destination address required",90:"Message too long",91:"Protocol wrong type for socket",92:"Protocol not available",93:"Unknown protocol",94:"Socket type not supported",95:"Not supported",96:"Protocol family not supported",97:"Address family not supported by protocol family",98:"Address already in use",99:"Address not available",100:"Network interface is not configured",101:"Network is unreachable",102:"Connection reset by network",103:"Connection aborted",104:"Connection reset by peer",105:"No buffer space available",106:"Socket is already connected",107:"Socket is not connected",108:"Can't send after socket shutdown",109:"Too many references",110:"Connection timed out",111:"Connection refused",112:"Host is down",113:"Host is unreachable",114:"Socket already connected",115:"Connection already in progress",116:"Stale file handle",122:"Quota exceeded",123:"No medium (in tape drive)",125:"Operation canceled",130:"Previous owner died",131:"State not recoverable"};
-  
+
   var ERRNO_CODES={EPERM:1,ENOENT:2,ESRCH:3,EINTR:4,EIO:5,ENXIO:6,E2BIG:7,ENOEXEC:8,EBADF:9,ECHILD:10,EAGAIN:11,EWOULDBLOCK:11,ENOMEM:12,EACCES:13,EFAULT:14,ENOTBLK:15,EBUSY:16,EEXIST:17,EXDEV:18,ENODEV:19,ENOTDIR:20,EISDIR:21,EINVAL:22,ENFILE:23,EMFILE:24,ENOTTY:25,ETXTBSY:26,EFBIG:27,ENOSPC:28,ESPIPE:29,EROFS:30,EMLINK:31,EPIPE:32,EDOM:33,ERANGE:34,ENOMSG:42,EIDRM:43,ECHRNG:44,EL2NSYNC:45,EL3HLT:46,EL3RST:47,ELNRNG:48,EUNATCH:49,ENOCSI:50,EL2HLT:51,EDEADLK:35,ENOLCK:37,EBADE:52,EBADR:53,EXFULL:54,ENOANO:55,EBADRQC:56,EBADSLT:57,EDEADLOCK:35,EBFONT:59,ENOSTR:60,ENODATA:61,ETIME:62,ENOSR:63,ENONET:64,ENOPKG:65,EREMOTE:66,ENOLINK:67,EADV:68,ESRMNT:69,ECOMM:70,EPROTO:71,EMULTIHOP:72,EDOTDOT:73,EBADMSG:74,ENOTUNIQ:76,EBADFD:77,EREMCHG:78,ELIBACC:79,ELIBBAD:80,ELIBSCN:81,ELIBMAX:82,ELIBEXEC:83,ENOSYS:38,ENOTEMPTY:39,ENAMETOOLONG:36,ELOOP:40,EOPNOTSUPP:95,EPFNOSUPPORT:96,ECONNRESET:104,ENOBUFS:105,EAFNOSUPPORT:97,EPROTOTYPE:91,ENOTSOCK:88,ENOPROTOOPT:92,ESHUTDOWN:108,ECONNREFUSED:111,EADDRINUSE:98,ECONNABORTED:103,ENETUNREACH:101,ENETDOWN:100,ETIMEDOUT:110,EHOSTDOWN:112,EHOSTUNREACH:113,EINPROGRESS:115,EALREADY:114,EDESTADDRREQ:89,EMSGSIZE:90,EPROTONOSUPPORT:93,ESOCKTNOSUPPORT:94,EADDRNOTAVAIL:99,ENETRESET:102,EISCONN:106,ENOTCONN:107,ETOOMANYREFS:109,EUSERS:87,EDQUOT:122,ESTALE:116,ENOTSUP:95,ENOMEDIUM:123,EILSEQ:84,EOVERFLOW:75,ECANCELED:125,ENOTRECOVERABLE:131,EOWNERDEAD:130,ESTRPIPE:86};var FS={root:null,mounts:[],devices:{},streams:[],nextInode:1,nameTable:null,currentPath:"/",initialized:false,ignorePermissions:true,trackingDelegate:{},tracking:{openFlags:{READ:1,WRITE:2}},ErrnoError:null,genericErrors:{},filesystems:null,syncFSRequests:0,handleFSError:function (e) {
         if (!(e instanceof FS.ErrnoError)) throw e + ' : ' + stackTrace();
         return ___setErrNo(e.errno);
       },lookupPath:function (path, opts) {
         path = PATH_FS.resolve(FS.cwd(), path);
         opts = opts || {};
-  
+
         if (!path) return { path: '', node: null };
-  
+
         var defaults = {
           follow_mount: true,
           recurse_count: 0
@@ -2911,37 +2911,37 @@ function copyTempDouble(ptr) {
             opts[key] = defaults[key];
           }
         }
-  
+
         if (opts.recurse_count > 8) {  // max recursive lookup of 8
           throw new FS.ErrnoError(40);
         }
-  
+
         // split the path
         var parts = PATH.normalizeArray(path.split('/').filter(function(p) {
           return !!p;
         }), false);
-  
+
         // start at the root
         var current = FS.root;
         var current_path = '/';
-  
+
         for (var i = 0; i < parts.length; i++) {
           var islast = (i === parts.length-1);
           if (islast && opts.parent) {
             // stop resolving
             break;
           }
-  
+
           current = FS.lookupNode(current, parts[i]);
           current_path = PATH.join2(current_path, parts[i]);
-  
+
           // jump to the mount's root node if this is a mountpoint
           if (FS.isMountpoint(current)) {
             if (!islast || (islast && opts.follow_mount)) {
               current = current.mounted.root;
             }
           }
-  
+
           // by default, lookupPath will not follow a symlink if it is the final path component.
           // setting opts.follow = true will override this behavior.
           if (!islast || opts.follow) {
@@ -2949,17 +2949,17 @@ function copyTempDouble(ptr) {
             while (FS.isLink(current.mode)) {
               var link = FS.readlink(current_path);
               current_path = PATH_FS.resolve(PATH.dirname(current_path), link);
-  
+
               var lookup = FS.lookupPath(current_path, { recurse_count: opts.recurse_count });
               current = lookup.node;
-  
+
               if (count++ > 40) {  // limit max consecutive symlinks to 40 (SYMLOOP_MAX).
                 throw new FS.ErrnoError(40);
               }
             }
           }
         }
-  
+
         return { path: current_path, node: current };
       },getPath:function (node) {
         var path;
@@ -2974,8 +2974,8 @@ function copyTempDouble(ptr) {
         }
       },hashName:function (parentid, name) {
         var hash = 0;
-  
-  
+
+
         for (var i = 0; i < name.length; i++) {
           hash = ((hash << 5) - hash + name.charCodeAt(i)) | 0;
         }
@@ -3028,13 +3028,13 @@ function copyTempDouble(ptr) {
             this.stream_ops = {};
             this.rdev = rdev;
           };
-  
+
           FS.FSNode.prototype = {};
-  
+
           // compatibility
           var readMode = 292 | 73;
           var writeMode = 146;
-  
+
           // NOTE we must use Object.defineProperties instead of individual calls to
           // Object.defineProperty in order to make closure compiler happy
           Object.defineProperties(FS.FSNode.prototype, {
@@ -3054,11 +3054,11 @@ function copyTempDouble(ptr) {
             }
           });
         }
-  
+
         var node = new FS.FSNode(parent, name, mode, rdev);
-  
+
         FS.hashAddNode(node);
-  
+
         return node;
       },destroyNode:function (node) {
         FS.hashRemoveNode(node);
@@ -3221,37 +3221,37 @@ function copyTempDouble(ptr) {
       },getMounts:function (mount) {
         var mounts = [];
         var check = [mount];
-  
+
         while (check.length) {
           var m = check.pop();
-  
+
           mounts.push(m);
-  
+
           check.push.apply(check, m.mounts);
         }
-  
+
         return mounts;
       },syncfs:function (populate, callback) {
         if (typeof(populate) === 'function') {
           callback = populate;
           populate = false;
         }
-  
+
         FS.syncFSRequests++;
-  
+
         if (FS.syncFSRequests > 1) {
           console.log('warning: ' + FS.syncFSRequests + ' FS.syncfs operations in flight at once, probably just doing extra work');
         }
-  
+
         var mounts = FS.getMounts(FS.root.mount);
         var completed = 0;
-  
+
         function doCallback(err) {
           assert(FS.syncFSRequests > 0);
           FS.syncFSRequests--;
           return callback(err);
         }
-  
+
         function done(err) {
           if (err) {
             if (!done.errored) {
@@ -3264,7 +3264,7 @@ function copyTempDouble(ptr) {
             doCallback(null);
           }
         };
-  
+
         // sync all mounts
         mounts.forEach(function (mount) {
           if (!mount.type.syncfs) {
@@ -3276,78 +3276,78 @@ function copyTempDouble(ptr) {
         var root = mountpoint === '/';
         var pseudo = !mountpoint;
         var node;
-  
+
         if (root && FS.root) {
           throw new FS.ErrnoError(16);
         } else if (!root && !pseudo) {
           var lookup = FS.lookupPath(mountpoint, { follow_mount: false });
-  
+
           mountpoint = lookup.path;  // use the absolute path
           node = lookup.node;
-  
+
           if (FS.isMountpoint(node)) {
             throw new FS.ErrnoError(16);
           }
-  
+
           if (!FS.isDir(node.mode)) {
             throw new FS.ErrnoError(20);
           }
         }
-  
+
         var mount = {
           type: type,
           opts: opts,
           mountpoint: mountpoint,
           mounts: []
         };
-  
+
         // create a root node for the fs
         var mountRoot = type.mount(mount);
         mountRoot.mount = mount;
         mount.root = mountRoot;
-  
+
         if (root) {
           FS.root = mountRoot;
         } else if (node) {
           // set as a mountpoint
           node.mounted = mount;
-  
+
           // add the new mount to the current mount's children
           if (node.mount) {
             node.mount.mounts.push(mount);
           }
         }
-  
+
         return mountRoot;
       },unmount:function (mountpoint) {
         var lookup = FS.lookupPath(mountpoint, { follow_mount: false });
-  
+
         if (!FS.isMountpoint(lookup.node)) {
           throw new FS.ErrnoError(22);
         }
-  
+
         // destroy the nodes for this mount, and all its child mounts
         var node = lookup.node;
         var mount = node.mounted;
         var mounts = FS.getMounts(mount);
-  
+
         Object.keys(FS.nameTable).forEach(function (hash) {
           var current = FS.nameTable[hash];
-  
+
           while (current) {
             var next = current.name_next;
-  
+
             if (mounts.indexOf(current.mount) !== -1) {
               FS.destroyNode(current);
             }
-  
+
             current = next;
           }
         });
-  
+
         // no longer a mountpoint
         node.mounted = null;
-  
+
         // remove this mount from the child mounts
         var idx = node.mount.mounts.indexOf(mount);
         assert(idx !== -1);
@@ -3754,7 +3754,7 @@ function copyTempDouble(ptr) {
         }
         // we've already handled these, don't pass down to the underlying vfs
         flags &= ~(128 | 512);
-  
+
         // register the stream with the filesystem
         var stream = FS.createStream({
           node: node,
@@ -3797,7 +3797,7 @@ function copyTempDouble(ptr) {
         if (FS.isClosed(stream)) {
           throw new FS.ErrnoError(9);
         }
-        if (stream.getdents) stream.getdents = null; // free readdir state
+        if (stream.getdents) stream.getdents = null; // free readdir status
         try {
           if (stream.stream_ops.close) {
             stream.stream_ops.close(stream);
@@ -4046,7 +4046,7 @@ function copyTempDouble(ptr) {
         // TODO deprecate the old functionality of a single
         // input / output callback and that utilizes FS.createDevice
         // and instead require a unique set of stream ops
-  
+
         // by default, we symlink the standard streams to the
         // default tty devices. however, if the standard streams
         // have been overwritten we create a unique device for
@@ -4066,7 +4066,7 @@ function copyTempDouble(ptr) {
         } else {
           FS.symlink('/dev/tty1', '/dev/stderr');
         }
-  
+
         // open default streams for the stdin, stdout and stderr devices
         var stdin = FS.open('/dev/stdin', 'r');
         var stdout = FS.open('/dev/stdout', 'w');
@@ -4102,15 +4102,15 @@ function copyTempDouble(ptr) {
         });
       },staticInit:function () {
         FS.ensureErrnoError();
-  
+
         FS.nameTable = new Array(4096);
-  
+
         FS.mount(MEMFS, {}, '/');
-  
+
         FS.createDefaultDirectories();
         FS.createDefaultDevices();
         FS.createSpecialDirectories();
-  
+
         FS.filesystems = {
           'MEMFS': MEMFS,
           'IDBFS': IDBFS,
@@ -4119,14 +4119,14 @@ function copyTempDouble(ptr) {
       },init:function (input, output, error) {
         assert(!FS.init.initialized, 'FS.init was previously called. If you want to initialize later with custom parameters, remove any earlier calls (note that one is automatically added to the generated code)');
         FS.init.initialized = true;
-  
+
         FS.ensureErrnoError();
-  
+
         // Allow Module.stdin etc. to provide defaults, if none explicitly passed to us here
         Module['stdin'] = input || Module['stdin'];
         Module['stdout'] = output || Module['stdout'];
         Module['stderr'] = error || Module['stderr'];
-  
+
         FS.createStandardStreams();
       },quit:function () {
         FS.init.initialized = false;
@@ -4333,27 +4333,27 @@ function copyTempDouble(ptr) {
           var header;
           var hasByteServing = (header = xhr.getResponseHeader("Accept-Ranges")) && header === "bytes";
           var usesGzip = (header = xhr.getResponseHeader("Content-Encoding")) && header === "gzip";
-  
+
           var chunkSize = 1024*1024; // Chunk size in bytes
-  
+
           if (!hasByteServing) chunkSize = datalength;
-  
+
           // Function to get a range from the remote URL.
           var doXHR = (function(from, to) {
             if (from > to) throw new Error("invalid range (" + from + ", " + to + ") or no bytes requested!");
             if (to > datalength-1) throw new Error("only " + datalength + " bytes available! programmer error!");
-  
+
             // TODO: Use mozResponseArrayBuffer, responseStream, etc. if available.
             var xhr = new XMLHttpRequest();
             xhr.open('GET', url, false);
             if (datalength !== chunkSize) xhr.setRequestHeader("Range", "bytes=" + from + "-" + to);
-  
+
             // Some hints to the browser that we want binary data.
             if (typeof Uint8Array != 'undefined') xhr.responseType = 'arraybuffer';
             if (xhr.overrideMimeType) {
               xhr.overrideMimeType('text/plain; charset=x-user-defined');
             }
-  
+
             xhr.send(null);
             if (!(xhr.status >= 200 && xhr.status < 300 || xhr.status === 304)) throw new Error("Couldn't load " + url + ". Status: " + xhr.status);
             if (xhr.response !== undefined) {
@@ -4373,7 +4373,7 @@ function copyTempDouble(ptr) {
             if (typeof(lazyArray.chunks[chunkNum]) === "undefined") throw new Error("doXHR failed!");
             return lazyArray.chunks[chunkNum];
           });
-  
+
           if (usesGzip || !datalength) {
             // if the server uses gzip or doesn't supply the length, we have to download the whole file to get the (uncompressed) length
             chunkSize = datalength = 1; // this will force getter(0)/doXHR do download the whole file
@@ -4381,7 +4381,7 @@ function copyTempDouble(ptr) {
             chunkSize = datalength;
             console.log("LazyFiles on gzip forces download of the whole file when length is accessed");
           }
-  
+
           this._length = datalength;
           this._chunkSize = chunkSize;
           this.lengthKnown = true;
@@ -4407,12 +4407,12 @@ function copyTempDouble(ptr) {
               }
             }
           });
-  
+
           var properties = { isDevice: false, contents: lazyArray };
         } else {
           var properties = { isDevice: false, url: url };
         }
-  
+
         var node = FS.createFile(parent, name, properties, canRead, canWrite);
         // This is a total hack, but I want to get this lazy file code out of the
         // core of MEMFS. If we want to keep this lazy file concept I feel it should
@@ -4642,14 +4642,14 @@ function copyTempDouble(ptr) {
       },doReadlink:function (path, buf, bufsize) {
         if (bufsize <= 0) return -22;
         var ret = FS.readlink(path);
-  
+
         var len = Math.min(bufsize, lengthBytesUTF8(ret));
         var endChar = HEAP8[buf+len];
         stringToUTF8(ret, buf, bufsize+1);
         // readlink is one of the rare functions that write out a C string, but does never append a null to the output buffer(!)
         // stringToUTF8() always appends a null byte, so restore the character under the null byte after the write.
         HEAP8[buf+len] = endChar;
-  
+
         return len;
       },doAccess:function (path, amode) {
         if (amode & ~7) {
@@ -4720,16 +4720,16 @@ function copyTempDouble(ptr) {
       var HIGH_OFFSET = 0x100000000; // 2^32
       // use an unsigned operator on low and shift high by 32-bits
       var offset = offset_high * HIGH_OFFSET + (offset_low >>> 0);
-  
+
       var DOUBLE_LIMIT = 0x20000000000000; // 2^53
       // we also check for equality since DOUBLE_LIMIT + 1 == DOUBLE_LIMIT
       if (offset <= -DOUBLE_LIMIT || offset >= DOUBLE_LIMIT) {
         return -75;
       }
-  
+
       FS.llseek(stream, offset, whence);
       (tempI64 = [stream.position>>>0,(tempDouble=stream.position,(+(Math_abs(tempDouble))) >= 1.0 ? (tempDouble > 0.0 ? ((Math_min((+(Math_floor((tempDouble)/4294967296.0))), 4294967295.0))|0)>>>0 : (~~((+(Math_ceil((tempDouble - +(((~~(tempDouble)))>>>0))/4294967296.0)))))>>>0) : 0)],HEAP32[((result)>>2)]=tempI64[0],HEAP32[(((result)+(4))>>2)]=tempI64[1]);
-      if (stream.getdents && offset === 0 && whence === 0) stream.getdents = null; // reset readdir state
+      if (stream.getdents && offset === 0 && whence === 0) stream.getdents = null; // reset readdir status
       return 0;
     } catch (e) {
     if (typeof FS === 'undefined' || !(e instanceof FS.ErrnoError)) abort(e);
@@ -4785,7 +4785,7 @@ function copyTempDouble(ptr) {
         }
         case 12:
         /* case 12: Currently in musl F_GETLK64 has same value as F_GETLK, so omitted to avoid duplicate case blocks. If that changes, uncomment this */ {
-          
+
           var arg = SYSCALLS.get();
           var offset = 0;
           // We're always unlocked.
@@ -4796,8 +4796,8 @@ function copyTempDouble(ptr) {
         case 14:
         /* case 13: Currently in musl F_SETLK64 has same value as F_SETLK, so omitted to avoid duplicate case blocks. If that changes, uncomment this */
         /* case 14: Currently in musl F_SETLKW64 has same value as F_SETLKW, so omitted to avoid duplicate case blocks. If that changes, uncomment this */
-          
-          
+
+
           return 0; // Pretend that the locking is successful.
         case 16:
         case 8:
@@ -4900,7 +4900,7 @@ function copyTempDouble(ptr) {
       return HEAP8.length;
     }
 
-  
+
   var GL={counter:1,lastError:0,buffers:[],mappedBuffers:{},programs:[],framebuffers:[],renderbuffers:[],textures:[],uniforms:[],shaders:[],vaos:[],contexts:{},currentContext:null,offscreenCanvases:{},timerQueriesEXT:[],queries:[],samplers:[],transformFeedbacks:[],syncs:[],programInfos:{},stringCache:{},stringiCache:{},unpackAlignment:4,init:function () {
         GL.miniTempBuffer = new Float32Array(GL.MINI_TEMP_BUFFER_SIZE);
         for (var i = 0; i < GL.MINI_TEMP_BUFFER_SIZE; i++) {
@@ -4924,15 +4924,15 @@ function copyTempDouble(ptr) {
         }
         return source;
       },createContext:function (canvas, webGLContextAttributes) {
-  
-  
-  
-  
-        var ctx = 
+
+
+
+
+        var ctx =
           (webGLContextAttributes.majorVersion > 1) ? canvas.getContext("webgl2", webGLContextAttributes) :
           (canvas.getContext("webgl", webGLContextAttributes) || canvas.getContext("experimental-webgl", webGLContextAttributes));
-  
-  
+
+
         return ctx ? GL.registerContext(ctx, webGLContextAttributes) : 0;
       },registerContext:function (ctx, webGLContextAttributes) {
         var handle = _malloc(8); // Make space on the heap to store GL context attributes that need to be accessible as shared between threads.
@@ -4942,7 +4942,7 @@ function copyTempDouble(ptr) {
           version: webGLContextAttributes.majorVersion,
           GLctx: ctx
         };
-  
+
         // BUG: Workaround Chrome WebGL 2 issue: the first shipped versions of WebGL 2 in Chrome did not actually implement the new WebGL 2 functions.
         //      Those are supported only in Chrome 58 and newer.
         function getChromeVersion() {
@@ -4950,21 +4950,21 @@ function copyTempDouble(ptr) {
           return raw ? parseInt(raw[2], 10) : false;
         }
         context.supportsWebGL2EntryPoints = (context.version >= 2) && (getChromeVersion() === false || getChromeVersion() >= 58);
-  
-  
+
+
         // Store the created context object so that we can access the context given a canvas without having to pass the parameters again.
         if (ctx.canvas) ctx.canvas.GLctxObject = context;
         GL.contexts[handle] = context;
         if (typeof webGLContextAttributes.enableExtensionsByDefault === 'undefined' || webGLContextAttributes.enableExtensionsByDefault) {
           GL.initExtensions(context);
         }
-  
-  
-  
-  
+
+
+
+
         return handle;
       },makeContextCurrent:function (contextHandle) {
-  
+
         GL.currentContext = GL.contexts[contextHandle]; // Active Emscripten GL layer context object.
         Module.ctx = GLctx = GL.currentContext && GL.currentContext.GLctx; // Active WebGL context object.
         return !(contextHandle && !GLctx);
@@ -5002,22 +5002,22 @@ function copyTempDouble(ptr) {
       },initExtensions:function (context) {
         // If this function is called without a specific context object, init the extensions of the currently active context.
         if (!context) context = GL.currentContext;
-  
+
         if (context.initExtensionsDone) return;
         context.initExtensionsDone = true;
-  
+
         var GLctx = context.GLctx;
-  
+
         // Detect the presence of a few extensions manually, this GL interop layer itself will need to know if they exist.
-  
+
         if (context.version < 2) {
           GL.acquireInstancedArraysExtension(GLctx);
           GL.acquireVertexArrayObjectExtension(GLctx);
           GL.acquireDrawBuffersExtension(GLctx);
         }
-  
+
         GLctx.disjointTimerQueryExt = GLctx.getExtension("EXT_disjoint_timer_query");
-  
+
         // These are the 'safe' feature-enabling extensions that don't add any performance impact related to e.g. debugging, and
         // should be enabled by default so that client GLES2/GL code will not need to go through extra hoops to get its stuff working.
         // As new extensions are ratified at http://www.khronos.org/registry/webgl/extensions/ , feel free to add your new extensions
@@ -5034,7 +5034,7 @@ function copyTempDouble(ptr) {
                                                "EXT_sRGB", "WEBGL_compressed_texture_etc1", "EXT_disjoint_timer_query",
                                                "WEBGL_compressed_texture_etc", "WEBGL_compressed_texture_astc", "EXT_color_buffer_float",
                                                "WEBGL_compressed_texture_s3tc_srgb", "EXT_disjoint_timer_query_webgl2"];
-  
+
         function shouldEnableAutomatically(extension) {
           var ret = false;
           automaticallyEnabledExtensions.forEach(function(include) {
@@ -5044,7 +5044,7 @@ function copyTempDouble(ptr) {
           });
           return ret;
         }
-  
+
         var exts = GLctx.getSupportedExtensions();
         if (exts && exts.length > 0) {
           GLctx.getSupportedExtensions().forEach(function(ext) {
@@ -5061,23 +5061,23 @@ function copyTempDouble(ptr) {
           maxAttributeLength: -1, // This is lazily computed and cached, computed when/if first asked, "-1" meaning not computed yet.
           maxUniformBlockNameLength: -1 // Lazily computed as well
         };
-  
+
         var utable = ptable.uniforms;
         // A program's uniform table maps the string name of an uniform to an integer location of that uniform.
         // The global GL.uniforms map maps integer locations to WebGLUniformLocations.
         var numUniforms = GLctx.getProgramParameter(p, 0x8B86/*GL_ACTIVE_UNIFORMS*/);
         for (var i = 0; i < numUniforms; ++i) {
           var u = GLctx.getActiveUniform(p, i);
-  
+
           var name = u.name;
           ptable.maxUniformLength = Math.max(ptable.maxUniformLength, name.length+1);
-  
+
           // If we are dealing with an array, e.g. vec4 foo[3], strip off the array index part to canonicalize that "foo", "foo[]",
           // and "foo[0]" will mean the same. Loop below will populate foo[1] and foo[2].
           if (name.slice(-1) == ']') {
             name = name.slice(0, name.lastIndexOf('['));
           }
-  
+
           // Optimize memory usage slightly: If we have an array of uniforms, e.g. 'vec3 colors[3];', then
           // only store the string 'colors' in utable, and 'colors[0]', 'colors[1]' and 'colors[2]' will be parsed as 'colors'+i.
           // Note that for the GL.uniforms table, we still need to fetch the all WebGLUniformLocations for all the indices.
@@ -5086,12 +5086,12 @@ function copyTempDouble(ptr) {
             var id = GL.getNewId(GL.uniforms);
             utable[name] = [u.size, id];
             GL.uniforms[id] = loc;
-  
+
             for (var j = 1; j < u.size; ++j) {
               var n = name + '['+j+']';
               loc = GLctx.getUniformLocation(p, n);
               id = GL.getNewId(GL.uniforms);
-  
+
               GL.uniforms[id] = loc;
             }
           }
@@ -5118,7 +5118,7 @@ function copyTempDouble(ptr) {
     }
 
   function _emscripten_glBindBuffer(target, buffer) {
-  
+
       if (target == 0x88EB /*GL_PIXEL_PACK_BUFFER*/) {
         // In WebGL 2 glReadPixels entry point, we need to use a different WebGL 2 API function call when a buffer is bound to
         // GL_PIXEL_PACK_BUFFER_BINDING point, so must keep track whether that binding point is non-null to know what is
@@ -5144,9 +5144,9 @@ function copyTempDouble(ptr) {
     }
 
   function _emscripten_glBindFramebuffer(target, framebuffer) {
-  
+
       GLctx.bindFramebuffer(target, GL.framebuffers[framebuffer]);
-  
+
     }
 
   function _emscripten_glBindRenderbuffer(target, renderbuffer) {
@@ -5214,17 +5214,17 @@ function copyTempDouble(ptr) {
   function _emscripten_glClearBufferfi(x0, x1, x2, x3) { GLctx['clearBufferfi'](x0, x1, x2, x3) }
 
   function _emscripten_glClearBufferfv(buffer, drawbuffer, value) {
-  
+
       GLctx['clearBufferfv'](buffer, drawbuffer, HEAPF32, value>>2);
     }
 
   function _emscripten_glClearBufferiv(buffer, drawbuffer, value) {
-  
+
       GLctx['clearBufferiv'](buffer, drawbuffer, HEAP32, value>>2);
     }
 
   function _emscripten_glClearBufferuiv(buffer, drawbuffer, value) {
-  
+
       GLctx['clearBufferuiv'](buffer, drawbuffer, HEAPU32, value>>2);
     }
 
@@ -5329,15 +5329,15 @@ function copyTempDouble(ptr) {
       for (var i = 0; i < n; i++) {
         var id = HEAP32[(((buffers)+(i*4))>>2)];
         var buffer = GL.buffers[id];
-  
+
         // From spec: "glDeleteBuffers silently ignores 0's and names that do not
         // correspond to existing buffer objects."
         if (!buffer) continue;
-  
+
         GLctx.deleteBuffer(buffer);
         buffer.name = 0;
         GL.buffers[id] = null;
-  
+
         if (id == GL.currArrayBuffer) GL.currArrayBuffer = 0;
         if (id == GL.currElementArrayBuffer) GL.currElementArrayBuffer = 0;
         if (id == GLctx.currentPixelPackBufferBinding) GLctx.currentPixelPackBufferBinding = 0;
@@ -5492,9 +5492,9 @@ function copyTempDouble(ptr) {
     }
 
   function _emscripten_glDrawArrays(mode, first, count) {
-  
+
       GLctx.drawArrays(mode, first, count);
-  
+
     }
 
   function _emscripten_glDrawArraysInstanced(mode, first, count, primcount) {
@@ -5517,41 +5517,41 @@ function copyTempDouble(ptr) {
       GLctx['drawArraysInstanced'](mode, first, count, primcount);
     }
 
-  
+
   var __tempFixedLengthArray=[];function _emscripten_glDrawBuffers(n, bufs) {
-  
+
       var bufArray = __tempFixedLengthArray[n];
       for (var i = 0; i < n; i++) {
         bufArray[i] = HEAP32[(((bufs)+(i*4))>>2)];
       }
-  
+
       GLctx['drawBuffers'](bufArray);
     }
 
   function _emscripten_glDrawBuffersEXT(n, bufs) {
-  
+
       var bufArray = __tempFixedLengthArray[n];
       for (var i = 0; i < n; i++) {
         bufArray[i] = HEAP32[(((bufs)+(i*4))>>2)];
       }
-  
+
       GLctx['drawBuffers'](bufArray);
     }
 
   function _emscripten_glDrawBuffersWEBGL(n, bufs) {
-  
+
       var bufArray = __tempFixedLengthArray[n];
       for (var i = 0; i < n; i++) {
         bufArray[i] = HEAP32[(((bufs)+(i*4))>>2)];
       }
-  
+
       GLctx['drawBuffers'](bufArray);
     }
 
   function _emscripten_glDrawElements(mode, count, type, indices) {
-  
+
       GLctx.drawElements(mode, count, type, indices);
-  
+
     }
 
   function _emscripten_glDrawElementsInstanced(mode, count, type, indices, primcount) {
@@ -5574,11 +5574,11 @@ function copyTempDouble(ptr) {
       GLctx['drawElementsInstanced'](mode, count, type, indices, primcount);
     }
 
-  
+
   function _glDrawElements(mode, count, type, indices) {
-  
+
       GLctx.drawElements(mode, count, type, indices);
-  
+
     }function _emscripten_glDrawRangeElements(mode, start, end, count, type, indices) {
       // TODO: This should be a trivial pass-though function registered at the bottom of this page as
       // glFuncs[6][1] += ' drawRangeElements';
@@ -5637,7 +5637,7 @@ function copyTempDouble(ptr) {
 
   function _emscripten_glFrontFace(x0) { GLctx['frontFace'](x0) }
 
-  
+
   function __glGenObject(n, buffers, createFunction, objectTable
       ) {
       for (var i = 0; i < n; i++) {
@@ -5717,7 +5717,7 @@ function copyTempDouble(ptr) {
       program = GL.programs[program];
       var info = GLctx.getActiveAttrib(program, index);
       if (!info) return; // If an error occurs, nothing will be written to length, size and type and name.
-  
+
       var numBytesWrittenExclNull = (bufSize > 0 && name) ? stringToUTF8(info.name, name, bufSize) : 0;
       if (length) HEAP32[((length)>>2)]=numBytesWrittenExclNull;
       if (size) HEAP32[((size)>>2)]=info.size;
@@ -5728,7 +5728,7 @@ function copyTempDouble(ptr) {
       program = GL.programs[program];
       var info = GLctx.getActiveUniform(program, index);
       if (!info) return; // If an error occurs, nothing will be written to length, size, type and name.
-  
+
       var numBytesWrittenExclNull = (bufSize > 0 && name) ? stringToUTF8(info.name, name, bufSize) : 0;
       if (length) HEAP32[((length)>>2)]=numBytesWrittenExclNull;
       if (size) HEAP32[((size)>>2)]=info.size;
@@ -5737,7 +5737,7 @@ function copyTempDouble(ptr) {
 
   function _emscripten_glGetActiveUniformBlockName(program, uniformBlockIndex, bufSize, length, uniformBlockName) {
       program = GL.programs[program];
-  
+
       var result = GLctx['getActiveUniformBlockName'](program, uniformBlockIndex);
       if (!result) return; // If an error occurs, nothing will be written to uniformBlockName or length.
       if (uniformBlockName && bufSize > 0) {
@@ -5756,7 +5756,7 @@ function copyTempDouble(ptr) {
         return;
       }
       program = GL.programs[program];
-  
+
       switch(pname) {
         case 0x8A41: /* GL_UNIFORM_BLOCK_NAME_LENGTH */
           var name = GLctx['getActiveUniformBlockName'](program, uniformBlockIndex);
@@ -5791,10 +5791,10 @@ function copyTempDouble(ptr) {
       for (var i = 0; i < uniformCount; i++) {
         ids.push(HEAP32[(((uniformIndices)+(i*4))>>2)]);
       }
-  
+
       var result = GLctx['getActiveUniforms'](program, ids, pname);
       if (!result) return; // GL spec: If an error is generated, nothing is written out to params.
-  
+
       var len = result.length;
       for (var i = 0; i < len; i++) {
         HEAP32[(((params)+(i*4))>>2)]=result[i];
@@ -5818,7 +5818,7 @@ function copyTempDouble(ptr) {
       return GLctx.getAttribLocation(GL.programs[program], UTF8ToString(name));
     }
 
-  
+
   function emscriptenWebGLGet(name_, p, type) {
       // Guard against user passing a null pointer.
       // Note that GLES2 spec does not say anything about how passing a null pointer should be treated.
@@ -5869,7 +5869,7 @@ function copyTempDouble(ptr) {
           ret = name_ == 0x821B ? 3 : 0; // return version 3.0
           break;
       }
-  
+
       if (ret === undefined) {
         var result = GLctx.getParameter(name_);
         switch (typeof(result)) {
@@ -5933,7 +5933,7 @@ function copyTempDouble(ptr) {
             return;
         }
       }
-  
+
       switch (type) {
         case 1: (tempI64 = [ret>>>0,(tempDouble=ret,(+(Math_abs(tempDouble))) >= 1.0 ? (tempDouble > 0.0 ? ((Math_min((+(Math_floor((tempDouble)/4294967296.0))), 4294967295.0))|0)>>>0 : (~~((+(Math_ceil((tempDouble - +(((~~(tempDouble)))>>>0))/4294967296.0)))))>>>0) : 0)],HEAP32[((p)>>2)]=tempI64[0],HEAP32[(((p)+(4))>>2)]=tempI64[1]);    break;
         case 0: HEAP32[((p)>>2)]=ret;    break;
@@ -5991,7 +5991,7 @@ function copyTempDouble(ptr) {
       HEAP32[((params)>>2)]=result;
     }
 
-  
+
   function emscriptenWebGLGetIndexed(target, index, data, type) {
       if (!data) {
         // GLES2 specification does not specify how to behave if data is a null pointer. Since calling this function does not make sense
@@ -6031,7 +6031,7 @@ function copyTempDouble(ptr) {
           GL.recordError(0x0500); // GL_INVALID_ENUM
           return;
       }
-  
+
       switch (type) {
         case 1: (tempI64 = [ret>>>0,(tempDouble=ret,(+(Math_abs(tempDouble))) >= 1.0 ? (tempDouble > 0.0 ? ((Math_min((+(Math_floor((tempDouble)/4294967296.0))), 4294967295.0))|0)>>>0 : (~~((+(Math_ceil((tempDouble - +(((~~(tempDouble)))>>>0))/4294967296.0)))))>>>0) : 0)],HEAP32[((data)>>2)]=tempI64[0],HEAP32[(((data)+(4))>>2)]=tempI64[1]); break;
         case 0: HEAP32[((data)>>2)]=ret; break;
@@ -6091,18 +6091,18 @@ function copyTempDouble(ptr) {
         GL.recordError(0x0501 /* GL_INVALID_VALUE */);
         return;
       }
-  
+
       if (program >= GL.counter) {
         GL.recordError(0x0501 /* GL_INVALID_VALUE */);
         return;
       }
-  
+
       var ptable = GL.programInfos[program];
       if (!ptable) {
         GL.recordError(0x0502 /* GL_INVALID_OPERATION */);
         return;
       }
-  
+
       if (pname == 0x8B84) { // GL_INFO_LOG_LENGTH
         var log = GLctx.getProgramInfoLog(GL.programs[program]);
         if (log === null) log = '(unknown error)';
@@ -6319,7 +6319,7 @@ function copyTempDouble(ptr) {
       }
     }
 
-  
+
   function stringToNewUTF8(jsString) {
       var length = lengthBytesUTF8(jsString)+1;
       var cString = _malloc(length);
@@ -6348,7 +6348,7 @@ function copyTempDouble(ptr) {
           }
           ret = stringToNewUTF8(s);
           break;
-  
+
         case 0x1F02 /* GL_VERSION */:
           var glVersion = GLctx.getParameter(GLctx.VERSION);
           // return GLES version string corresponding to the version of the WebGL context
@@ -6454,14 +6454,14 @@ function copyTempDouble(ptr) {
       program = GL.programs[program];
       var info = GLctx['getTransformFeedbackVarying'](program, index);
       if (!info) return; // If an error occurred, the return parameters length, size, type and name will be unmodified.
-  
+
       if (name && bufSize > 0) {
         var numBytesWrittenExclNull = stringToUTF8(info.name, name, bufSize);
         if (length) HEAP32[((length)>>2)]=numBytesWrittenExclNull;
       } else {
         if (length) HEAP32[((length)>>2)]=0;
       }
-  
+
       if (size) HEAP32[((size)>>2)]=info.size;
       if (type) HEAP32[((type)>>2)]=info.type;
     }
@@ -6485,10 +6485,10 @@ function copyTempDouble(ptr) {
       var names = [];
       for (var i = 0; i < uniformCount; i++)
         names.push(UTF8ToString(HEAP32[(((uniformNames)+(i*4))>>2)]));
-  
+
       var result = GLctx['getUniformIndices'](program, names);
       if (!result) return; // GL spec: If an error is generated, nothing is written out to uniformIndices.
-  
+
       var len = result.length;
       for (var i = 0; i < len; i++) {
         HEAP32[(((uniformIndices)+(i*4))>>2)]=result[i];
@@ -6497,7 +6497,7 @@ function copyTempDouble(ptr) {
 
   function _emscripten_glGetUniformLocation(program, name) {
       name = UTF8ToString(name);
-  
+
       var arrayIndex = 0;
       // If user passed an array accessor "[index]", parse the array index off the accessor.
       if (name[name.length - 1] == ']') {
@@ -6505,7 +6505,7 @@ function copyTempDouble(ptr) {
         arrayIndex = name[leftBrace+1] != ']' ? parseInt(name.slice(leftBrace + 1)) : 0; // "index]", parseInt will ignore the ']' at the end; but treat "foo[]" as "foo[0]"
         name = name.slice(0, leftBrace);
       }
-  
+
       var uniformInfo = GL.programInfos[program] && GL.programInfos[program].uniforms[name]; // returns pair [ dimension_of_uniform_array, uniform_location ]
       if (uniformInfo && arrayIndex >= 0 && arrayIndex < uniformInfo[0]) { // Check if user asked for an out-of-bounds element, i.e. for 'vec4 colors[3];' user could ask for 'colors[10]' which should return -1.
         return uniformInfo[1] + arrayIndex;
@@ -6514,7 +6514,7 @@ function copyTempDouble(ptr) {
       }
     }
 
-  
+
   function emscriptenWebGLGetUniform(program, location, params, type) {
       if (!params) {
         // GLES2 specification does not specify how to behave if params is a null pointer. Since calling this function does not make sense
@@ -6550,7 +6550,7 @@ function copyTempDouble(ptr) {
       emscriptenWebGLGetUniform(program, location, params, 0);
     }
 
-  
+
   function emscriptenWebGLGetVertexAttrib(index, pname, params, type) {
       if (!params) {
         // GLES2 specification does not specify how to behave if params is a null pointer. Since calling this function does not make sense
@@ -6619,7 +6619,7 @@ function copyTempDouble(ptr) {
       for (var i = 0; i < numAttachments; i++) {
         list[i] = HEAP32[(((attachments)+(i*4))>>2)];
       }
-  
+
       GLctx['invalidateFramebuffer'](target, list);
     }
 
@@ -6628,7 +6628,7 @@ function copyTempDouble(ptr) {
       for (var i = 0; i < numAttachments; i++) {
         list[i] = HEAP32[(((attachments)+(i*4))>>2)];
       }
-  
+
       GLctx['invalidateSubFramebuffer'](target, list, x, y, width, height);
     }
 
@@ -6699,14 +6699,14 @@ function copyTempDouble(ptr) {
     }
 
   function _emscripten_glIsVertexArray(array) {
-  
+
       var vao = GL.vaos[array];
       if (!vao) return 0;
       return GLctx['isVertexArray'](vao);
     }
 
   function _emscripten_glIsVertexArrayOES(array) {
-  
+
       var vao = GL.vaos[array];
       if (!vao) return 0;
       return GLctx['isVertexArray'](vao);
@@ -6748,8 +6748,8 @@ function copyTempDouble(ptr) {
 
   function _emscripten_glReadBuffer(x0) { GLctx['readBuffer'](x0) }
 
-  
-  
+
+
   function __computeUnpackAlignedImageSize(width, height, sizePerPixel, alignment) {
       function roundedToNextMultipleOf(x, y) {
         return (x + y - 1) & -y;
@@ -6758,9 +6758,9 @@ function copyTempDouble(ptr) {
       var alignedRowSize = roundedToNextMultipleOf(plainRowSize, alignment);
       return height * alignedRowSize;
     }
-  
+
   var __colorChannelsInGlTextureFormat={6402:1,6403:1,6406:1,6407:3,6408:4,6409:1,6410:2,33319:2,33320:2,35904:3,35906:4,36244:1,36248:3,36249:4};
-  
+
   var __sizeOfGlTextureElementType={5120:1,5121:1,5122:2,5123:2,5124:4,5125:4,5126:4,5131:2,32819:2,32820:2,33635:2,33640:4,34042:4,35899:4,35902:4,36193:2};function emscriptenWebGLGetTexPixelData(type, format, width, height, pixels, internalFormat) {
       var sizePerPixel = __colorChannelsInGlTextureFormat[format] * __sizeOfGlTextureElementType[type];
       if (!sizePerPixel) {
@@ -6797,7 +6797,7 @@ function copyTempDouble(ptr) {
           GL.recordError(0x0500); // GL_INVALID_ENUM
       }
     }
-  
+
   function __heapObjectForWebGLType(type) {
       switch(type) {
         case 0x1400 /* GL_BYTE */:
@@ -6826,7 +6826,7 @@ function copyTempDouble(ptr) {
           return HEAPF32;
       }
     }
-  
+
   var __heapAccessShiftForWebGLType={5122:1,5123:1,5124:2,5125:2,5126:2,5131:1,32819:1,32820:1,33635:1,33640:2,34042:2,35899:2,35902:2,36193:1};function _emscripten_glReadPixels(x, y, width, height, format, type, pixels) {
       if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
         if (GLctx.currentPixelPackBufferBinding) {
@@ -6884,8 +6884,8 @@ function copyTempDouble(ptr) {
 
   function _emscripten_glShaderSource(shader, count, string, length) {
       var source = GL.getSource(shader, count, string, length);
-  
-  
+
+
       GLctx.shaderSource(GL.shaders[shader], source);
     }
 
@@ -6976,7 +6976,7 @@ function copyTempDouble(ptr) {
       var vars = [];
       for (var i = 0; i < count; i++)
         vars.push(UTF8ToString(HEAP32[(((varyings)+(i*4))>>2)]));
-  
+
       GLctx['transformFeedbackVaryings'](program, vars, bufferMode);
     }
 
@@ -6985,12 +6985,12 @@ function copyTempDouble(ptr) {
     }
 
   function _emscripten_glUniform1fv(location, count, value) {
-  
+
       if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
         GLctx.uniform1fv(GL.uniforms[location], HEAPF32, value>>2, count);
         return;
       }
-  
+
       if (count <= GL.MINI_TEMP_BUFFER_SIZE) {
         // avoid allocation when uploading few enough uniforms
         var view = GL.miniTempBufferViews[count-1];
@@ -7009,12 +7009,12 @@ function copyTempDouble(ptr) {
     }
 
   function _emscripten_glUniform1iv(location, count, value) {
-  
+
       if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
         GLctx.uniform1iv(GL.uniforms[location], HEAP32, value>>2, count);
         return;
       }
-  
+
       GLctx.uniform1iv(GL.uniforms[location], HEAP32.subarray((value)>>2,(value+count*4)>>2));
     }
 
@@ -7035,12 +7035,12 @@ function copyTempDouble(ptr) {
     }
 
   function _emscripten_glUniform2fv(location, count, value) {
-  
+
       if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
         GLctx.uniform2fv(GL.uniforms[location], HEAPF32, value>>2, count*2);
         return;
       }
-  
+
       if (2*count <= GL.MINI_TEMP_BUFFER_SIZE) {
         // avoid allocation when uploading few enough uniforms
         var view = GL.miniTempBufferViews[2*count-1];
@@ -7060,12 +7060,12 @@ function copyTempDouble(ptr) {
     }
 
   function _emscripten_glUniform2iv(location, count, value) {
-  
+
       if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
         GLctx.uniform2iv(GL.uniforms[location], HEAP32, value>>2, count*2);
         return;
       }
-  
+
       GLctx.uniform2iv(GL.uniforms[location], HEAP32.subarray((value)>>2,(value+count*8)>>2));
     }
 
@@ -7086,12 +7086,12 @@ function copyTempDouble(ptr) {
     }
 
   function _emscripten_glUniform3fv(location, count, value) {
-  
+
       if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
         GLctx.uniform3fv(GL.uniforms[location], HEAPF32, value>>2, count*3);
         return;
       }
-  
+
       if (3*count <= GL.MINI_TEMP_BUFFER_SIZE) {
         // avoid allocation when uploading few enough uniforms
         var view = GL.miniTempBufferViews[3*count-1];
@@ -7112,12 +7112,12 @@ function copyTempDouble(ptr) {
     }
 
   function _emscripten_glUniform3iv(location, count, value) {
-  
+
       if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
         GLctx.uniform3iv(GL.uniforms[location], HEAP32, value>>2, count*3);
         return;
       }
-  
+
       GLctx.uniform3iv(GL.uniforms[location], HEAP32.subarray((value)>>2,(value+count*12)>>2));
     }
 
@@ -7138,12 +7138,12 @@ function copyTempDouble(ptr) {
     }
 
   function _emscripten_glUniform4fv(location, count, value) {
-  
+
       if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
         GLctx.uniform4fv(GL.uniforms[location], HEAPF32, value>>2, count*4);
         return;
       }
-  
+
       if (4*count <= GL.MINI_TEMP_BUFFER_SIZE) {
         // avoid allocation when uploading few enough uniforms
         var view = GL.miniTempBufferViews[4*count-1];
@@ -7165,12 +7165,12 @@ function copyTempDouble(ptr) {
     }
 
   function _emscripten_glUniform4iv(location, count, value) {
-  
+
       if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
         GLctx.uniform4iv(GL.uniforms[location], HEAP32, value>>2, count*4);
         return;
       }
-  
+
       GLctx.uniform4iv(GL.uniforms[location], HEAP32.subarray((value)>>2,(value+count*16)>>2));
     }
 
@@ -7188,17 +7188,17 @@ function copyTempDouble(ptr) {
 
   function _emscripten_glUniformBlockBinding(program, uniformBlockIndex, uniformBlockBinding) {
       program = GL.programs[program];
-  
+
       GLctx['uniformBlockBinding'](program, uniformBlockIndex, uniformBlockBinding);
     }
 
   function _emscripten_glUniformMatrix2fv(location, count, transpose, value) {
-  
+
       if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
         GLctx.uniformMatrix2fv(GL.uniforms[location], !!transpose, HEAPF32, value>>2, count*4);
         return;
       }
-  
+
       if (4*count <= GL.MINI_TEMP_BUFFER_SIZE) {
         // avoid allocation when uploading few enough uniforms
         var view = GL.miniTempBufferViews[4*count-1];
@@ -7232,12 +7232,12 @@ function copyTempDouble(ptr) {
     }
 
   function _emscripten_glUniformMatrix3fv(location, count, transpose, value) {
-  
+
       if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
         GLctx.uniformMatrix3fv(GL.uniforms[location], !!transpose, HEAPF32, value>>2, count*9);
         return;
       }
-  
+
       if (9*count <= GL.MINI_TEMP_BUFFER_SIZE) {
         // avoid allocation when uploading few enough uniforms
         var view = GL.miniTempBufferViews[9*count-1];
@@ -7276,12 +7276,12 @@ function copyTempDouble(ptr) {
     }
 
   function _emscripten_glUniformMatrix4fv(location, count, transpose, value) {
-  
+
       if (GL.currentContext.supportsWebGL2EntryPoints) { // WebGL 2 provides new garbage-free entry points to call to WebGL. Use those always when possible.
         GLctx.uniformMatrix4fv(GL.uniforms[location], !!transpose, HEAPF32, value>>2, count*16);
         return;
       }
-  
+
       if (16*count <= GL.MINI_TEMP_BUFFER_SIZE) {
         // avoid allocation when uploading few enough uniforms
         var view = GL.miniTempBufferViews[16*count-1];
@@ -7341,28 +7341,28 @@ function copyTempDouble(ptr) {
   function _emscripten_glVertexAttrib1f(x0, x1) { GLctx['vertexAttrib1f'](x0, x1) }
 
   function _emscripten_glVertexAttrib1fv(index, v) {
-  
+
       GLctx.vertexAttrib1f(index, HEAPF32[v>>2]);
     }
 
   function _emscripten_glVertexAttrib2f(x0, x1, x2) { GLctx['vertexAttrib2f'](x0, x1, x2) }
 
   function _emscripten_glVertexAttrib2fv(index, v) {
-  
+
       GLctx.vertexAttrib2f(index, HEAPF32[v>>2], HEAPF32[v+4>>2]);
     }
 
   function _emscripten_glVertexAttrib3f(x0, x1, x2, x3) { GLctx['vertexAttrib3f'](x0, x1, x2, x3) }
 
   function _emscripten_glVertexAttrib3fv(index, v) {
-  
+
       GLctx.vertexAttrib3f(index, HEAPF32[v>>2], HEAPF32[v+4>>2], HEAPF32[v+8>>2]);
     }
 
   function _emscripten_glVertexAttrib4f(x0, x1, x2, x3, x4) { GLctx['vertexAttrib4f'](x0, x1, x2, x3, x4) }
 
   function _emscripten_glVertexAttrib4fv(index, v) {
-  
+
       GLctx.vertexAttrib4f(index, HEAPF32[v>>2], HEAPF32[v+4>>2], HEAPF32[v+8>>2], HEAPF32[v+12>>2]);
     }
 
@@ -7416,9 +7416,9 @@ function copyTempDouble(ptr) {
       GLctx.waitSync(GL.syncs[sync], flags, timeout);
     }
 
-  
-  
-  
+
+
+
   var Browser={mainLoop:{scheduler:null,method:"",currentlyRunningMainloop:0,func:null,arg:0,timingMode:0,timingValue:0,currentFrameNumber:0,queue:[],pause:function () {
           Browser.mainLoop.scheduler = null;
           Browser.mainLoop.currentlyRunningMainloop++; // Incrementing this signals the previous main loop that it's now become old, and it must return.
@@ -7467,10 +7467,10 @@ function copyTempDouble(ptr) {
           if (Module['postMainLoop']) Module['postMainLoop']();
         }},isFullscreen:false,pointerLock:false,moduleContextCreatedCallbacks:[],workers:[],init:function () {
         if (!Module["preloadPlugins"]) Module["preloadPlugins"] = []; // needs to exist even in workers
-  
+
         if (Browser.initted) return;
         Browser.initted = true;
-  
+
         try {
           new Blob();
           Browser.hasBlobConstructor = true;
@@ -7484,7 +7484,7 @@ function copyTempDouble(ptr) {
           console.log("warning: Browser does not support creating object URLs. Built-in browser image decoding will not be available.");
           Module.noImageDecoding = true;
         }
-  
+
         // Support for plugins that can process preloaded files. You can add more of these to
         // your app by creating and appending to Module.preloadPlugins.
         //
@@ -7492,7 +7492,7 @@ function copyTempDouble(ptr) {
         // it is given the file's raw data. When it is done, it calls a callback with the file's
         // (possibly modified) data. For example, a plugin might decompress a file, or it
         // might create some side data structure for use later (like an Image element, etc.).
-  
+
         var imagePlugin = {};
         imagePlugin['canHandle'] = function imagePlugin_canHandle(name) {
           return !Module.noImageDecoding && /\.(jpg|jpeg|png|bmp)$/i.test(name);
@@ -7536,7 +7536,7 @@ function copyTempDouble(ptr) {
           img.src = url;
         };
         Module['preloadPlugins'].push(imagePlugin);
-  
+
         var audioPlugin = {};
         audioPlugin['canHandle'] = function audioPlugin_canHandle(name) {
           return !Module.noAudioDecoding && name.substr(-4) in { '.ogg': 1, '.wav': 1, '.mp3': 1 };
@@ -7605,10 +7605,10 @@ function copyTempDouble(ptr) {
           }
         };
         Module['preloadPlugins'].push(audioPlugin);
-  
-  
+
+
         // Canvas event setup
-  
+
         function pointerLockChange() {
           Browser.pointerLock = document['pointerLockElement'] === Module['canvas'] ||
                                 document['mozPointerLockElement'] === Module['canvas'] ||
@@ -7619,7 +7619,7 @@ function copyTempDouble(ptr) {
         if (canvas) {
           // forced aspect ratio can be enabled by defining 'forcedAspectRatio' on Module
           // Module['forcedAspectRatio'] = 4 / 3;
-  
+
           canvas.requestPointerLock = canvas['requestPointerLock'] ||
                                       canvas['mozRequestPointerLock'] ||
                                       canvas['webkitRequestPointerLock'] ||
@@ -7631,12 +7631,12 @@ function copyTempDouble(ptr) {
                                    document['msExitPointerLock'] ||
                                    function(){}; // no-op if function does not exist
           canvas.exitPointerLock = canvas.exitPointerLock.bind(document);
-  
+
           document.addEventListener('pointerlockchange', pointerLockChange, false);
           document.addEventListener('mozpointerlockchange', pointerLockChange, false);
           document.addEventListener('webkitpointerlockchange', pointerLockChange, false);
           document.addEventListener('mspointerlockchange', pointerLockChange, false);
-  
+
           if (Module['elementPointerLock']) {
             canvas.addEventListener("click", function(ev) {
               if (!Browser.pointerLock && Module['canvas'].requestPointerLock) {
@@ -7648,7 +7648,7 @@ function copyTempDouble(ptr) {
         }
       },createContext:function (canvas, useWebGL, setInModule, webGLContextAttributes) {
         if (useWebGL && Module.ctx && canvas == Module.canvas) return Module.ctx; // no need to recreate GL context if it's already been created for this canvas.
-  
+
         var ctx;
         var contextHandle;
         if (useWebGL) {
@@ -7658,13 +7658,13 @@ function copyTempDouble(ptr) {
             alpha: false,
             majorVersion: (typeof WebGL2RenderingContext !== 'undefined') ? 2 : 1,
           };
-  
+
           if (webGLContextAttributes) {
             for (var attribute in webGLContextAttributes) {
               contextAttributes[attribute] = webGLContextAttributes[attribute];
             }
           }
-  
+
           // This check of existence of GL is here to satisfy Closure compiler, which yells if variable GL is referenced below but GL object is not
           // actually compiled in because application is not doing any GL operations. TODO: Ideally if GL is not being used, this function
           // Browser.createContext() should not even be emitted.
@@ -7677,12 +7677,12 @@ function copyTempDouble(ptr) {
         } else {
           ctx = canvas.getContext('2d');
         }
-  
+
         if (!ctx) return null;
-  
+
         if (setInModule) {
           if (!useWebGL) assert(typeof GLctx === 'undefined', 'cannot set in module if GLctx is used, but we are a non-GL context that would replace it');
-  
+
           Module.ctx = ctx;
           if (useWebGL) GL.makeContextCurrent(contextHandle);
           Module.useWebGL = useWebGL;
@@ -7697,7 +7697,7 @@ function copyTempDouble(ptr) {
         if (typeof Browser.lockPointer === 'undefined') Browser.lockPointer = true;
         if (typeof Browser.resizeCanvas === 'undefined') Browser.resizeCanvas = false;
         if (typeof Browser.vrDevice === 'undefined') Browser.vrDevice = null;
-  
+
         var canvas = Module['canvas'];
         function fullscreenChange() {
           Browser.isFullscreen = false;
@@ -7717,7 +7717,7 @@ function copyTempDouble(ptr) {
             // remove the full screen specific parent of the canvas again to restore the HTML structure from before going full screen
             canvasContainer.parentNode.insertBefore(canvas, canvasContainer);
             canvasContainer.parentNode.removeChild(canvasContainer);
-  
+
             if (Browser.resizeCanvas) {
               Browser.setWindowedCanvasSize();
             } else {
@@ -7727,7 +7727,7 @@ function copyTempDouble(ptr) {
           if (Module['onFullScreen']) Module['onFullScreen'](Browser.isFullscreen);
           if (Module['onFullscreen']) Module['onFullscreen'](Browser.isFullscreen);
         }
-  
+
         if (!Browser.fullscreenHandlersInstalled) {
           Browser.fullscreenHandlersInstalled = true;
           document.addEventListener('fullscreenchange', fullscreenChange, false);
@@ -7735,19 +7735,19 @@ function copyTempDouble(ptr) {
           document.addEventListener('webkitfullscreenchange', fullscreenChange, false);
           document.addEventListener('MSFullscreenChange', fullscreenChange, false);
         }
-  
+
         // create a new parent to ensure the canvas has no siblings. this allows browsers to optimize full screen performance when its parent is the full screen root
         var canvasContainer = document.createElement("div");
         canvas.parentNode.insertBefore(canvasContainer, canvas);
         canvasContainer.appendChild(canvas);
-  
+
         // use parent of canvas as full screen root to allow aspect ratio correction (Firefox stretches the root to screen size)
         canvasContainer.requestFullscreen = canvasContainer['requestFullscreen'] ||
                                             canvasContainer['mozRequestFullScreen'] ||
                                             canvasContainer['msRequestFullscreen'] ||
                                            (canvasContainer['webkitRequestFullscreen'] ? function() { canvasContainer['webkitRequestFullscreen'](Element['ALLOW_KEYBOARD_INPUT']) } : null) ||
                                            (canvasContainer['webkitRequestFullScreen'] ? function() { canvasContainer['webkitRequestFullScreen'](Element['ALLOW_KEYBOARD_INPUT']) } : null);
-  
+
         if (vrDevice) {
           canvasContainer.requestFullscreen({ vrDisplay: vrDevice });
         } else {
@@ -7761,12 +7761,12 @@ function copyTempDouble(ptr) {
           return Browser.requestFullscreen(lockPointer, resizeCanvas, vrDevice);
       },exitFullscreen:function () {
         // This is workaround for chrome. Trying to exit from fullscreen
-        // not in fullscreen state will cause "TypeError: Document not active"
+        // not in fullscreen status will cause "TypeError: Document not active"
         // in chrome. See https://github.com/emscripten-core/emscripten/pull/8236
         if (!Browser.isFullscreen) {
           return false;
         }
-  
+
         var CFS = document['exitFullscreen'] ||
                   document['cancelFullScreen'] ||
                   document['mozCancelFullScreen'] ||
@@ -7908,7 +7908,7 @@ function copyTempDouble(ptr) {
             Browser.mouseMovementX = Browser.getMovementX(event);
             Browser.mouseMovementY = Browser.getMovementY(event);
           }
-  
+
           // check if SDL is available
           if (typeof SDL != "undefined") {
             Browser.mouseX = SDL.mouseX + Browser.mouseMovementX;
@@ -7925,7 +7925,7 @@ function copyTempDouble(ptr) {
           var rect = Module["canvas"].getBoundingClientRect();
           var cw = Module["canvas"].width;
           var ch = Module["canvas"].height;
-  
+
           // Neither .scrollX or .pageXOffset are defined in a spec, but
           // we prefer .scrollX because it is currently in a spec draft.
           // (see: http://www.w3.org/TR/2013/WD-cssom-view-20131217/)
@@ -7934,21 +7934,21 @@ function copyTempDouble(ptr) {
           // If this assert lands, it's likely because the browser doesn't support scrollX or pageXOffset
           // and we have no viable fallback.
           assert((typeof scrollX !== 'undefined') && (typeof scrollY !== 'undefined'), 'Unable to retrieve scroll position, mouse positions likely broken.');
-  
+
           if (event.type === 'touchstart' || event.type === 'touchend' || event.type === 'touchmove') {
             var touch = event.touch;
             if (touch === undefined) {
               return; // the "touch" property is only defined in SDL
-  
+
             }
             var adjustedX = touch.pageX - (scrollX + rect.left);
             var adjustedY = touch.pageY - (scrollY + rect.top);
-  
+
             adjustedX = adjustedX * (cw / rect.width);
             adjustedY = adjustedY * (ch / rect.height);
-  
+
             var coords = { x: adjustedX, y: adjustedY };
-  
+
             if (event.type === 'touchstart') {
               Browser.lastTouches[touch.identifier] = coords;
               Browser.touches[touch.identifier] = coords;
@@ -7960,16 +7960,16 @@ function copyTempDouble(ptr) {
             }
             return;
           }
-  
+
           var x = event.pageX - (scrollX + rect.left);
           var y = event.pageY - (scrollY + rect.top);
-  
+
           // the canvas might be CSS-scaled compared to its backbuffer;
           // SDL-using content will want mouse coordinates in terms
           // of backbuffer units.
           x = x * (cw / rect.width);
           y = y * (ch / rect.height);
-  
+
           Browser.mouseMovementX = x - Browser.mouseX;
           Browser.mouseMovementY = y - Browser.mouseY;
           Browser.mouseX = x;
@@ -8067,12 +8067,12 @@ function copyTempDouble(ptr) {
       }};function _emscripten_set_main_loop_timing(mode, value) {
       Browser.mainLoop.timingMode = mode;
       Browser.mainLoop.timingValue = value;
-  
+
       if (!Browser.mainLoop.func) {
         console.error('emscripten_set_main_loop_timing: Cannot set timing mode for main loop since a main loop does not exist! Call emscripten_set_main_loop first to set one up.');
         return 1; // Return non-zero on failure, can't set timing mode when there is no main loop.
       }
-  
+
       if (mode == 0 /*EM_TIMING_SETTIMEOUT*/) {
         Browser.mainLoop.scheduler = function Browser_mainLoop_scheduler_setTimeout() {
           var timeUntilNextTick = Math.max(0, Browser.mainLoop.tickStartTime + value - _emscripten_get_now())|0;
@@ -8114,15 +8114,15 @@ function copyTempDouble(ptr) {
       }
       return 0;
     }
-  
+
   function _emscripten_get_now() { abort() }function _emscripten_set_main_loop(func, fps, simulateInfiniteLoop, arg, noSetTiming) {
       Module['noExitRuntime'] = true;
-  
+
       assert(!Browser.mainLoop.func, 'emscripten_set_main_loop: there can only be one main loop function at once: call emscripten_cancel_main_loop to cancel the previous one before setting a new one with different parameters.');
-  
+
       Browser.mainLoop.func = func;
       Browser.mainLoop.arg = arg;
-  
+
       var browserIterationFunc;
       if (typeof arg !== 'undefined') {
         browserIterationFunc = function() {
@@ -8133,9 +8133,9 @@ function copyTempDouble(ptr) {
           Module['dynCall_v'](func);
         };
       }
-  
+
       var thisMainLoopId = Browser.mainLoop.currentlyRunningMainloop;
-  
+
       Browser.mainLoop.runner = function Browser_mainLoop_runner() {
         if (ABORT) return;
         if (Browser.mainLoop.queue.length > 0) {
@@ -8155,17 +8155,17 @@ function copyTempDouble(ptr) {
           }
           console.log('main loop blocker "' + blocker.name + '" took ' + (Date.now() - start) + ' ms'); //, left: ' + Browser.mainLoop.remainingBlockers);
           Browser.mainLoop.updateStatus();
-  
+
           // catches pause/resume main loop from blocker execution
           if (thisMainLoopId < Browser.mainLoop.currentlyRunningMainloop) return;
-  
+
           setTimeout(Browser.mainLoop.runner, 0);
           return;
         }
-  
+
         // catch pauses from non-main loop sources
         if (thisMainLoopId < Browser.mainLoop.currentlyRunningMainloop) return;
-  
+
         // Implement very basic swap interval control
         Browser.mainLoop.currentFrameNumber = Browser.mainLoop.currentFrameNumber + 1 | 0;
         if (Browser.mainLoop.timingMode == 1/*EM_TIMING_RAF*/ && Browser.mainLoop.timingValue > 1 && Browser.mainLoop.currentFrameNumber % Browser.mainLoop.timingValue != 0) {
@@ -8175,40 +8175,40 @@ function copyTempDouble(ptr) {
         } else if (Browser.mainLoop.timingMode == 0/*EM_TIMING_SETTIMEOUT*/) {
           Browser.mainLoop.tickStartTime = _emscripten_get_now();
         }
-  
+
         // Signal GL rendering layer that processing of a new frame is about to start. This helps it optimize
         // VBO double-buffering and reduce GPU stalls.
-  
-  
-  
+
+
+
         if (Browser.mainLoop.method === 'timeout' && Module.ctx) {
           err('Looks like you are rendering without using requestAnimationFrame for the main loop. You should use 0 for the frame rate in emscripten_set_main_loop in order to use requestAnimationFrame, as that can greatly improve your frame rates!');
           Browser.mainLoop.method = ''; // just warn once per call to set main loop
         }
-  
+
         Browser.mainLoop.runIter(browserIterationFunc);
-  
+
         checkStackCookie();
-  
+
         // catch pauses from the main loop itself
         if (thisMainLoopId < Browser.mainLoop.currentlyRunningMainloop) return;
-  
+
         // Queue new audio data. This is important to be right after the main loop invocation, so that we will immediately be able
         // to queue the newest produced audio samples.
         // TODO: Consider adding pre- and post- rAF callbacks so that GL.newRenderingFrameStarted() and SDL.audio.queueNewAudioData()
         //       do not need to be hardcoded into this function, but can be more generic.
         if (typeof SDL === 'object' && SDL.audio && SDL.audio.queueNewAudioData) SDL.audio.queueNewAudioData();
-  
+
         Browser.mainLoop.scheduler();
       }
-  
+
       if (!noSetTiming) {
         if (fps && fps > 0) _emscripten_set_main_loop_timing(0/*EM_TIMING_SETTIMEOUT*/, 1000.0 / fps);
         else _emscripten_set_main_loop_timing(1/*EM_TIMING_RAF*/, 1); // Do rAF by rendering each frame (no decimating)
-  
+
         Browser.mainLoop.scheduler();
       }
-  
+
       if (simulateInfiniteLoop) {
         throw 'SimulateInfiniteLoop';
       }
@@ -8216,7 +8216,7 @@ function copyTempDouble(ptr) {
       _emscripten_set_main_loop(func, fps, simulateInfiniteLoop, arg);
     }
 
-  
+
   var GLFW={Window:function (id, width, height, title, monitor, share) {
         this.id = id;
         this.x = 0;
@@ -8313,8 +8313,8 @@ function copyTempDouble(ptr) {
           case 0xDC:return 92; // DOM_VK_BACKSLASH -> GLFW_KEY_BACKSLASH
           case 0xDD:return 93; // DOM_VK_CLOSE_BRACKET -> GLFW_KEY_RIGHT_BRACKET
           case 0xC0:return 94; // DOM_VK_BACK_QUOTE -> GLFW_KEY_GRAVE_ACCENT
-          
-  
+
+
           case 0x1B:return 256; // DOM_VK_ESCAPE -> GLFW_KEY_ESCAPE
           case 0x0D:return 257; // DOM_VK_RETURN -> GLFW_KEY_ENTER
           case 0x09:return 258; // DOM_VK_TAB -> GLFW_KEY_TAB
@@ -8398,25 +8398,25 @@ function copyTempDouble(ptr) {
       },onKeyPress:function (event) {
         if (!GLFW.active || !GLFW.active.charFunc) return;
         if (event.ctrlKey || event.metaKey) return;
-  
+
         // correct unicode charCode is only available with onKeyPress event
         var charCode = event.charCode;
         if (charCode == 0 || (charCode >= 0x00 && charCode <= 0x1F)) return;
-  
-  
+
+
         dynCall_vii(GLFW.active.charFunc, GLFW.active.id, charCode);
       },onKeyChanged:function (keyCode, status) {
         if (!GLFW.active) return;
-  
+
         var key = GLFW.DOMToGLFWKeyCode(keyCode);
         if (key == -1) return;
-  
+
         var repeat = status && GLFW.active.keys[key];
         GLFW.active.keys[key] = status;
         GLFW.active.domKeys[keyCode] = status;
         if (!GLFW.active.keyFunc) return;
-  
-  
+
+
         if (repeat) status = 2; // GLFW_REPEAT
         dynCall_viiiii(GLFW.active.keyFunc, GLFW.active.id, key, keyCode, status, GLFW.getModBits(GLFW.active));
       },onGamepadConnected:function (event) {
@@ -8425,7 +8425,7 @@ function copyTempDouble(ptr) {
         GLFW.refreshJoysticks();
       },onKeydown:function (event) {
         GLFW.onKeyChanged(event.keyCode, 1); // GLFW_PRESS or GLFW_REPEAT
-  
+
         // This logic comes directly from the sdl implementation. We cannot
         // call preventDefault on all keydown events otherwise onKeyPress will
         // not get called
@@ -8436,7 +8436,7 @@ function copyTempDouble(ptr) {
         GLFW.onKeyChanged(event.keyCode, 0); // GLFW_RELEASE
       },onBlur:function (event) {
         if (!GLFW.active) return;
-  
+
         for (var i = 0; i < GLFW.active.domKeys.length; ++i) {
           if (GLFW.active.domKeys[i]) {
             GLFW.onKeyChanged(i, 0); // GLFW_RELEASE
@@ -8444,12 +8444,12 @@ function copyTempDouble(ptr) {
         }
       },onMousemove:function (event) {
         if (!GLFW.active) return;
-  
+
         Browser.calculateMouseEvent(event);
-  
+
         if (event.target != Module["canvas"] || !GLFW.active.cursorPosFunc) return;
-  
-  
+
+
         dynCall_vidd(GLFW.active.cursorPosFunc, GLFW.active.id, Browser.mouseX, Browser.mouseY);
       },DOMToGLFWMouseButton:function (event) {
         // DOM and glfw have different button codes.
@@ -8465,25 +8465,25 @@ function copyTempDouble(ptr) {
         return eventButton;
       },onMouseenter:function (event) {
         if (!GLFW.active) return;
-  
+
         if (event.target != Module["canvas"] || !GLFW.active.cursorEnterFunc) return;
-  
+
         dynCall_vii(GLFW.active.cursorEnterFunc, GLFW.active.id, 1);
       },onMouseleave:function (event) {
         if (!GLFW.active) return;
-  
+
         if (event.target != Module["canvas"] || !GLFW.active.cursorEnterFunc) return;
-  
+
         dynCall_vii(GLFW.active.cursorEnterFunc, GLFW.active.id, 0);
       },onMouseButtonChanged:function (event, status) {
         if (!GLFW.active) return;
-  
+
         Browser.calculateMouseEvent(event);
-  
+
         if (event.target != Module["canvas"]) return;
-  
+
         var eventButton = GLFW.DOMToGLFWMouseButton(event);
-  
+
         if (status == 1) { // GLFW_PRESS
           GLFW.active.buttons |= (1 << eventButton);
           try {
@@ -8492,10 +8492,10 @@ function copyTempDouble(ptr) {
         } else {  // GLFW_RELEASE
           GLFW.active.buttons &= ~(1 << eventButton);
         }
-  
+
         if (!GLFW.active.mouseButtonFunc) return;
-  
-  
+
+
         dynCall_viiii(GLFW.active.mouseButtonFunc, GLFW.active.id, eventButton, status, GLFW.getModBits(GLFW.active));
       },onMouseButtonDown:function (event) {
         if (!GLFW.active) return;
@@ -8508,10 +8508,10 @@ function copyTempDouble(ptr) {
         var delta = -Browser.getMouseWheelDelta(event);
         delta = (delta == 0) ? 0 : (delta > 0 ? Math.max(delta, 1) : Math.min(delta, -1)); // Quantize to integer so that minimum scroll is at least +/- 1.
         GLFW.wheelPos += delta;
-  
+
         if (!GLFW.active || !GLFW.active.scrollFunc || event.target != Module['canvas']) return;
-  
-  
+
+
         var sx = 0;
         var sy = 0;
         if (event.type == 'mousewheel') {
@@ -8521,15 +8521,15 @@ function copyTempDouble(ptr) {
           sx = event.deltaX;
           sy = event.deltaY;
         }
-  
+
         dynCall_vidd(GLFW.active.scrollFunc, GLFW.active.id, sx, sy);
-  
+
         event.preventDefault();
       },onCanvasResize:function (width, height) {
         if (!GLFW.active) return;
-  
+
         var resizeNeeded = true;
-  
+
         // If the client is requesting fullscreen mode
         if (document["fullscreen"] || document["fullScreen"] || document["mozFullScreen"] || document["webkitIsFullScreen"]) {
           GLFW.active.storedX = GLFW.active.x;
@@ -8540,7 +8540,7 @@ function copyTempDouble(ptr) {
           GLFW.active.width = screen.width;
           GLFW.active.height = screen.height;
           GLFW.active.fullscreen = true;
-  
+
         // If the client is reverting from fullscreen mode
         } else if (GLFW.active.fullscreen == true) {
           GLFW.active.x = GLFW.active.storedX;
@@ -8548,7 +8548,7 @@ function copyTempDouble(ptr) {
           GLFW.active.width = GLFW.active.storedWidth;
           GLFW.active.height = GLFW.active.storedHeight;
           GLFW.active.fullscreen = false;
-  
+
         // If the width/height values do not match current active window sizes
         } else if (GLFW.active.width != width || GLFW.active.height != height) {
             GLFW.active.width = width;
@@ -8556,7 +8556,7 @@ function copyTempDouble(ptr) {
         } else {
           resizeNeeded = false;
         }
-  
+
         // If any of the above conditions were true, we need to resize the canvas
         if (resizeNeeded) {
           // resets the canvas size to counter the aspect preservation of Browser.updateCanvasDimensions
@@ -8568,16 +8568,16 @@ function copyTempDouble(ptr) {
         }
       },onWindowSizeChanged:function () {
         if (!GLFW.active) return;
-  
+
         if (!GLFW.active.windowSizeFunc) return;
-  
-  
+
+
         dynCall_viii(GLFW.active.windowSizeFunc, GLFW.active.id, GLFW.active.width, GLFW.active.height);
       },onFramebufferSizeChanged:function () {
         if (!GLFW.active) return;
-  
+
         if (!GLFW.active.framebufferSizeFunc) return;
-  
+
         dynCall_viii(GLFW.active.framebufferSizeFunc, GLFW.active.id, GLFW.active.width, GLFW.active.height);
       },requestFullscreen:function () {
         var RFS = Module["canvas"]['requestFullscreen'] ||
@@ -8604,7 +8604,7 @@ function copyTempDouble(ptr) {
       },setWindowTitle:function (winid, title) {
         var win = GLFW.WindowFromId(winid);
         if (!win) return;
-  
+
         win.title = UTF8ToString(title);
         if (GLFW.active.id == win.id) {
           document.title = win.title;
@@ -8617,10 +8617,10 @@ function copyTempDouble(ptr) {
         if (Browser.mainLoop.currentFrameNumber !== GLFW.lastGamepadStateFrame || !Browser.mainLoop.currentFrameNumber) {
           GLFW.lastGamepadState = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads : null);
           GLFW.lastGamepadStateFrame = Browser.mainLoop.currentFrameNumber;
-  
+
           for (var joy = 0; joy < GLFW.lastGamepadState.length; ++joy) {
             var gamepad = GLFW.lastGamepadState[joy];
-  
+
             if (gamepad) {
               if (!GLFW.joys[joy]) {
                 console.log('glfw joystick connected:',joy);
@@ -8631,33 +8631,33 @@ function copyTempDouble(ptr) {
                   buttons: allocate(new Array(gamepad.buttons.length), 'i8', ALLOC_NORMAL),
                   axes: allocate(new Array(gamepad.axes.length*4), 'float', ALLOC_NORMAL)
                 };
-  
+
                 if (GLFW.joystickFunc) {
                   dynCall_vii(GLFW.joystickFunc, joy, 0x00040001); // GLFW_CONNECTED
                 }
               }
-  
+
               var data = GLFW.joys[joy];
-  
+
               for (var i = 0; i < gamepad.buttons.length;  ++i) {
                 setValue(data.buttons + i, gamepad.buttons[i].pressed, 'i8');
               }
-  
+
               for (var i = 0; i < gamepad.axes.length; ++i) {
                 setValue(data.axes + i*4, gamepad.axes[i], 'float');
               }
             } else {
               if (GLFW.joys[joy]) {
                 console.log('glfw joystick disconnected',joy);
-  
+
                 if (GLFW.joystickFunc) {
                   dynCall_vii(GLFW.joystickFunc, joy, 0x00040002); // GLFW_DISCONNECTED
                 }
-  
+
                 _free(GLFW.joys[joy].id);
                 _free(GLFW.joys[joy].buttons);
                 _free(GLFW.joys[joy].axes);
-  
+
                 delete GLFW.joys[joy];
               }
             }
@@ -8702,14 +8702,14 @@ function copyTempDouble(ptr) {
       },onDrop:function (event) {
         if (!GLFW.active || !GLFW.active.dropFunc) return;
         if (!event.dataTransfer || !event.dataTransfer.files || event.dataTransfer.files.length == 0) return;
-  
+
         event.preventDefault();
-  
-  
+
+
         return false;
       },onDragover:function (event) {
         if (!GLFW.active || !GLFW.active.dropFunc) return;
-  
+
         event.preventDefault();
         return false;
       },setWindowSizeCallback:function (winid, cbfun) {
@@ -8717,8 +8717,8 @@ function copyTempDouble(ptr) {
         if (!win) return null;
         var prevcbfun = win.windowSizeFunc;
         win.windowSizeFunc = cbfun;
-       
-  
+
+
         return prevcbfun;
       },setWindowCloseCallback:function (winid, cbfun) {
         var win = GLFW.WindowFromId(winid);
@@ -8740,7 +8740,7 @@ function copyTempDouble(ptr) {
       },setInputMode:function (winid, mode, value) {
         var win = GLFW.WindowFromId(winid);
         if (!win) return;
-  
+
         switch(mode) {
           case 0x00033001: { // GLFW_CURSOR
             switch(value) {
@@ -8798,13 +8798,13 @@ function copyTempDouble(ptr) {
       },getWindowPos:function (winid, x, y) {
         var wx = 0;
         var wy = 0;
-  
+
         var win = GLFW.WindowFromId(winid);
         if (win) {
           wx = win.x;
           wy = win.y;
         }
-  
+
         setValue(x, wx, 'i32');
         setValue(y, wy, 'i32');
       },setWindowPos:function (winid, x, y) {
@@ -8815,19 +8815,19 @@ function copyTempDouble(ptr) {
       },getWindowSize:function (winid, width, height) {
         var ww = 0;
         var wh = 0;
-  
+
         var win = GLFW.WindowFromId(winid);
         if (win) {
           ww = win.width;
           wh = win.height;
         }
-  
+
         setValue(width, ww, 'i32');
         setValue(height, wh, 'i32');
       },setWindowSize:function (winid, width, height) {
         var win = GLFW.WindowFromId(winid);
         if (!win) return;
-  
+
         if (GLFW.active.id == win.id) {
           if (width == screen.width && height == screen.height) {
             GLFW.requestFullscreen();
@@ -8838,28 +8838,28 @@ function copyTempDouble(ptr) {
             win.height = height;
           }
         }
-  
+
         if (!win.windowSizeFunc) return;
-  
-  
+
+
         dynCall_viii(win.windowSizeFunc, win.id, width, height);
       },createWindow:function (width, height, title, monitor, share) {
         var i, id;
         for (i = 0; i < GLFW.windows.length && GLFW.windows[i] !== null; i++);
         if (i > 0) throw "glfwCreateWindow only supports one window at time currently";
-  
+
         // id for window
         id = i + 1;
-  
+
         // not valid
         if (width <= 0 || height <= 0) return 0;
-  
+
         if (monitor) {
           GLFW.requestFullscreen();
         } else {
           Browser.setCanvasSize(width, height);
         }
-  
+
         // Create context when there are no existing alive windows
         for (i = 0; i < GLFW.windows.length && GLFW.windows[i] == null; i++);
         if (i == GLFW.windows.length) {
@@ -8867,41 +8867,41 @@ function copyTempDouble(ptr) {
             antialias: (GLFW.hints[0x0002100D] > 1), // GLFW_SAMPLES
             depth: (GLFW.hints[0x00021005] > 0),     // GLFW_DEPTH_BITS
             stencil: (GLFW.hints[0x00021006] > 0),   // GLFW_STENCIL_BITS
-            alpha: (GLFW.hints[0x00021004] > 0)      // GLFW_ALPHA_BITS 
+            alpha: (GLFW.hints[0x00021004] > 0)      // GLFW_ALPHA_BITS
           }
           Module.ctx = Browser.createContext(Module['canvas'], true, true, contextAttributes);
         }
-  
+
         // If context creation failed, do not return a valid window
         if (!Module.ctx) return 0;
-  
+
         // Get non alive id
         var win = new GLFW.Window(id, width, height, title, monitor, share);
-  
+
         // Set window to array
         if (id - 1 == GLFW.windows.length) {
           GLFW.windows.push(win);
         } else {
           GLFW.windows[id - 1] = win;
         }
-  
+
         GLFW.active = win;
         return win.id;
       },destroyWindow:function (winid) {
         var win = GLFW.WindowFromId(winid);
         if (!win) return;
-  
+
         if (win.windowCloseFunc)
           dynCall_vi(win.windowCloseFunc, win.id);
-  
+
         GLFW.windows[win.id - 1] = null;
         if (GLFW.active.id == win.id)
           GLFW.active = null;
-  
+
         // Destroy context when no alive windows
         for (var i = 0; i < GLFW.windows.length; i++)
           if (GLFW.windows[i] !== null) return;
-  
+
         Module.ctx = Browser.destroyContext(Module['canvas'], true, true);
       },swapBuffers:function (winid) {
       },GLFW2ParamToGLFW3Param:function (param) {
@@ -8964,12 +8964,12 @@ function copyTempDouble(ptr) {
 
   function _glfwInit() {
       if (GLFW.windows) return 1; // GL_TRUE
-  
+
       GLFW.initialTime = GLFW.getTime();
       GLFW.hints = GLFW.defaultHints;
       GLFW.windows = new Array()
       GLFW.active = null;
-  
+
       window.addEventListener("gamepadconnected", GLFW.onGamepadConnected, true);
       window.addEventListener("gamepaddisconnected", GLFW.onGamepadDisconnected, true);
       window.addEventListener("keydown", GLFW.onKeydown, true);
@@ -8985,7 +8985,7 @@ function copyTempDouble(ptr) {
       Module["canvas"].addEventListener('mouseleave', GLFW.onMouseleave, true);
       Module["canvas"].addEventListener('drop', GLFW.onDrop, true);
       Module["canvas"].addEventListener('dragover', GLFW.onDragover, true);
-  
+
       Browser.resizeListeners.push(function(width, height) {
          GLFW.onCanvasResize(width, height);
       });
@@ -9034,29 +9034,29 @@ function copyTempDouble(ptr) {
       Module["canvas"].removeEventListener('mouseleave', GLFW.onMouseleave, true);
       Module["canvas"].removeEventListener('drop', GLFW.onDrop, true);
       Module["canvas"].removeEventListener('dragover', GLFW.onDragover, true);
-  
-  
+
+
       Module["canvas"].width = Module["canvas"].height = 1;
       GLFW.windows = null;
       GLFW.active = null;
     }
 
-  
+
   function _emscripten_memcpy_big(dest, src, num) {
       HEAPU8.set(HEAPU8.subarray(src, src+num), dest);
     }
-  
-   
 
-   
 
-  
-  
+
+
+
+
+
   function abortOnCannotGrowMemory(requestedSize) {
       abort('Cannot enlarge memory arrays to size ' + requestedSize + ' bytes (OOM). Either (1) compile with  -s TOTAL_MEMORY=X  with X higher than the current value ' + HEAP8.length + ', (2) compile with  -s ALLOW_MEMORY_GROWTH=1  which allows increasing the size at runtime, or (3) if you want malloc to return NULL (0) instead of this abort, compile with  -s ABORTING_MALLOC=0 ');
     }function _emscripten_resize_heap(requestedSize) {
       abortOnCannotGrowMemory(requestedSize);
-    } 
+    }
 
 FS.staticInit();Module["FS_createFolder"] = FS.createFolder;Module["FS_createPath"] = FS.createPath;Module["FS_createDataFile"] = FS.createDataFile;Module["FS_createPreloadedFile"] = FS.createPreloadedFile;Module["FS_createLazyFile"] = FS.createLazyFile;Module["FS_createLink"] = FS.createLink;Module["FS_createDevice"] = FS.createDevice;Module["FS_unlink"] = FS.unlink;;
 var GLctx; GL.init();
@@ -10127,4 +10127,3 @@ if (typeof exports === 'object' && typeof module === 'object')
       define([], function() { return AWO_EM_MODULE; });
     else if (typeof exports === 'object')
       exports["AWO_EM_MODULE"] = AWO_EM_MODULE;
-    
