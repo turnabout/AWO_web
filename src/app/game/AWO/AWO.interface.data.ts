@@ -33,7 +33,7 @@ export class AWODataInterface {
         const heightPtr: any = this.state.emscripten._malloc(4);
 
         let tempBuffer: any = this.state.emscripten.ccall(
-            "testy",
+            "test_entity_visuals_reader",
             "number",
             ["number", "number"],
             [this.state.gamePtr, lenPtr]
@@ -89,18 +89,25 @@ export class AWODataInterface {
         const result: TileTypeData[] = [];
 
         // Wrap function to get tile variations' data
+        const getNextTileType: any = this.state.emscripten.cwrap(
+            "get_next_game_tile_type_data",
+            "string",
+            ["number"]
+        );
+        const typeValuePtr: any = this.state.emscripten._malloc(1);
+
         const getNextTileVar: any = this.state.emscripten.cwrap(
-            "editor_get_next_tile_var",
+            "get_next_game_tile_var_data",
             "string",
             ["number", "number", "number"]
         );
+        const varValuePtr: any = this.state.emscripten._malloc(1);
 
         // Loop every tile type
         let tileTypeString: string;
-        let tileTypeValue: number = 0;
-        const varValuePtr: any = this.state.emscripten._malloc(1);
 
-        while (tileTypeString = this.state.emscripten.ccall("editor_get_next_tile_type", "string", [])) {
+        while (tileTypeString = getNextTileType(typeValuePtr)) {
+            let tileTypeValue: number = this.state.emscripten.getValue(typeValuePtr, "i8");
 
             // Create this tile type object
             const tileTypeData: TileTypeData = {
@@ -108,7 +115,6 @@ export class AWODataInterface {
                 name: tileTypeString,
                 variations: []
             };
-
 
             // Loop and record all of this tile type's variations
             let variationStr: string;
@@ -121,12 +127,9 @@ export class AWODataInterface {
             }
 
             result.push(tileTypeData);
-            tileTypeValue++;
         }
 
         this.state.emscripten._free(varValuePtr);
         return result;
     }
-
-
 }
