@@ -50,7 +50,7 @@ export class GameService {
                     this.initializedChange.next(true);
 
                     // TODO: move elsewhere
-                    this.AWO.init.prepareGame();
+                    this.AWO.init.prepareDesignRoomGame();
                     this.AWO.init.runGame();
                 }
 

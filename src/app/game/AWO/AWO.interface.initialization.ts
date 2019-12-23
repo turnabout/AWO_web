@@ -44,8 +44,8 @@ export class AWOInitializationInterface {
      * Initializes the game's base components.
      * Updates status: Interface_Initialized -> Game_Initialized
      *
-     * @param width The window's width.
-     * @param height The window's height.
+     * @param width The game's width.
+     * @param height The game's height.
      */
     initializeGame(width: number, height: number): void {
         if (!this.state.checkState(AWOState.Interface_Initialized)) {
@@ -53,11 +53,18 @@ export class AWOInitializationInterface {
         }
 
         this.state.gamePtr = this.state.emscripten.ccall(
-            "init_AWO",
+            "create_game",
             "number",
             ["number", "number"],
             [width, height]
         );
+
+        if (this.state.gamePtr === 0) {
+            console.error(`initializeGame error: create_game returned NULL`);
+            // TODO: print error(s) from AWO
+
+            return;
+        }
 
         this.state.status = AWOState.Game_Initialized;
     }
@@ -66,12 +73,23 @@ export class AWOInitializationInterface {
      * Prepares the game for a match between players.
      * Updates status: Game_Initialized -> Game_Ready
      */
-    prepareGame(): void {
+    prepareDesignRoomGame(): void {
         if (!this.state.checkState(AWOState.Game_Initialized)) {
             return;
         }
 
-        // TODO
+        if (!this.state.emscripten.ccall(
+            "prepare_design_room_game",
+            "number",
+            ["number"],
+            [this.state.gamePtr]
+        )) {
+            console.error(`prepareDesignRoomGame error: prepare_design_room_game returned negative result`);
+            // TODO: print error(s) from AWO
+
+            return;
+        }
+
         this.state.status = AWOState.Game_Ready;
     }
 
@@ -86,7 +104,7 @@ export class AWOInitializationInterface {
 
         // Start running the game
         setTimeout(() => {
-            this.state.emscripten.ccall("run_AWO", null, ["number"], [this.state.gamePtr]);
+            this.state.emscripten.ccall("run_game", null, ["number"], [this.state.gamePtr]);
         });
 
         this.state.status = AWOState.Game_Running;

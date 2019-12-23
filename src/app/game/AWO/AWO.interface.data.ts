@@ -82,22 +82,22 @@ export class AWODataInterface {
      */
     getTileData(): TileTypeData[] {
 
-        if (!this.state.checkStateMinimum(AWOState.Interface_Initialized)) {
-            return null;
+        if (!this.state.checkStateMinimum(AWOState.Game_Initialized)) {
+            return [];
         }
 
         const result: TileTypeData[] = [];
 
         // Wrap function to get tile variations' data
         const getNextTileType: any = this.state.emscripten.cwrap(
-            "get_next_game_tile_type_data",
+            "get_next_game_tile_type",
             "string",
             ["number"]
         );
         const typeValuePtr: any = this.state.emscripten._malloc(1);
 
         const getNextTileVar: any = this.state.emscripten.cwrap(
-            "get_next_game_tile_var_data",
+            "get_next_game_tile_var",
             "string",
             ["number", "number", "number"]
         );

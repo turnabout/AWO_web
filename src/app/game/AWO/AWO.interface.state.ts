@@ -79,15 +79,14 @@ export class AWOInterfaceState {
      * @returns Whether the status is as expected.
      */
     checkStateMinimum(expectedMin: AWOState): boolean {
-
         if (this.status >= expectedMin) {
             return true;
         }
 
-        console.error(
-            `expected state to be at minimum ${expectedMin} ('${AWOStateStr[expectedMin]}'), 
-            was ${this.status} ('${AWOStateStr[this.status]}')`
-        );
+        let errStr: string = `expected state to be at minimum ${expectedMin} ('${AWOStateStr[expectedMin]}'), `;
+        errStr += `was ${this.status} ('${AWOStateStr[this.status]}')`;
+
+        console.error(errStr);
 
         return false;
     }
