@@ -3,9 +3,10 @@ import { AWOInitializationInterface } from "./AWO.interface.initialization";
 import { AWOInterfaceState } from "./AWO.interface.state";
 import { AWOEditorInterface } from "./AWO.interface.editor";
 import { AWOGameInterface } from "./AWO.interface.game";
+import { AWODataInterface } from "./AWO.interface.data";
 
 export * from "./AWO.interface.state-enum";
-export * from "./AWO.interface.editor.types";
+export * from "./AWO.interface.data.types";
 
 /**
  * Main AWO interface class used as an entry point for all communications with the AWO core game program.
@@ -19,6 +20,7 @@ export class AWOInterface {
     public init: AWOInitializationInterface;
     public editor: AWOEditorInterface;
     public game: AWOGameInterface;
+    public data: AWODataInterface;
 
     // The current AWO interface status.
     public get state(): AWOState {
@@ -30,5 +32,6 @@ export class AWOInterface {
         this.init = new AWOInitializationInterface(this.interfaceState);
         this.editor = new AWOEditorInterface(this.interfaceState);
         this.game = new AWOGameInterface(this.interfaceState);
+        this.data = new AWODataInterface(this.interfaceState);
     }
 }

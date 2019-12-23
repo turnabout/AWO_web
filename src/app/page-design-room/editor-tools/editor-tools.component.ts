@@ -32,10 +32,10 @@ export class EditorToolsComponent implements OnInit {
 
     ngOnInit() {
         if (this.gameService.initialized) {
-            this.tileData = this.gameService.AWO.editor.getTileData();
+            this.tileData = this.gameService.AWO.data.getTileData();
         } else {
             this.gameService.initializedChange.subscribe((value) => {
-                this.tileData = this.gameService.AWO.editor.getTileData();
+                this.tileData = this.gameService.AWO.data.getTileData();
             });
         }
     }
