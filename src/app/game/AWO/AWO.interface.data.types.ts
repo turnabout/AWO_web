@@ -23,3 +23,21 @@ export enum SelectedEntityKind {
     Tile,
     Unit,
 }
+
+/**
+ * Every possible kind of game entity.
+ */
+export enum EntityKind {
+    NeutralTile,
+    Property,
+    Unit,
+}
+
+/**
+ * Every weather variation used ingame. Used as a palette variation for tiles.
+ */
+export enum Weather {
+    Clear,
+    Snow,
+    Rain,
+}

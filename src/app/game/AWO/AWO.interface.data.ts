@@ -1,5 +1,5 @@
 import { AWOInterfaceState } from "./AWO.interface.state";
-import { TileTypeData, TileVariationData, SelectedEntityKind } from "./AWO.interface.data.types";
+import { TileTypeData, TileVariationData, SelectedEntityKind, EntityKind, Weather } from "./AWO.interface.data.types";
 import { AWOState } from "./AWO.interface.state-enum";
 
 
@@ -11,31 +11,68 @@ export class AWODataInterface {
     private canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
 
+    // Module used for reading texture data from game entities.
+    private entityTextureReader: number;
+
+    // C-wrapped function used to read texture data for game entities
+    private readGameEntityTexture: any;
+
     constructor(private state: AWOInterfaceState) {
         this.canvas = document.createElement("canvas");
         this.ctx = this.canvas.getContext("2d");
+
+        this.entityTextureReader = 0;
+    }
+
+    /**
+     * Internally sets the entity texture reader. Game must be initialized.
+     */
+    private setEntityTextureReader() {
+        if (!this.state.checkStateMinimum(AWOState.Game_Initialized) || this.entityTextureReader !== 0) {
+            return;
+        }
+
+        this.entityTextureReader = this.state.emscripten.ccall(
+            "create_game_entity_texture_reader",
+            "number",
+            ["number"],
+            [this.state.gamePtr]
+        );
+
+        this.readGameEntityTexture = this.state.emscripten.cwrap(
+            "read_game_entity_texture",
+            "number",
+            ["number", "number", "number", "number", "number", "number", "number"]
+        );
     }
 
     /**
      * Generates an image data URL for the given entity.
-     * TODO
      *
-     * @param kind The kind of the entity to get the image data URL for.
+     * @param kind The entity kind of the entity to get the image data URL for.
      * @param type The type of the entity to get the image data URL for.
-     * @param variation The variation of the entity.
+     * @param variation The variation of the entity. Determines the visual style.
+     * @param paletteVariation The palette variation of the entity. Determines the colors applied.
      * @returns The generated image data URL string.
      */
-    private getEntityImageDataURL(): string {
+    private getEntityImageDataURL(kind: EntityKind, type: number, variation: number, paletteVariation: number): string {
+
+        if (!this.state.checkStateMinimum(AWOState.Game_Initialized)) {
+            return "";
+        }
 
         // Get buffer filled with pixel data of entity from AWO core
         const widthPtr: any = this.state.emscripten._malloc(4);
         const heightPtr: any = this.state.emscripten._malloc(4);
 
-        const tempBuffer: any = this.state.emscripten.ccall(
-            "test_entity_visuals_reader",
-            "number",
-            ["number", "number", "number"],
-            [this.state.gamePtr, widthPtr, heightPtr]
+        const textureBuffer: any = this.readGameEntityTexture(
+            this.entityTextureReader,
+            kind,
+            type,
+            variation,
+            paletteVariation,
+            widthPtr,
+            heightPtr
         );
 
         // Transfer buffer length
@@ -49,11 +86,11 @@ export class AWODataInterface {
         for (let i = 0; i < bufferLen; i++) {
             // The AND operation is so values get interpreted as unsigned
             // TODO: AND might not be needed
-            buffer[i] = this.state.emscripten.getValue(tempBuffer + i, "i8") & 0xFF;
+            buffer[i] = this.state.emscripten.getValue(textureBuffer + i, "i8") & 0xFF;
         }
 
         // Free allocated buffers
-        this.state.emscripten._free(tempBuffer);
+        this.state.emscripten._free(textureBuffer);
         this.state.emscripten._free(widthPtr);
         this.state.emscripten._free(heightPtr);
 
@@ -82,16 +119,16 @@ export class AWODataInterface {
             return [];
         }
 
-        const testy: string = this.getEntityImageDataURL();
+        // Ensure the entity texture reader is set
+        this.setEntityTextureReader();
 
-        const result: TileTypeData[] = [];
-
-        // Wrap function to get tile variations' data
+        // Wrap function used to get tile variations' data
         const getNextTileType: any = this.state.emscripten.cwrap(
             "get_next_game_tile_type",
             "string",
             ["number"]
         );
+
         const typeValuePtr: any = this.state.emscripten._malloc(1);
 
         const getNextTileVar: any = this.state.emscripten.cwrap(
@@ -101,7 +138,8 @@ export class AWODataInterface {
         );
         const varValuePtr: any = this.state.emscripten._malloc(1);
 
-        // Loop every tile type
+        // Loop every tile type to gather result
+        const result: TileTypeData[] = [];
         let tileTypeString: string;
 
         while (tileTypeString = getNextTileType(typeValuePtr)) {
@@ -117,10 +155,18 @@ export class AWODataInterface {
             // Loop and record all of this tile type's variations
             let variationStr: string;
             while (variationStr = getNextTileVar(this.state.gamePtr, tileTypeValue, varValuePtr)) {
+
+                let varValue: number = this.state.emscripten.getValue(varValuePtr, "i8");
+
                 tileTypeData.variations.push({
                     name: variationStr,
-                    value: this.state.emscripten.getValue(varValuePtr, "i8"),
-                    imageDataURL: testy
+                    value: varValue,
+                    imageDataURL: this.getEntityImageDataURL(
+                        EntityKind.NeutralTile,
+                        tileTypeValue,
+                        varValue,
+                        Weather.Clear
+                    )
                 });
             }
 

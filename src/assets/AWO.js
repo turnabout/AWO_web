@@ -207,7 +207,7 @@ Module['FS_createPath']('/AWO/Resources', 'Textures', true, true);
   }
 
  }
- loadPackage({"files": [{"start": 0, "audio": 0, "end": 82974, "filename": "/AWO/Resources/Data/game_data.json"}, {"start": 82974, "audio": 0, "end": 101602, "filename": "/AWO/Resources/Fonts/aw2-gba.ttf"}, {"start": 101602, "audio": 0, "end": 101822, "filename": "/AWO/Resources/Fonts/license.txt"}, {"start": 101822, "audio": 0, "end": 102495, "filename": "/AWO/Resources/Fonts/readme.txt"}, {"start": 102495, "audio": 0, "end": 102661, "filename": "/AWO/Resources/Shaders/basic.frag"}, {"start": 102661, "audio": 0, "end": 102936, "filename": "/AWO/Resources/Shaders/basic.vert"}, {"start": 102936, "audio": 0, "end": 104729, "filename": "/AWO/Resources/Shaders/grid.frag"}, {"start": 104729, "audio": 0, "end": 105041, "filename": "/AWO/Resources/Shaders/grid.vert"}, {"start": 105041, "audio": 0, "end": 105414, "filename": "/AWO/Resources/Shaders_ES/basic.frag"}, {"start": 105414, "audio": 0, "end": 105658, "filename": "/AWO/Resources/Shaders_ES/basic.vert"}, {"start": 105658, "audio": 0, "end": 107469, "filename": "/AWO/Resources/Shaders_ES/grid.frag"}, {"start": 107469, "audio": 0, "end": 107752, "filename": "/AWO/Resources/Shaders_ES/grid.vert"}, {"start": 107752, "audio": 0, "end": 351688, "filename": "/AWO/Resources/Textures/spritesheet.png"}], "remote_package_size": 351688, "package_uuid": "8d25fa23-f8c3-4135-9dd7-e2b64d7c806f"});
+ loadPackage({"files": [{"start": 0, "audio": 0, "end": 82974, "filename": "/AWO/Resources/Data/game_data.json"}, {"start": 82974, "audio": 0, "end": 101602, "filename": "/AWO/Resources/Fonts/aw2-gba.ttf"}, {"start": 101602, "audio": 0, "end": 101822, "filename": "/AWO/Resources/Fonts/license.txt"}, {"start": 101822, "audio": 0, "end": 102495, "filename": "/AWO/Resources/Fonts/readme.txt"}, {"start": 102495, "audio": 0, "end": 102661, "filename": "/AWO/Resources/Shaders/basic.frag"}, {"start": 102661, "audio": 0, "end": 102936, "filename": "/AWO/Resources/Shaders/basic.vert"}, {"start": 102936, "audio": 0, "end": 104729, "filename": "/AWO/Resources/Shaders/grid.frag"}, {"start": 104729, "audio": 0, "end": 105041, "filename": "/AWO/Resources/Shaders/grid.vert"}, {"start": 105041, "audio": 0, "end": 105414, "filename": "/AWO/Resources/Shaders_ES/basic.frag"}, {"start": 105414, "audio": 0, "end": 105658, "filename": "/AWO/Resources/Shaders_ES/basic.vert"}, {"start": 105658, "audio": 0, "end": 107469, "filename": "/AWO/Resources/Shaders_ES/grid.frag"}, {"start": 107469, "audio": 0, "end": 107752, "filename": "/AWO/Resources/Shaders_ES/grid.vert"}, {"start": 107752, "audio": 0, "end": 351688, "filename": "/AWO/Resources/Textures/spritesheet.png"}], "remote_package_size": 351688, "package_uuid": "f3118c1c-826c-456b-a6da-219e5dcb6de1"});
 
 })();
 
@@ -1317,11 +1317,11 @@ function updateGlobalBufferViews() {
 
 
 var STATIC_BASE = 1024,
-    STACK_BASE = 22960,
+    STACK_BASE = 23040,
     STACKTOP = STACK_BASE,
-    STACK_MAX = 5265840,
-    DYNAMIC_BASE = 5265840,
-    DYNAMICTOP_PTR = 22928;
+    STACK_MAX = 5265920,
+    DYNAMIC_BASE = 5265920,
+    DYNAMICTOP_PTR = 23008;
 
 assert(STACK_BASE % 16 === 0, 'stack must start aligned');
 assert(DYNAMIC_BASE % 16 === 0, 'heap must start aligned');
@@ -1833,7 +1833,7 @@ var ASM_CONSTS = [];
 
 
 
-// STATICTOP = STATIC_BASE + 21936;
+// STATICTOP = STATIC_BASE + 22016;
 /* global initializers */ /*__ATINIT__.push();*/
 
 
@@ -1844,7 +1844,7 @@ var ASM_CONSTS = [];
 
 
 /* no memory initializer */
-var tempDoublePtr = 22944
+var tempDoublePtr = 23024
 assert(tempDoublePtr % 8 == 0);
 
 function copyTempFloat(ptr) { // functions, because inlining this code increases code size too much
@@ -9518,6 +9518,12 @@ var _create_game = Module["_create_game"] = function() {
   return Module["asm"]["_create_game"].apply(null, arguments)
 };
 
+var _create_game_entity_texture_reader = Module["_create_game_entity_texture_reader"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return Module["asm"]["_create_game_entity_texture_reader"].apply(null, arguments)
+};
+
 var _emscripten_GetProcAddress = Module["_emscripten_GetProcAddress"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
@@ -9540,6 +9546,12 @@ var _free_game = Module["_free_game"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
   return Module["asm"]["_free_game"].apply(null, arguments)
+};
+
+var _free_game_entity_visuals_reader = Module["_free_game_entity_visuals_reader"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return Module["asm"]["_free_game_entity_visuals_reader"].apply(null, arguments)
 };
 
 var _get_next_game_tile_type = Module["_get_next_game_tile_type"] = function() {
@@ -9576,6 +9588,12 @@ var _prepare_design_room_game = Module["_prepare_design_room_game"] = function()
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
   return Module["asm"]["_prepare_design_room_game"].apply(null, arguments)
+};
+
+var _read_game_entity_texture = Module["_read_game_entity_texture"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return Module["asm"]["_read_game_entity_texture"].apply(null, arguments)
 };
 
 var _realloc = Module["_realloc"] = function() {
