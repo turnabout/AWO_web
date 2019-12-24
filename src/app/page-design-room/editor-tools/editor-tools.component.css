@@ -18,8 +18,22 @@
     height: 300px;
 }
 
-.bla {
-    width: 20px;
-    height: 20px;
-    border: 1px solid red;
+.tile-selection-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.tile-selection {
+    width: 64px;
+    height: 64px;
+    -webkit-background-size: cover;
+    background-size: cover;
+
+    image-rendering: optimizeSpeed;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -o-crisp-edges;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: pixelated;
+    image-rendering: optimize-contrast;
+    -ms-interpolation-mode: nearest-neighbor;
 }

@@ -10,20 +10,37 @@ export class EditorToolsComponent implements OnInit {
 
     public selectedTileType: TileTypeData;
     public selectedTileVariation: TileVariationData;
+
+
     public tileData: TileTypeData[] = [];
 
     constructor(private gameService: GameService) { }
 
     /**
      * Updates the currently selected tile.
-     * Uses `selectedTileType` which is set automatically and the given variation.
-     * @param tileVariation The tile variation to update the selected tile to.
+     * @param tileType The new selected tile type.
      */
-    updatedSelectedTile(tileVariation: TileVariationData) {
+    updatedSelectedTile(tileType: TileTypeData) {
+        this.selectedTileType = tileType;
+        this.selectedTileVariation = null;
+
+        // Internally update the selected tile
+        this.gameService.AWO.editor.updateEditorSelectedEntity(
+            SelectedEntityKind.Tile,
+            this.selectedTileType.value,
+            -1
+        );
+    }
+
+    /**
+     * Updates the currently selected tile variation.
+     * @param tileVariation The new selected tile variation.
+     */
+    updateSelectedVariation(tileVariation: TileVariationData) {
         this.selectedTileVariation = tileVariation;
 
         // Internally update the selected tile
-        this.gameService.AWO.editor.updateEditorSelectedTile(
+        this.gameService.AWO.editor.updateEditorSelectedEntity(
             SelectedEntityKind.Tile,
             this.selectedTileType.value,
             this.selectedTileVariation.value
@@ -33,9 +50,11 @@ export class EditorToolsComponent implements OnInit {
     ngOnInit() {
         if (this.gameService.initialized) {
             this.tileData = this.gameService.AWO.data.getTileData();
+            this.selectedTileType = this.tileData[0];
         } else {
             this.gameService.initializedChange.subscribe((value) => {
                 this.tileData = this.gameService.AWO.data.getTileData();
+                this.selectedTileType = this.tileData[0];
             });
         }
     }

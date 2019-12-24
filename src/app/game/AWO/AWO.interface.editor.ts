@@ -15,11 +15,11 @@ export class AWOEditorInterface {
      *
      * @param kind The kind of the entity to update to. Tile or unit.
      * @param type The type of the entity to update to.
-     * @param variation The variation of the entity to update to.
+     * @param variation The variation of the entity to update to. -1 for none specified.
      */
-    updateEditorSelectedTile(kind: SelectedEntityKind, type: number, variation: number): void {
+    updateEditorSelectedEntity(kind: SelectedEntityKind, type: number, variation: number): void {
         this.state.emscripten.ccall(
-            "editor_update_selected_tile",
+            "update_game_editor_selected_entity",
             null,
             ["number", "number", "number", "number"],
             [this.state.gamePtr, kind, type, variation]

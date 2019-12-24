@@ -4,20 +4,21 @@
 
             <!-- Tile type selector -->
             <div class="tiles" *ngIf="tileData.length">
-                <h2>Tile</h2>
-
-                <div
-                    *ngFor="let tile of tileData"
-                >
-                    {{ tile.name }}
-                    <img [src]="tile.variations[0].imageDataURL" />
-
+                <div class="tile-selection-container">
                     <div
-                        class="bla"
-                        [ngStyle]="{ 'background-image': 'url(' + tile.variations[0].imageDataURL + ')'}"
-                    ></div>
+                        class="tile-selection"
+                        *ngFor="let tileType of tileData"
+                        (click)="updatedSelectedTile(tileType)"
+                        [ngStyle]="{
+                            'background-image': 'url(' + tileType.variations[0].imageDataURL + ')',
+                            'border': (tileType === selectedTileType) ? '1px solid red' : 'none'
+                        }"
+                    >
+                    </div>
+                </div>
 
-
+                <div class="tile-selection-container" *ngIf="selectedTileType">
+                    <h1>{{ selectedTileType.name }}</h1>
                 </div>
 
                 <!-- Tile variation selector -->
