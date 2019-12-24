@@ -173,11 +173,8 @@ Module['FS_createPath']('/AWO/Resources', 'Textures', true, true);
       var byteArray = new Uint8Array(arrayBuffer);
       var curr;
       
-        // copy the entire loaded file into a spot in the heap. Files will refer to slices in that. They cannot be freed though
-        // (we may be allocating before malloc is ready, during startup).
-        var ptr = Module['getMemory'](byteArray.length);
-        Module['HEAPU8'].set(byteArray, ptr);
-        DataRequest.prototype.byteArray = Module['HEAPU8'].subarray(ptr, ptr+byteArray.length);
+        // Reuse the bytearray from the XHR as the source for file reads.
+        DataRequest.prototype.byteArray = byteArray;
   
           var files = metadata.files;
           for (var i = 0; i < files.length; ++i) {
@@ -207,7 +204,7 @@ Module['FS_createPath']('/AWO/Resources', 'Textures', true, true);
   }
 
  }
- loadPackage({"files": [{"start": 0, "audio": 0, "end": 82974, "filename": "/AWO/Resources/Data/game_data.json"}, {"start": 82974, "audio": 0, "end": 101602, "filename": "/AWO/Resources/Fonts/aw2-gba.ttf"}, {"start": 101602, "audio": 0, "end": 101822, "filename": "/AWO/Resources/Fonts/license.txt"}, {"start": 101822, "audio": 0, "end": 102495, "filename": "/AWO/Resources/Fonts/readme.txt"}, {"start": 102495, "audio": 0, "end": 102661, "filename": "/AWO/Resources/Shaders/basic.frag"}, {"start": 102661, "audio": 0, "end": 102936, "filename": "/AWO/Resources/Shaders/basic.vert"}, {"start": 102936, "audio": 0, "end": 104729, "filename": "/AWO/Resources/Shaders/grid.frag"}, {"start": 104729, "audio": 0, "end": 105041, "filename": "/AWO/Resources/Shaders/grid.vert"}, {"start": 105041, "audio": 0, "end": 105414, "filename": "/AWO/Resources/Shaders_ES/basic.frag"}, {"start": 105414, "audio": 0, "end": 105658, "filename": "/AWO/Resources/Shaders_ES/basic.vert"}, {"start": 105658, "audio": 0, "end": 107469, "filename": "/AWO/Resources/Shaders_ES/grid.frag"}, {"start": 107469, "audio": 0, "end": 107752, "filename": "/AWO/Resources/Shaders_ES/grid.vert"}, {"start": 107752, "audio": 0, "end": 351688, "filename": "/AWO/Resources/Textures/spritesheet.png"}], "remote_package_size": 351688, "package_uuid": "f3118c1c-826c-456b-a6da-219e5dcb6de1"});
+ loadPackage({"files": [{"start": 0, "audio": 0, "end": 82974, "filename": "/AWO/Resources/Data/game_data.json"}, {"start": 82974, "audio": 0, "end": 101602, "filename": "/AWO/Resources/Fonts/aw2-gba.ttf"}, {"start": 101602, "audio": 0, "end": 101822, "filename": "/AWO/Resources/Fonts/license.txt"}, {"start": 101822, "audio": 0, "end": 102495, "filename": "/AWO/Resources/Fonts/readme.txt"}, {"start": 102495, "audio": 0, "end": 102661, "filename": "/AWO/Resources/Shaders/basic.frag"}, {"start": 102661, "audio": 0, "end": 102936, "filename": "/AWO/Resources/Shaders/basic.vert"}, {"start": 102936, "audio": 0, "end": 104729, "filename": "/AWO/Resources/Shaders/grid.frag"}, {"start": 104729, "audio": 0, "end": 105041, "filename": "/AWO/Resources/Shaders/grid.vert"}, {"start": 105041, "audio": 0, "end": 105414, "filename": "/AWO/Resources/Shaders_ES/basic.frag"}, {"start": 105414, "audio": 0, "end": 105658, "filename": "/AWO/Resources/Shaders_ES/basic.vert"}, {"start": 105658, "audio": 0, "end": 107469, "filename": "/AWO/Resources/Shaders_ES/grid.frag"}, {"start": 107469, "audio": 0, "end": 107752, "filename": "/AWO/Resources/Shaders_ES/grid.vert"}, {"start": 107752, "audio": 0, "end": 351688, "filename": "/AWO/Resources/Textures/spritesheet.png"}], "remote_package_size": 351688, "package_uuid": "274eb79f-0c79-4b1f-b108-30ae3a94e563"});
 
 })();
 
@@ -1317,11 +1314,11 @@ function updateGlobalBufferViews() {
 
 
 var STATIC_BASE = 1024,
-    STACK_BASE = 23040,
+    STACK_BASE = 23072,
     STACKTOP = STACK_BASE,
-    STACK_MAX = 5265920,
-    DYNAMIC_BASE = 5265920,
-    DYNAMICTOP_PTR = 23008;
+    STACK_MAX = 5265952,
+    DYNAMIC_BASE = 5265952,
+    DYNAMICTOP_PTR = 23040;
 
 assert(STACK_BASE % 16 === 0, 'stack must start aligned');
 assert(DYNAMIC_BASE % 16 === 0, 'heap must start aligned');
@@ -1351,8 +1348,6 @@ assert(typeof Int32Array !== 'undefined' && typeof Float64Array !== 'undefined' 
   {
     wasmMemory = new WebAssembly.Memory({
       'initial': INITIAL_TOTAL_MEMORY / WASM_PAGE_SIZE
-      ,
-      'maximum': INITIAL_TOTAL_MEMORY / WASM_PAGE_SIZE
     });
   }
 
@@ -1833,7 +1828,7 @@ var ASM_CONSTS = [];
 
 
 
-// STATICTOP = STATIC_BASE + 22016;
+// STATICTOP = STATIC_BASE + 22048;
 /* global initializers */ /*__ATINIT__.push();*/
 
 
@@ -1844,7 +1839,7 @@ var ASM_CONSTS = [];
 
 
 /* no memory initializer */
-var tempDoublePtr = 23024
+var tempDoublePtr = 23056
 assert(tempDoublePtr % 8 == 0);
 
 function copyTempFloat(ptr) { // functions, because inlining this code increases code size too much
@@ -2387,6 +2382,17 @@ function copyTempDouble(ptr) {
           }
           return size;
         },write:function (stream, buffer, offset, length, position, canOwn) {
+          // If memory can grow, we don't want to hold on to references of
+          // the memory Buffer, as they may get invalidated. That means
+          // we need to do a copy here.
+          // FIXME: this is inefficient as the file packager may have
+          //        copied the data into memory already - we may want to
+          //        integrate more there and let the file packager loading
+          //        code be able to query if memory growth is on or off.
+          if (canOwn) {
+            warnOnce('file packager has copied file data into memory, but in memory growth we are forced to copy it again (see --no-heap-copy)');
+          }
+          canOwn = false;
   
           if (!length) return 0;
           var node = stream.node;
@@ -9050,8 +9056,76 @@ function copyTempDouble(ptr) {
   
   function abortOnCannotGrowMemory(requestedSize) {
       abort('Cannot enlarge memory arrays to size ' + requestedSize + ' bytes (OOM). Either (1) compile with  -s TOTAL_MEMORY=X  with X higher than the current value ' + HEAP8.length + ', (2) compile with  -s ALLOW_MEMORY_GROWTH=1  which allows increasing the size at runtime, or (3) if you want malloc to return NULL (0) instead of this abort, compile with  -s ABORTING_MALLOC=0 ');
+    }
+  
+  function emscripten_realloc_buffer(size) {
+      var PAGE_MULTIPLE = 65536;
+      size = alignUp(size, PAGE_MULTIPLE); // round up to wasm page size
+      var oldSize = buffer.byteLength;
+      // native wasm support
+      // note that this is *not* threadsafe. multiple threads can call .grow(), and each
+      // presents a delta, so in theory we may over-allocate here (e.g. if two threads
+      // ask to grow from 256MB to 512MB, we get 2 requests to add +256MB, and may end
+      // up growing to 768MB (even though we may have been able to make do with 512MB).
+      // TODO: consider decreasing the step sizes in emscripten_resize_heap
+      try {
+        var result = wasmMemory.grow((size - oldSize) / 65536); // .grow() takes a delta compared to the previous size
+        if (result !== (-1 | 0)) {
+          // success in native wasm memory growth, get the buffer from the memory
+          buffer = wasmMemory.buffer;
+          return true;
+        } else {
+          return false;
+        }
+      } catch(e) {
+        console.error('emscripten_realloc_buffer: Attempted to grow from ' + oldSize  + ' bytes to ' + size + ' bytes, but got error: ' + e);
+        return false;
+      }
     }function _emscripten_resize_heap(requestedSize) {
-      abortOnCannotGrowMemory(requestedSize);
+      var oldSize = _emscripten_get_heap_size();
+      // With pthreads, races can happen (another thread might increase the size in between), so return a failure, and let the caller retry.
+      assert(requestedSize > oldSize);
+  
+  
+      var PAGE_MULTIPLE = 65536;
+      var LIMIT = 2147483648 - PAGE_MULTIPLE; // We can do one page short of 2GB as theoretical maximum.
+  
+      if (requestedSize > LIMIT) {
+        err('Cannot enlarge memory, asked to go up to ' + requestedSize + ' bytes, but the limit is ' + LIMIT + ' bytes!');
+        return false;
+      }
+  
+      var MIN_TOTAL_MEMORY = 16777216;
+      var newSize = Math.max(oldSize, MIN_TOTAL_MEMORY); // So the loop below will not be infinite, and minimum asm.js memory size is 16MB.
+  
+      // TODO: see realloc_buffer - for PTHREADS we may want to decrease these jumps
+      while (newSize < requestedSize) { // Keep incrementing the heap size as long as it's less than what is requested.
+        if (newSize <= 536870912) {
+          newSize = alignUp(2 * newSize, PAGE_MULTIPLE); // Simple heuristic: double until 1GB...
+        } else {
+          // ..., but after that, add smaller increments towards 2GB, which we cannot reach
+          newSize = Math.min(alignUp((3 * newSize + 2147483648) / 4, PAGE_MULTIPLE), LIMIT);
+        }
+  
+        if (newSize === oldSize) {
+          warnOnce('Cannot ask for more memory since we reached the practical limit in browsers (which is just below 2GB), so the request would have failed. Requesting only ' + HEAP8.length);
+        }
+      }
+  
+  
+  
+      var start = Date.now();
+  
+      if (!emscripten_realloc_buffer(newSize)) {
+        err('Failed to grow the heap from ' + oldSize + ' bytes to ' + newSize + ' bytes, not enough memory!');
+        return false;
+      }
+  
+      updateGlobalBufferViews();
+  
+  
+  
+      return true;
     } 
 
 FS.staticInit();Module["FS_createFolder"] = FS.createFolder;Module["FS_createPath"] = FS.createPath;Module["FS_createDataFile"] = FS.createDataFile;Module["FS_createPreloadedFile"] = FS.createPreloadedFile;Module["FS_createLazyFile"] = FS.createLazyFile;Module["FS_createLink"] = FS.createLink;Module["FS_createDevice"] = FS.createDevice;Module["FS_unlink"] = FS.unlink;;
@@ -9495,6 +9569,7 @@ var asmLibraryArg = {
   "emscriptenWebGLGetTexPixelData": emscriptenWebGLGetTexPixelData,
   "emscriptenWebGLGetUniform": emscriptenWebGLGetUniform,
   "emscriptenWebGLGetVertexAttrib": emscriptenWebGLGetVertexAttrib,
+  "emscripten_realloc_buffer": emscripten_realloc_buffer,
   "jsStackTrace": jsStackTrace,
   "stackTrace": stackTrace,
   "stringToNewUTF8": stringToNewUTF8,
@@ -9528,6 +9603,12 @@ var _emscripten_GetProcAddress = Module["_emscripten_GetProcAddress"] = function
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
   return Module["asm"]["_emscripten_GetProcAddress"].apply(null, arguments)
+};
+
+var _emscripten_replace_memory = Module["_emscripten_replace_memory"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return Module["asm"]["_emscripten_replace_memory"].apply(null, arguments)
 };
 
 var _fflush = Module["_fflush"] = function() {
