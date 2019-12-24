@@ -28,35 +28,31 @@ export class AWODataInterface {
     private getEntityImageDataURL(): string {
 
         // Get buffer filled with pixel data of entity from AWO core
-        const lenPtr: any = this.state.emscripten._malloc(4);
         const widthPtr: any = this.state.emscripten._malloc(4);
         const heightPtr: any = this.state.emscripten._malloc(4);
 
-        let tempBuffer: any = this.state.emscripten.ccall(
+        const tempBuffer: any = this.state.emscripten.ccall(
             "test_entity_visuals_reader",
             "number",
-            ["number", "number"],
-            [this.state.gamePtr, lenPtr]
+            ["number", "number", "number"],
+            [this.state.gamePtr, widthPtr, heightPtr]
         );
 
         // Transfer buffer length
-        const bufferLen: number = this.state.emscripten.getValue(lenPtr, "i32");
-        // const width: number = this.interfaceState.emscripten.getValue(widthPtr, "i32");
-        // const height: number = this.interfaceState.emscripten.getValue(heightPtr, "i32");
-
-        const width = 20;
-        const height = 20;
+        const width: number = this.state.emscripten.getValue(widthPtr, "i32");
+        const height: number = this.state.emscripten.getValue(heightPtr, "i32");
+        const bufferLen: number = width * height * 4;
 
         // Transfer buffer's bytes into array for ease of use
-        let buffer = new Uint8ClampedArray(bufferLen);
+        const buffer = new Uint8ClampedArray(bufferLen);
 
         for (let i = 0; i < bufferLen; i++) {
             // The AND operation is so values get interpreted as unsigned
+            // TODO: AND might not be needed
             buffer[i] = this.state.emscripten.getValue(tempBuffer + i, "i8") & 0xFF;
         }
 
         // Free allocated buffers
-        this.state.emscripten._free(lenPtr);
         this.state.emscripten._free(tempBuffer);
         this.state.emscripten._free(widthPtr);
         this.state.emscripten._free(heightPtr);
