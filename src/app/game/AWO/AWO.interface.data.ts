@@ -82,6 +82,8 @@ export class AWODataInterface {
             return [];
         }
 
+        const testy: string = this.getEntityImageDataURL();
+
         const result: TileTypeData[] = [];
 
         // Wrap function to get tile variations' data
@@ -118,7 +120,7 @@ export class AWODataInterface {
                 tileTypeData.variations.push({
                     name: variationStr,
                     value: this.state.emscripten.getValue(varValuePtr, "i8"),
-                    imageDataURL: this.getEntityImageDataURL()
+                    imageDataURL: testy
                 });
             }
 
