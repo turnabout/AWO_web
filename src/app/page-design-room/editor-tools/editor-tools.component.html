@@ -8,9 +8,9 @@
                     <div
                         class="tile-selection"
                         [ngClass]="{
-                                'selected': (tileType === selectedTileType)
-                            }"
-                        (click)="updatedSelectedTile(tileType)"
+                            'selected': (tileType === selectedTileType)
+                        }"
+                        (click)="updateSelectedTileType(tileType)"
                         *ngFor="let tileType of tileData"
                     >
                         <div
@@ -32,10 +32,35 @@
                 </div>
 
                 <!-- Tile variation selector -->
+                <div class="tile-selection-container variation" *ngIf="selectedTileType">
+
+                    <div
+                        class="tile-selection"
+                        [ngClass]="{
+                            'selected': (tileVar === selectedTileVariation)
+                        }"
+                        (click)="updateSelectedTileVariation(tileVar)"
+                        *ngFor="let tileVar of selectedTileType.variations"
+                    >
+                        <div
+                            class="image"
+                            [ngClass]="{
+                                'tall': (tileVar.image.height > 16)
+                            }"
+                            [ngStyle]="{
+                                'background-image': 'url(' + tileVar.image.dataURL + ')'
+                            }"
+                        >
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Tile variation selector -->
                 <!--
                 <select
                     [(ngModel)]="selectedTileType"
-                    (ngModelChange)="updatedSelectedTile($event.variations[0])"
+                    (ngModelChange)="updateSelectedTileType($event.variations[0])"
                 >
                     <option
                         *ngFor="let tileType of tileData"
@@ -50,7 +75,7 @@
 
                     <select
                         [(ngModel)]="selectedTileVariation"
-                        (ngModelChange)="updatedSelectedTile($event)"
+                        (ngModelChange)="updateSelectedTileType($event)"
                     >
                         <option
                             *ngFor="let tileVar of selectedTileType.variations"

@@ -20,7 +20,7 @@ export class EditorToolsComponent implements OnInit {
      * Updates the currently selected tile.
      * @param tileType The new selected tile type.
      */
-    updatedSelectedTile(tileType: TileTypeData) {
+    updateSelectedTileType(tileType: TileTypeData) {
         this.selectedTileType = tileType;
         this.selectedTileVariation = null;
 
@@ -36,7 +36,7 @@ export class EditorToolsComponent implements OnInit {
      * Updates the currently selected tile variation.
      * @param tileVariation The new selected tile variation.
      */
-    updateSelectedVariation(tileVariation: TileVariationData) {
+    updateSelectedTileVariation(tileVariation: TileVariationData) {
         this.selectedTileVariation = tileVariation;
 
         // Internally update the selected tile

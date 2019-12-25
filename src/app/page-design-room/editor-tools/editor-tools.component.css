@@ -20,7 +20,7 @@
 
 .tile-selection-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
 }
 
 .tile-selection {
