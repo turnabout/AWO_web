@@ -13,7 +13,16 @@ export declare interface TileTypeData {
 export declare interface TileVariationData {
     value: number;
     name: string;
-    imageDataURL: string;
+    image: EntityImage;
+}
+
+/**
+ * An image representing an entity.
+ */
+export declare interface EntityImage {
+    dataURL: string;
+    width: number;
+    height: number;
 }
 
 /**

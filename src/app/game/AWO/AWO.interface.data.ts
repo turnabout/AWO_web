@@ -1,5 +1,8 @@
 import { AWOInterfaceState } from "./AWO.interface.state";
-import { TileTypeData, TileVariationData, SelectedEntityKind, EntityKind, Weather } from "./AWO.interface.data.types";
+import {
+    TileTypeData, TileVariationData, SelectedEntityKind, EntityKind, Weather,
+    EntityImage
+} from "./AWO.interface.data.types";
 import { AWOState } from "./AWO.interface.state-enum";
 
 
@@ -55,10 +58,15 @@ export class AWODataInterface {
      * @param paletteVariation The palette variation of the entity. Determines the colors applied.
      * @returns The generated image data URL string.
      */
-    private getEntityImageDataURL(kind: EntityKind, type: number, variation: number, paletteVariation: number): string {
+    private getEntityImage(
+        kind: EntityKind,
+        type: number,
+        variation: number,
+        paletteVariation: number
+    ): EntityImage {
 
         if (!this.state.checkStateMinimum(AWOState.Game_Initialized)) {
-            return "";
+            return {dataURL: "", width: 0, height: 0};
         }
 
         // Get buffer filled with pixel data of entity from AWO core
@@ -104,7 +112,11 @@ export class AWODataInterface {
             0
         );
 
-        return this.canvas.toDataURL("image/png");
+        return {
+            dataURL: this.canvas.toDataURL("image/png"),
+            width,
+            height,
+        };
     }
 
     /**
@@ -161,7 +173,7 @@ export class AWODataInterface {
                 tileTypeData.variations.push({
                     name: variationStr,
                     value: varValue,
-                    imageDataURL: this.getEntityImageDataURL(
+                    image: this.getEntityImage(
                         EntityKind.NeutralTile,
                         tileTypeValue,
                         varValue,
