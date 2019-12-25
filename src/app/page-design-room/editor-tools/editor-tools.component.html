@@ -7,16 +7,26 @@
                 <div class="tile-selection-container">
                     <div
                         class="tile-selection"
-                        *ngFor="let tileType of tileData"
+                        [ngClass]="{
+                                'selected': (tileType === selectedTileType)
+                            }"
                         (click)="updatedSelectedTile(tileType)"
-                        [ngStyle]="{
-                            'background-image': 'url(' + tileType.variations[0].image.dataURL + ')',
-                            'border': (tileType === selectedTileType) ? '1px solid red' : 'none'
-                        }"
+                        *ngFor="let tileType of tileData"
                     >
+                        <div
+                            class="image"
+                            [ngClass]="{
+                                'tall': (tileType.variations[0].image.height > 16)
+                            }"
+                            [ngStyle]="{
+                                'background-image': 'url(' + tileType.variations[0].image.dataURL + ')'
+                            }"
+                        >
+                        </div>
                     </div>
                 </div>
 
+                <!--'border': (tileType === selectedTileType) ? '1px solid red' : 'none'-->
                 <div class="tile-selection-container" *ngIf="selectedTileType">
                     <h1>{{ selectedTileType.name }}</h1>
                 </div>
